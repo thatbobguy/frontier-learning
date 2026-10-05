@@ -3,7 +3,6 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEven
 import { Glow } from '../../art2/fx'
 import { N } from '../../art2/palette'
 import { Equation, SCALE, Sack, Scale, Weight, terms, tiltFor, tiltScale } from '../../art2/props'
-import { toStage } from '../../engine/svg'
 
 /*
  * The playable balance scale used from chapter 4 on. The learner lifts weights and sacks
@@ -147,6 +146,14 @@ function layoutTray(ids: Ids): Spot[] {
   return spots
 }
 
+/** A pointer position in the coordinates the scale is drawn in, even inside a moving camera group. */
+function toLocal(el: SVGGraphicsElement, clientX: number, clientY: number) {
+  const m = el.getScreenCTM()
+  if (!m) return { x: 0, y: 0 }
+  const p = new DOMPoint(clientX, clientY).matrixTransform(m.inverse())
+  return { x: p.x, y: p.y }
+}
+
 const count = (ids: Ids): Side => ({ sacks: ids.sacks.length, weights: ids.weights.length })
 
 /* ------------------------------------------------------------------ */
@@ -248,14 +255,14 @@ export function BalancePlay({ x = 800, y = 640, s = 0.85, value, start, active, 
     if (!active || split || held) return
     e.preventDefault()
     e.stopPropagation()
-    const svg = e.currentTarget.ownerSVGElement
+    const svg = root.current
     if (!svg) return
-    const p0 = toStage(svg, e.clientX, e.clientY)
+    const p0 = toLocal(svg, e.clientX, e.clientY)
     take(from, item, id)
     setHeld({ id, item, from, px: p0.x, py: p0.y })
     let moved = 0
     const move = (ev: PointerEvent) => {
-      const p = toStage(svg, ev.clientX, ev.clientY)
+      const p = toLocal(svg, ev.clientX, ev.clientY)
       moved = Math.max(moved, Math.hypot(p.x - p0.x, p.y - p0.y))
       setHeld((h) => (h ? { ...h, px: p.x, py: p.y } : h))
     }
@@ -263,7 +270,7 @@ export function BalancePlay({ x = 800, y = 640, s = 0.85, value, start, active, 
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
       window.removeEventListener('pointercancel', up)
-      const p = toStage(svg, ev.clientX, ev.clientY)
+      const p = toLocal(svg, ev.clientX, ev.clientY)
       // A tap on something in a pan sends it to the tray on that side.
       const to: Loc = moved < 12 ? (from === 'left' ? 'trayL' : from === 'right' ? 'trayR' : from) : whereIs(p.x, p.y)
       put(to, item, id)
@@ -293,16 +300,16 @@ export function BalancePlay({ x = 800, y = 640, s = 0.85, value, start, active, 
   const grabKnife = (e: ReactPointerEvent<SVGGElement>) => {
     if (!active || split || held) return
     e.preventDefault()
-    const svg = e.currentTarget.ownerSVGElement
+    const svg = root.current
     if (!svg) return
     setKnifeY(knifeTop)
-    const move = (ev: PointerEvent) => setKnifeY(Math.max(knifeTop, Math.min(y + 40, toStage(svg, ev.clientX, ev.clientY).y)))
+    const move = (ev: PointerEvent) => setKnifeY(Math.max(knifeTop, Math.min(y + 40, toLocal(svg, ev.clientX, ev.clientY).y)))
     const up = (ev: PointerEvent) => {
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerup', up)
       window.removeEventListener('pointercancel', up)
       setKnifeY(null)
-      if (toStage(svg, ev.clientX, ev.clientY).y < knifeCut) return
+      if (toLocal(svg, ev.clientX, ev.clientY).y < knifeCut) return
       const b = balanceRef.current
       if (!isLevel(b, value)) return cbs.current.onMove?.(b, { kind: 'split-blocked', reason: 'tipped' })
       const parts = splitParts(b)

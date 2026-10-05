@@ -73,6 +73,10 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
   const slotRefs = useRef(new Map<string, SVGGElement>())
   const tutorRef = useRef<TutorHandle>(null)
   const speakToken = useRef(0)
+  /** Bumped whenever the cue changes, so a chapter's queued line is dropped if the flow has moved on. */
+  const cueToken = useRef(0)
+  /** The current cue's narration; a chapter's own line waits for it rather than cutting it off. */
+  const narration = useRef<Promise<unknown>>(Promise.resolve())
   const sceneState = useRef('')
   const hints = useRef<string[]>([])
   const recent = useRef<string[]>([])
@@ -87,6 +91,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
 
   const goTo = useCallback((ch: number, cueIndex: number, remount = false) => {
     speakToken.current++
+    cueToken.current++
     stopSpeech()
     setSpeechDone(false)
     setAnimDone(false)
@@ -123,7 +128,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
     if (!started || !playing || speechDone || ended) return
     const token = ++speakToken.current
     setCaption({ text: cue.say, word: 0 })
-    speak(cue.say, {
+    narration.current = speak(cue.say, {
       onWord: (i) => token === speakToken.current && setCaption((c) => ({ ...c, word: i })),
     }).then((ok) => {
       if (ok && token === speakToken.current) setSpeechDone(true)
@@ -210,14 +215,18 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
     }
   }, [cue])
 
-  // A chapter's own line: said in the narrator's voice; the flow waits for it before moving on.
+  // A chapter's own line: said in the narrator's voice once the cue's narration has finished; the flow waits for it.
   const say = useCallback((text: string) => {
-    const token = ++speakToken.current
-    setSpeechDone(true)
+    const cueAt = cueToken.current
     setTalking(true)
-    setCaption({ text, word: 0 })
-    return speak(text, { onWord: (i) => token === speakToken.current && setCaption((c) => ({ ...c, word: i })) }).then(() => {
-      if (token === speakToken.current) setTalking(false)
+    return narration.current.then(() => {
+      if (cueAt !== cueToken.current) return
+      const token = ++speakToken.current
+      setSpeechDone(true)
+      setCaption({ text, word: 0 })
+      return speak(text, { onWord: (i) => token === speakToken.current && setCaption((c) => ({ ...c, word: i })) }).then(() => {
+        if (token === speakToken.current) setTalking(false)
+      })
     })
   }, [])
 

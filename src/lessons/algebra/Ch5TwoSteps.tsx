@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Backdrop, Glow, Motes, Stars, Vignette } from '../../art2/fx'
 import { FONT2, N } from '../../art2/palette'
 import { Equation, SCALE, Sack, Scale, Title, Weight, termWidth, terms, tiltFor, tiltScale, type Term } from '../../art2/props'
@@ -267,7 +267,7 @@ function Arrow({ cls, x1, x2, y, color }: { cls: string; x1: number; x2: number;
   const k = Math.sign(x2 - x1)
   return (
     <g>
-      <path className={`${cls}-glow`} d={`M${x1} ${y} H${x2}`} stroke={color} strokeWidth={18} strokeLinecap="round" opacity={0} filter="url(#fx-soft)" />
+      <path className={`${cls}-glow`} d={`M${x1} ${y} H${x2}`} stroke={color} strokeWidth={26} strokeLinecap="round" opacity={0} />
       <path className={`${cls}-line`} d={`M${x1} ${y} H${x2 - k * 6}`} pathLength={1} strokeDasharray="1 1" stroke={color} strokeWidth={7} strokeLinecap="round" fill="none" />
       <path className={`${cls}-head`} d={`M${x2 - k * 22} ${y - 15} L${x2} ${y} L${x2 - k * 22} ${y + 15}`} stroke={color} strokeWidth={7} strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </g>
@@ -290,9 +290,11 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
   const myTurn = (cueIndex === 1 && !undone) || (cueIndex === 3 && !solved)
 
   const cueRef = useRef(cueIndex)
-  cueRef.current = cueIndex
   const api = useRef({ say, emit, onPlayDone })
-  api.current = { say, emit, onPlayDone }
+  useLayoutEffect(() => {
+    cueRef.current = cueIndex
+    api.current = { say, emit, onPlayDone }
+  })
   const flags = useRef({ undone: cueIndex > 1, solved: cueIndex > 3, tips: 0, sack: false, blocked: 0, sinceLevel: 0, last: null as Balance | null })
   const tipTimer = useRef(0)
 
@@ -330,14 +332,14 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
       setBal(b)
       const f = flags.current
       const cue = cueRef.current
-      const { say: speak, emit: report, onPlayDone: done } = api.current
+      const { emit: report, onPlayDone: done } = api.current
       if (move.kind === 'split-blocked') {
         // The scale already said why; no second word about the tipping.
         window.clearTimeout(tipTimer.current)
         report({ type: 'attempt', correct: false, detail: move.reason === 'tipped' ? 'tried to split while the scale was tipped' : 'tried to split before the sacks were alone' })
         if (f.blocked < 2) {
           f.blocked += 1
-          void speak(BLOCKED[move.reason])
+          void api.current.say(BLOCKED[move.reason])
         }
         return
       }
@@ -350,14 +352,14 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
           f.undone = true
           setUndone(true)
           report({ type: 'attempt', correct: true, detail: 'took one weight off each side: 2x = 8' })
-          void speak(UNDO_LINE)
+          void api.current.say(UNDO_LINE)
           done()
           return
         }
         if (move.kind === 'remove' && move.item === 'sack' && !f.sack) {
           f.sack = true
           report({ type: 'attempt', correct: false, detail: 'took a sack off the scale' })
-          void speak(SACK_LINE)
+          void api.current.say(SACK_LINE)
           return
         }
       } else if (cue === 3 && !f.solved) {
@@ -420,12 +422,12 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
       tl.fromTo(`${cls}-line`, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: 'power2.inOut' }, at)
       tl.fromTo(`${cls}-head`, { opacity: 0 }, { opacity: 1, duration: 0.2 }, at + dur - 0.15)
     }
-    const flash = (cls: string, at: number) => tl.fromTo(`${cls}-glow`, { opacity: 0 }, { opacity: 0.85, duration: 0.2, yoyo: true, repeat: 1, ease: 'sine.inOut', immediateRender: false }, at)
+    const flash = (cls: string, at: number) => tl.fromTo(`${cls}-glow`, { opacity: 0 }, { opacity: 0.35, duration: 0.2, yoyo: true, repeat: 1, ease: 'sine.inOut', immediateRender: false }, at)
 
     // Start: the empty scale on its stage; everything else waits its turn.
     tl.set(['.ch5-d-item', '.ch5-de', '.ch5-spark', '.ch5-live', '.ch5-bp'], { opacity: 0 })
     tl.set('.ch5-dglow', { opacity: 0.15 })
-    tl.set(['.ch5-g-plus1', '.ch5-g-lone', '.ch5-g-right', '.ch5-eqglow', '.ch5-halo-s', '.ch5-prev', '.ch5-halves', '.ch5-burst', '.ch5-swipe', '.ch5-halo-x', '.ch5-halo-4'], { opacity: 0 })
+    tl.set(['.ch5-g-plus1', '.ch5-g-lone', '.ch5-g-right', '.ch5-eqglow', '.ch5-halo-s', '.ch5-prevwrap', '.ch5-halves', '.ch5-burst', '.ch5-swipe', '.ch5-halo-x', '.ch5-halo-4'], { opacity: 0 })
     tl.set(['.ch5-row', '.ch5-note', '.ch5-rowC-glow'], { opacity: 0 })
     tl.set('.ch5-sceneB', { y: 900 })
     tl.set('.ch5-ordercam', { scale: OCAM.push, y: 410 - OCAM.oy, svgOrigin: `${OCAM.ox} ${OCAM.oy}` })
@@ -480,16 +482,19 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
     tl.addLabel('b2', b1 + 4.8)
     const b2 = tl.labels.b2
     fadeIn('.ch5-eqglow', b2 + 0.2, 0.6)
-    tl.fromTo('.ch5-live', { scale: 1, svgOrigin: `${EQ.x} ${EQ.y}` }, { scale: 1.08, duration: 0.35, yoyo: true, repeat: 1, ease: 'sine.inOut' }, b2 + 0.3)
-    tl.to('.ch5-eqglow', { opacity: 0.45, duration: 0.8 }, b2 + 1.8)
-    fadeIn('.ch5-halo-s', b2 + 2.3, 0.6)
-    tl.fromTo('.ch5-prev', { opacity: 0, strokeDashoffset: 1 }, { opacity: 0.9, strokeDashoffset: 0, duration: 0.7, ease: 'power2.inOut' }, b2 + 4.1)
-    fadeIn('.ch5-halves', b2 + 4.4, 0.6)
+    tl.fromTo('.ch5-live', { scale: 1, svgOrigin: `${EQ.x} ${EQ.y}` }, { scale: 1.1, duration: 0.35, yoyo: true, repeat: 1, ease: 'sine.inOut' }, b2 + 0.3)
+    tl.to('.ch5-eqglow', { opacity: 0.55, duration: 0.8 }, b2 + 1.9)
+    fadeIn('.ch5-halo-s', b2 + 2.5, 0.6)
+    tl.fromTo('.ch5-prev', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.8, ease: 'power2.inOut' }, b2 + 3.6)
+    fadeIn('.ch5-prevwrap', b2 + 3.6, 0.3)
+    fadeIn('.ch5-halves', b2 + 3.9, 0.6)
 
     // 3. Learner's turn: the splitting line arrives in a burst of light; a ghost of the gesture runs down.
-    tl.addLabel('b3', b2 + 5.8)
+    // The halving lines stay, softer, for as long as the scale still reads 2 sacks against 8 weights.
+    tl.addLabel('b3', b2 + 5.6)
     const b3 = tl.labels.b3
-    tl.to(['.ch5-prev', '.ch5-halves', '.ch5-halo-s', '.ch5-eqglow'], { opacity: 0, duration: 0.5 }, b3)
+    tl.to(['.ch5-halves', '.ch5-halo-s', '.ch5-eqglow'], { opacity: 0, duration: 0.5 }, b3)
+    tl.to('.ch5-prevwrap', { opacity: 0.55, duration: 0.5 }, b3)
     tl.fromTo('.ch5-burst', { opacity: 0, scale: 0.2, svgOrigin: `${KNIFE.x} ${KNIFE.y}` }, { opacity: 1, scale: 1.3, duration: 0.3, ease: 'power2.out' }, b3 + 0.05)
     tl.to('.ch5-burst', { opacity: 0, scale: 2, duration: 0.6, ease: 'power1.in' }, b3 + 0.35)
     tl.fromTo('.ch5-swipe', { opacity: 0, y: 0 }, { opacity: 1, duration: 0.3 }, b3 + 3.3)
@@ -501,7 +506,7 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
     const b4 = tl.labels.b4
     tl.to('.ch5-burst', { opacity: 0.9, scale: 1, duration: 0.15 }, b4)
     tl.to('.ch5-burst', { opacity: 0, scale: 0.2, duration: 0.4, ease: 'power2.in' }, b4 + 0.15)
-    tl.to('.ch5-live', { opacity: 0, duration: 0.4 }, b4)
+    tl.to(['.ch5-live', '.ch5-prevwrap'], { opacity: 0, duration: 0.4 }, b4)
     tl.fromTo('.ch5-scalecam', { x: 0, scale: 1, svgOrigin: '800 560' }, { x: -300, scale: 0.75, duration: 1.0, ease: 'power2.inOut' }, b4)
     fadeIn(['.ch5-halo-x', '.ch5-halo-4'], b4 + 0.4, 0.6)
     const rowIn = (sel: string, at: number) => tl.fromTo(sel, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 0.45, ease: 'power3.out' }, at)
@@ -720,9 +725,17 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
 
             {/* Hints drawn over the scale: never in the way of a finger */}
             <g pointerEvents="none">
-              {[PAN.l, PAN.r].map((px) => (
-                <line key={px} className="ch5-prev" x1={px} y1={PAN.y - 150 * SC.s} x2={px} y2={PAN.y + 14 * SC.s} pathLength={1} strokeDasharray="0.06 0.05" stroke={N.tealLight} strokeWidth={6} strokeLinecap="round" filter="url(#fx-glow)" />
-              ))}
+              <g className="ch5-prevwrap">
+                <g opacity={same(bal, AFTER_ONE) ? 1 : 0} style={{ transition: 'opacity 0.3s' }}>
+                  {/* (no filter on a straight line: its zero-width box would clip it away) */}
+                  {[PAN.l, PAN.r].map((px) => (
+                    <g key={px}>
+                      <line x1={px} y1={PAN.y - 150 * SC.s} x2={px} y2={PAN.y + 14 * SC.s} stroke={N.teal} strokeWidth={22} strokeLinecap="round" opacity={0.18} />
+                      <line className="ch5-prev" x1={px} y1={PAN.y - 150 * SC.s} x2={px} y2={PAN.y + 14 * SC.s} pathLength={1} strokeDasharray="0.06 0.05" stroke={N.tealLight} strokeWidth={6} strokeLinecap="round" />
+                    </g>
+                  ))}
+                </g>
+              </g>
               <g className="ch5-burst">
                 <Glow x={KNIFE.x} y={KNIFE.y} r={130} color="teal" />
               </g>
@@ -758,7 +771,8 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
             {/* The equation under the scale */}
             <g pointerEvents="none">
               <g className="ch5-eqglow">
-                <ellipse cx={EQ.x} cy={EQ.y} rx={330} ry={90} fill="url(#fx-glow-cool)" />
+                <ellipse cx={EQ.x} cy={EQ.y} rx={300} ry={110} fill="url(#fx-glow-violet)" />
+                <rect x={EQ.x - 150} y={EQ.y - 60} width={300} height={120} rx={36} fill="none" stroke={N.mist} strokeOpacity={0.7} strokeWidth={4} filter="url(#fx-glow)" />
               </g>
               <g opacity={bal.left.weights === 1 && bal.left.sacks === 2 ? 1 : 0}>
                 <g className="ch5-g-plus1">

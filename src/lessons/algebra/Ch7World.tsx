@@ -76,9 +76,9 @@ const ARC_DOTS = Array.from({ length: 13 }, (_, i) => quad(GAME.from, GAME.ctrl,
 /* ---------- The bridge (scene units) ---------- */
 const BR = { x0: 300, x1: 1300, T0: 14, T1: 64, sag: 28 }
 const TRUCKS = [
-  { x: 590, cab: N.sand, cabDark: N.sandDark, box: N.stoneLight, boxDark: N.stone },
+  { x: 590, cab: N.sky, cabDark: N.skyDark, box: N.stoneLight, boxDark: N.stone },
   { x: 800, cab: N.violet, cabDark: N.violetDark, box: N.cream, boxDark: N.sandLight },
-  { x: 1010, cab: N.leaf, cabDark: N.leafDark, box: N.skyLight, boxDark: N.sky },
+  { x: 1010, cab: N.leaf, cabDark: N.leafDark, box: N.violetLight, boxDark: N.violet },
 ]
 /** Where the convoy waits before it rolls in, off the left of the picture. */
 const CONVOY_OFF = -1150
@@ -316,9 +316,9 @@ function GameScene({ uid }: { uid: string }) {
           ))}
           <path d={`M${sx} 612 Q470 470 640 600 Q760 500 900 600 Q1040 520 1200 612 Z`} fill={N.leafLight} opacity={0.5} />
           {/* the ground */}
-          <rect x={sx} y={GAME.ground} width={sw} height={110} fill={N.sandDark} />
+          <rect x={sx} y={GAME.ground} width={sw} height={110} fill={N.wood} />
           {Array.from({ length: 15 }, (_, i) => (
-            <rect key={i} x={sx + i * 80 + (i % 2) * 20} y={650} width={70} height={24} rx={5} fill={N.sand} opacity={0.4} />
+            <rect key={i} x={sx + i * 80 + (i % 2) * 20} y={650} width={70} height={24} rx={5} fill={N.woodLight} opacity={0.5} />
           ))}
           <rect x={sx} y={GAME.ground} width={sw} height={22} fill={N.leaf} />
           <rect x={sx} y={GAME.ground} width={sw} height={7} fill={N.leafLight} />
@@ -327,9 +327,9 @@ function GameScene({ uid }: { uid: string }) {
             {[0, 1, 2, 3].map((r) =>
               [0, 1].map((c) => (
                 <g key={`${r}-${c}`}>
-                  <rect x={L.x0 + c * 100} y={L.top + r * 70} width={100} height={70} fill={N.sand} stroke={N.sandDark} strokeWidth={4} />
-                  <rect x={L.x0 + c * 100 + 6} y={L.top + r * 70 + 6} width={88} height={9} rx={4} fill={N.sandLight} opacity={0.8} />
-                  <rect x={L.x0 + c * 100 + 6} y={L.top + r * 70 + 52} width={88} height={10} rx={4} fill={N.sandDark} opacity={0.45} />
+                  <rect x={L.x0 + c * 100} y={L.top + r * 70} width={100} height={70} fill={N.woodLight} stroke={N.woodDark} strokeWidth={4} />
+                  <rect x={L.x0 + c * 100 + 6} y={L.top + r * 70 + 6} width={88} height={9} rx={4} fill={N.sandLight} opacity={0.45} />
+                  <rect x={L.x0 + c * 100 + 6} y={L.top + r * 70 + 52} width={88} height={10} rx={4} fill={N.wood} opacity={0.8} />
                 </g>
               )),
             )}
@@ -576,7 +576,7 @@ function SpaceScene() {
       </g>
       <g className="w-lbl">
         <g className="s-gold-lbl">
-          <Label x={MEET[0]} y={MEET[1] - 62}>
+          <Label x={MEET[0]} y={MEET[1] + 80}>
             next year
           </Label>
         </g>
@@ -605,7 +605,7 @@ function SpaceScene() {
       <g className="s-earth" data-tutor="Earth">
         <Earth />
         <g className="w-lbl">
-          <Label x={0} y={-46}>
+          <Label x={0} y={-56}>
             Earth
           </Label>
         </g>
@@ -650,6 +650,18 @@ function SkyWindow({ i, uid, children }: { i: number; uid: string; children: Rea
 
 /* ---------- The world below ---------- */
 
+/** The glow of the air along the rim of the world, behind anything standing on it. */
+function PlanetHaze() {
+  const { cx, cy, r } = PLANET
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={r + 70} fill="none" stroke={N.sky} strokeOpacity={0.05} strokeWidth={80} />
+      <circle cx={cx} cy={cy} r={r + 30} fill="none" stroke={N.sky} strokeOpacity={0.1} strokeWidth={40} />
+      <circle cx={cx} cy={cy} r={r + 8} fill="none" stroke={N.skyLight} strokeOpacity={0.18} strokeWidth={14} />
+    </g>
+  )
+}
+
 function Planet({ uid }: { uid: string }) {
   const { cx, cy, r } = PLANET
   const lights = rng(17)
@@ -662,9 +674,6 @@ function Planet({ uid }: { uid: string }) {
           <stop offset="1" stopColor={N.night0} />
         </radialGradient>
       </defs>
-      <circle cx={cx} cy={cy} r={r + 70} fill="none" stroke={N.sky} strokeOpacity={0.05} strokeWidth={80} />
-      <circle cx={cx} cy={cy} r={r + 30} fill="none" stroke={N.sky} strokeOpacity={0.1} strokeWidth={40} />
-      <circle cx={cx} cy={cy} r={r + 8} fill="none" stroke={N.skyLight} strokeOpacity={0.18} strokeWidth={14} />
       <circle cx={cx} cy={cy} r={r} fill={`url(#${uid}-planet)`} />
       <circle cx={cx} cy={cy} r={r} fill="none" stroke={N.skyLight} strokeOpacity={0.55} strokeWidth={3} />
       <circle cx={cx} cy={cy} r={r - 46} fill="none" stroke={N.night3} strokeOpacity={0.4} strokeWidth={2} />
@@ -1135,6 +1144,7 @@ export function Ch7World({ cueIndex, playing, onAnimDone, reportState, setHints 
       {/* The world, which the camera moves through */}
       <g className="w-cam">
         <g className="w-drift">
+          <PlanetHaze />
           <Tree />
           <Planet uid={uid} />
           <Motes count={18} seed={44} color={N.skyLight} />

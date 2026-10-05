@@ -593,14 +593,15 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
 
       // 0. Inside the House of Wisdom: the camera tilts down from the dome and drifts along the shelves as books fly in.
       tl.addLabel('b0')
-      cam(CAM.hall.x, CAM.hall.y, 0, 3.6, 'power2.inOut')
-      cam(CAM.drift.x, CAM.drift.y, 3.6, 4.2, 'sine.inOut')
-      tl.to('.c2-title', { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, 1.4)
-      tl.to('.c2-title', { opacity: 0, y: -12, duration: 0.6, ease: 'power1.in' }, 4.8)
+      // (The first second or so happens while the city picture is still flying away.)
+      cam(CAM.hall.x, CAM.hall.y, 1.2, 3.2, 'power2.inOut')
+      cam(CAM.drift.x, CAM.drift.y, 4.4, 3.6, 'sine.inOut')
+      tl.to('.c2-title', { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, 1.5)
+      tl.to('.c2-title', { opacity: 0, y: -12, duration: 0.6, ease: 'power1.in' }, 5.0)
       ARRIVALS.forEach((a, i) => {
         const k = ARRIVALS.slice(0, i).filter((b) => b.gap === a.gap).length
         const to = gapSpot(a.gap, k)
-        const at = 3.0 + i * 0.42
+        const at = 3.4 + i * 0.42
         const sel = `.c2-fb${i}`
         tl.set(sel, { x: a.from.x, y: a.from.y, rotation: i % 2 ? 60 : -50, scale: 1.9, opacity: 1, svgOrigin: '0 0' }, at)
         tl.to(sel, { x: to.x, duration: 1.2, ease: 'power2.out' }, at)
@@ -610,7 +611,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       })
 
       // 1. Over to al-Khwarizmi's desk. Three puzzles pop up around him, each with the same pink question mark.
-      tl.addLabel('b1', 7.8)
+      tl.addLabel('b1', 8.0)
       const b1 = tl.labels.b1
       cam(CAM.desk.x, CAM.desk.y, b1, 2.6, 'power2.inOut')
       tl.to('.c2-zoom', { scale: ZOOM.s, duration: 2.2, ease: 'power2.inOut' }, b1 + 0.8)
@@ -666,8 +667,9 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       tl.to('.c2-year', { opacity: 1, duration: 0.8 }, b4 + 0.8)
       tl.to('.c2-year', { opacity: 0, duration: 0.6 }, b4 + 3.4)
       tl.to('.c2-deskglow', { opacity: 1, duration: 0.6 }, b4 + 2.2)
-      tl.to('.c2-zoom2', { scale: 3.4, duration: 1.4, ease: 'power3.in' }, b4 + 3.0)
-      tl.to('.c2-dark', { opacity: 0.9, duration: 0.8 }, b4 + 3.7)
+      tl.to('.c2-zoom2', { scale: 2.4, duration: 1.4, ease: 'power3.in' }, b4 + 3.0)
+      tl.to('.c2-deskbook', { opacity: 0, duration: 0.4 }, b4 + 3.9)
+      tl.to('.c2-dark', { opacity: 0.97, duration: 0.8 }, b4 + 3.7)
       tl.to('.c2-bk', { opacity: 1, duration: 0.6 }, b4 + 3.8)
       tl.to('.c2-bk-in', { scale: 1, duration: 1.3, ease: 'power3.out' }, b4 + 3.8)
       tl.to('.c2-bk-cover', { scaleX: 0, duration: 0.35, ease: 'power2.in' }, b4 + 4.7)
@@ -710,17 +712,17 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
             applyWord()
           },
         },
-        b5 + 2.3,
+        b5 + 2.4,
       )
-      const steps = [4.15, 4.5, 4.85, 5.2, 6.0]
+      const steps = [4.55, 4.9, 5.25, 5.6, 6.2]
       steps.forEach((t, i) => {
         tl.set(`.c2-wst${i}`, { opacity: 0 }, b5 + t)
         tl.set(`.c2-wst${i + 1}`, { opacity: 1 }, b5 + t)
         tl.fromTo('.c2-word-pop', { scale: 1.25 }, { scale: 1, duration: 0.3, ease: 'back.out(3)', immediateRender: false }, b5 + t)
       })
       tl.to('.c2-baghdad-label', { opacity: 0, duration: 0.4 }, b5 + 4.4)
-      tl.to('.c2-scrim', { opacity: 0.75, duration: 0.8 }, b5 + 4.7)
-      tl.to(W, { x: WORD_AT.end.x, y: WORD_AT.end.y, s: WORD_AT.end.s, duration: 1.4, ease: 'power2.inOut', onUpdate: applyWord }, b5 + 4.5)
+      tl.to('.c2-scrim', { opacity: 0.75, duration: 0.8 }, b5 + 4.9)
+      tl.to(W, { x: WORD_AT.end.x, y: WORD_AT.end.y, s: WORD_AT.end.s, duration: 1.4, ease: 'power2.inOut', onUpdate: applyWord }, b5 + 4.7)
       tl.addLabel('b6', b5 + 6.6)
     },
     [applyGears],
@@ -848,10 +850,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
 
   const restDeg = leverDown ? LEVER.down : LEVER.up
   const fgPillars = [60, 2560]
-  const nearLanterns = [
-    [300, -430],
-    [1250, -480],
-  ]
+  const nearLanterns = [[1250, -480]]
   const linkD = (() => {
     const [a, b, c] = [qCentre(0), qCentre(1), qCentre(2)]
     return `M${a.x} ${a.y} Q${(a.x + b.x) / 2} ${Math.min(a.y, b.y) - 120} ${b.x} ${b.y} Q${(b.x + c.x) / 2} ${Math.min(b.y, c.y) - 120} ${c.x} ${c.y}`
@@ -863,6 +862,11 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
         <clipPath id="c2-bubclip">
           <circle r={BUB_R - 5} />
         </clipPath>
+        <radialGradient id="c2-scrim-g">
+          <stop offset="0" stopColor={N.night0} stopOpacity="0.9" />
+          <stop offset="0.6" stopColor={N.night0} stopOpacity="0.6" />
+          <stop offset="1" stopColor={N.night0} stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* The hall: the back wall, the floor with its people, and near pillars, each panned at its own speed */}
@@ -970,7 +974,9 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
                 <Glow x={DESKBOOK.x} y={DESKBOOK.y - 20} r={130} color="warm" />
               </g>
               <g transform={`translate(${DESKBOOK.x} ${DESKBOOK.y})`}>
-                <ClosedBook />
+                <g className="c2-deskbook">
+                  <ClosedBook />
+                </g>
               </g>
             </g>
 
@@ -979,7 +985,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
                 <g key={lx} transform={`translate(${lx} ${ly})`}>
                   <line x1={0} y1={-900} x2={0} y2={-120} stroke={N.night0} strokeWidth={5} />
                   <g className="sway" style={{ animationDelay: `${-i * 1.7}s` }}>
-                    <Lantern y={0} s={2.1} rope={60} color={i ? N.coral : N.sky} />
+                    <Lantern y={0} s={2.1} rope={60} color={i ? N.sky : N.coral} />
                   </g>
                 </g>
               ))}
@@ -1179,7 +1185,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
                   <g className="c2-beam-flash">
                     <Glow r={300} color="teal" />
                   </g>
-                  <rect x={-BEAM.half} y={-11} width={BEAM.half * 2} height={22} rx={11} fill={N.teal} />
+                  <rect x={-BEAM.half - 5} y={-13} width={BEAM.half * 2 + 10} height={26} rx={12} fill={N.teal} />
                   <rect x={-BEAM.half} y={3} width={BEAM.half * 2} height={8} rx={4} fill={N.tealDark} />
                   <rect x={-BEAM.half + 10} y={-8} width={BEAM.half * 2 - 20} height={5} rx={2.5} fill={N.tealLight} />
                   <path d="M-8 -10 L0 -66 L8 -10 Z" fill={N.teal} />
@@ -1233,7 +1239,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
             </Title>
           </g>
         </g>
-        <ellipse className="c2-scrim" cx={WORD_AT.end.x} cy={WORD_AT.end.y} rx={470} ry={120} fill={N.night0} filter="url(#fx-blur-big)" />
+        <ellipse className="c2-scrim" cx={WORD_AT.end.x} cy={WORD_AT.end.y - 10} rx={560} ry={190} fill="url(#c2-scrim-g)" />
       </g>
 
       {/* The word: al-jabr, and later algebra */}

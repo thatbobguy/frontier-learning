@@ -375,12 +375,12 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
 
   useBeatTimeline(root, build, cueIndex, playing, animDone)
 
-  // A short line from the world, never two on top of each other.
+  // A short line from the world, never two on top of each other. Said as say(LINES[key]) so the voice scan finds them.
   const react = useCallback(
-    (line: string, force = false) => {
+    (key: keyof typeof LINES, force = false) => {
       if (talking.current && !force) return false
       talking.current = true
-      void say(line).then(() => {
+      void say(LINES[key]).then(() => {
         talking.current = false
       })
       return true
@@ -397,7 +397,7 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       const now = equationText(b, X)
       if (move.kind === 'remove' && move.item === 'sack') {
         emit({ type: 'attempt', correct: false, detail: `took the sack off the scale; now ${now}` })
-        if (told.current.sack < 1 && react(LINES.sack, true)) {
+        if (told.current.sack < 1 && react('sack', true)) {
           told.current.sack++
           return
         }
@@ -408,10 +408,10 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       const diff = Math.abs(sideWeight(b.left, X) - sideWeight(b.right, X))
       if (!level) bigTip.current = Math.max(bigTip.current, diff)
       if (was && !level && (told.current.tipped === 0 || (told.current.tipped === 1 && diff >= 2))) {
-        if (react(LINES.tipped)) told.current.tipped++
+        if (react('tipped')) told.current.tipped++
       } else if (!was && level && !isSolved(b, X) && (told.current.level === 0 || (told.current.level === 1 && bigTip.current >= 2))) {
         // Coming back level is the news, so it may cut short the line about tipping.
-        if (react(LINES.level, true)) told.current.level++
+        if (react('level', true)) told.current.level++
       }
       if (level) bigTip.current = 0
     },
