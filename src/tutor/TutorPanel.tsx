@@ -1,5 +1,5 @@
 import { useImperativeHandle, useRef, useState, type Ref } from 'react'
-import { Pip, type PipMood } from '../art/kit'
+import { Pip2 as Pip, type PipMood } from '../art2/characters'
 import { loadLiveVoiceKey, setLiveVoiceKey, speak, stop as stopSpeech } from '../engine/narrator'
 import { askPip, buildSystemPrompt, describeError, loadKey, saveKey, type TutorReply, type TutorTurn } from './claude'
 import { canListen, listen } from './listen'
@@ -34,6 +34,8 @@ export interface TutorHandle {
   nudge: (reason: string) => void
   /** Ask the student to explain how they solved a game. Calls `done` when the lesson can move on. */
   askToExplain: (done: () => void) => void
+  /** Show a line in Pip's bubble without speaking or pausing, e.g. an invitation to explain. It closes by itself. */
+  invite: (text: string) => void
 }
 
 function situationText(c: LessonContext, extra?: string) {
@@ -66,6 +68,7 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
   const hintStep = useRef(0)
   const busy = useRef(false)
   const explainDone = useRef<(() => void) | null>(null)
+  const invited = useRef(0)
 
   const finishExplaining = () => {
     const done = explainDone.current
@@ -156,6 +159,13 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
       setOpen(true)
       void respond('', `${reason} Offer one small, encouraging nudge toward the idea they need, without giving the answer.`)
     },
+    invite: (text: string) => {
+      setBubble(text)
+      setOpen(true)
+      invited.current = window.setTimeout(() => {
+        if (!busy.current && !stopListening.current) setOpen(false)
+      }, 9000)
+    },
   }))
 
   /** Pauses the video while the student talks to Pip. A game stays live so they can keep playing. */
@@ -167,6 +177,7 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
   }
 
   const startTalking = () => {
+    window.clearTimeout(invited.current)
     setOpen(true)
     holdLesson()
     stopSpeech()

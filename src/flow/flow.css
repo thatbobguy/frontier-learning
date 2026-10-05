@@ -1,0 +1,344 @@
+/* The video-style lesson page: dark, quiet chrome so the picture does the talking. */
+
+.flow {
+  --f-bg: #070b24;
+  --f-panel: rgba(20, 29, 82, 0.72);
+  --f-line: rgba(201, 211, 255, 0.16);
+  --f-text: #f4f2ff;
+  --f-soft: #a9b1e0;
+  --f-gold: #ffc23d;
+  --f-pink: #ff4f9a;
+  --f-teal: #2fe0c0;
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at 50% -10%, #1b2466 0%, var(--f-bg) 60%);
+  color: var(--f-text);
+  font-family: 'Baloo 2', 'Nunito', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flow-top {
+  width: min(1200px, calc(100% - 32px));
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0 10px;
+}
+
+.flow-back {
+  background: none;
+  border: 1px solid var(--f-line);
+  color: var(--f-soft);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.flow-back:hover {
+  color: var(--f-text);
+  border-color: var(--f-soft);
+}
+
+.flow-title {
+  font-weight: 800;
+  color: var(--f-soft);
+  letter-spacing: 0.01em;
+}
+
+.flow-stage-wrap {
+  width: min(1200px, calc(100% - 32px), calc((100vh - 230px) * 16 / 9));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flow-stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #0c1235;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--f-line);
+}
+
+.flow-stage > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  user-select: none;
+}
+
+/* Start screen, over the poster picture */
+.flow-poster {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  padding: 24px 24px 24px 6%;
+  background: linear-gradient(90deg, rgba(7, 11, 36, 0.78) 0%, rgba(7, 11, 36, 0.45) 45%, rgba(7, 11, 36, 0) 70%);
+}
+.flow-poster h1 {
+  margin: 0;
+  font-size: clamp(30px, 5vw, 64px);
+  line-height: 1.02;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+}
+.flow-eyebrow {
+  margin: 0 0 6px;
+  color: var(--f-gold);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+.flow-tagline {
+  margin: 8px 0 20px;
+  max-width: 520px;
+  color: #dfe3ff;
+  font-size: clamp(15px, 1.8vw, 20px);
+  font-weight: 600;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
+}
+.flow-fine {
+  margin: 14px 0 0;
+  color: var(--f-soft);
+  font-size: 14px;
+}
+
+.flow-play-big {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: none;
+  background: var(--f-gold);
+  color: #141d52;
+  cursor: pointer;
+  box-shadow: 0 0 0 10px rgba(255, 194, 61, 0.18), 0 12px 40px rgba(255, 194, 61, 0.45);
+  transition: transform 0.15s;
+}
+.flow-play-big:hover {
+  transform: scale(1.06);
+}
+.flow-play-big svg {
+  width: 52px;
+  height: 52px;
+  margin-left: 6px;
+}
+
+.flow-paused-overlay {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(7, 11, 36, 0.35);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.flow-paused-overlay span {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #141d52;
+  display: grid;
+  place-items: center;
+}
+.flow-paused-overlay svg {
+  width: 44px;
+  height: 44px;
+  margin-left: 5px;
+}
+
+/* End screen */
+.flow-end {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  background: rgba(7, 11, 36, 0.78);
+  backdrop-filter: blur(4px);
+}
+.flow-end h2 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 52px);
+}
+.flow-end p {
+  color: var(--f-soft);
+  margin: 6px 0 16px;
+}
+.flow-next {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.flow-next-card {
+  width: 220px;
+  text-align: left;
+  background: var(--f-panel);
+  border: 1px solid var(--f-line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.flow-next-card strong {
+  font-size: 18px;
+}
+.flow-next-card span {
+  color: var(--f-soft);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.flow-next-card em {
+  font-style: normal;
+  color: var(--f-gold);
+  font-weight: 700;
+  font-size: 13px;
+}
+.flow-end-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+.flow-end-actions button {
+  font: inherit;
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 10px 22px;
+  border: 1px solid var(--f-line);
+  background: transparent;
+  color: var(--f-text);
+  cursor: pointer;
+}
+.flow-end-actions button.primary {
+  background: var(--f-gold);
+  color: #141d52;
+  border-color: var(--f-gold);
+}
+
+/* Captions under the picture */
+.flow-captions {
+  min-height: 64px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.flow .captions p {
+  color: rgba(244, 242, 255, 0.5);
+  font-size: clamp(16px, 1.7vw, 21px);
+  font-weight: 700;
+  line-height: 1.4;
+}
+.flow .captions .word.said,
+.flow .captions .word.on {
+  color: var(--f-text);
+}
+.flow .captions .word.on {
+  background: var(--f-gold);
+  color: #141d52;
+  box-shadow: 0 0 0 2px var(--f-gold);
+  border-radius: 6px;
+}
+
+/* The bar: play, chapters, captions, sound */
+.flow-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 18px;
+  /* Pip floats in the bottom-right corner */
+  padding-right: 96px;
+}
+.flow-pp {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 50%;
+  border: none;
+  background: var(--f-text);
+  color: #141d52;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.flow-pp svg {
+  width: 26px;
+  height: 26px;
+}
+.flow-progress {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  min-width: 120px;
+}
+.flow-seg {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(201, 211, 255, 0.16);
+  cursor: pointer;
+  flex-basis: 0;
+}
+.flow-seg:hover {
+  background: rgba(201, 211, 255, 0.3);
+}
+.flow-seg.on {
+  box-shadow: 0 0 0 2px rgba(255, 194, 61, 0.35);
+}
+.flow-seg-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--f-gold);
+  transform-origin: 0 50%;
+  transition: transform 0.6s ease;
+}
+.flow-chapter {
+  flex: none;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--f-soft);
+  font-weight: 700;
+  font-size: 15px;
+}
+.flow-toggle {
+  flex: none;
+  font: inherit;
+  font-weight: 800;
+  font-size: 14px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  border: 1px solid var(--f-line);
+  background: transparent;
+  color: var(--f-soft);
+  cursor: pointer;
+}
+.flow-toggle.on {
+  color: var(--f-text);
+  border-color: var(--f-soft);
+}
+
+@media (max-width: 720px) {
+  .flow-chapter {
+    display: none;
+  }
+  .flow-stage {
+    border-radius: 14px;
+  }
+}

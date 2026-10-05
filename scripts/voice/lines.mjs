@@ -6,7 +6,7 @@
 // strings they hold. Hints and Pip's own lines are Pip's voice; the rest is the
 // narrator's. Lines built at runtime from numbers can't be known here, and the
 // player falls back to another voice for those.
-import { readFileSync, readdirSync } from 'node:fs'
+import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import ts from 'typescript'
 import { normalizeLine, splitSentences } from '../../src/engine/voiceKey.ts'
@@ -91,12 +91,21 @@ function collectFile(path, { beatVoice, sayVoice, sayCalls }) {
   return found
 }
 
+function tsxFiles(dir) {
+  return readdirSync(dir)
+    .sort()
+    .flatMap((f) => {
+      const p = join(dir, f)
+      return statSync(p).isDirectory() ? tsxFiles(p) : f.endsWith('.tsx') ? [p] : []
+    })
+}
+
 /** Every line to record: `{ voice: 'narrator' | 'tutor', text }`, de-duplicated. */
 export function collectLines() {
-  const scenes = join(ROOT, 'src/scenes')
   const lines = []
-  for (const f of readdirSync(scenes).filter((f) => f.endsWith('.tsx')).sort()) {
-    lines.push(...collectFile(join(scenes, f), { beatVoice: 'narrator', sayCalls: { say: 'narrator', setHints: 'tutor' } }))
+  // The first lesson's scenes, and every chapter of the newer lessons.
+  for (const file of ['src/scenes', 'src/lessons'].flatMap((d) => tsxFiles(join(ROOT, d)))) {
+    lines.push(...collectFile(file, { beatVoice: 'narrator', sayCalls: { say: 'narrator', setHints: 'tutor' } }))
   }
   lines.push(...collectFile(join(ROOT, 'src/tutor/TutorPanel.tsx'), { beatVoice: 'tutor', sayCalls: { pipSays: 'tutor' } }))
   const seen = new Set()
