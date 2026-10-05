@@ -5,7 +5,7 @@ import { Equation, SCALE, Sack, Scale, Title, Weight, termWidth, terms, tiltFor,
 import { Moon, Skyline } from '../../art2/scenery'
 import { useBeatTimeline } from '../../engine/useBeatTimeline'
 import type { Chapter, ChapterProps, Cue } from '../../flow/types'
-import { BalancePlay, equationText, isLevel, isSolved, type Balance, type Move } from './balance'
+import { BalancePlay, equationText, isLevel, isSolved, sideWeight, type Balance, type Move } from './balance'
 
 export const CUES: Cue[] = [
   { id: 'equals', say: 'The equals sign is the heart of it. It means both sides weigh exactly the same.' },
@@ -162,12 +162,16 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
   const myTurn = cueIndex === 4 && !done
   const wasLevel = useRef(true)
   const told = useRef({ tipped: 0, level: 0, sack: 0 })
+  /** The biggest difference between the sides since the scale last tipped. */
+  const bigTip = useRef(0)
   const talking = useRef(false)
   const cueRef = useRef(cueIndex)
   cueRef.current = cueIndex
   const guessSaid = useRef(false)
 
   const dist = guess === undefined ? undefined : Math.abs(guess - X)
+  /** Where the gold 8 marker sits: on the line, or stacked above the guess when they match. */
+  const trueY = guess === X ? NL.y - 6 - 0.55 * 110 - 8 - 44 * 0.65 : NL.y - 6 - 44 * 0.65
   const closeness = dist === undefined ? null : dist === 0 ? CLOSENESS.exact : dist <= 2 ? CLOSENESS.close : CLOSENESS.far
 
   const build = useCallback((tl: gsap.core.Timeline) => {
@@ -233,7 +237,7 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.set('.c4-slate', { opacity: 0, y: 460 })
     tl.set('.c4-scrim', { opacity: 0 })
     tl.set('.c4-guess', { opacity: 0, x: guess === undefined ? 0 : NL.x0 - 110 - nx(guess) })
-    tl.set('.c4-true', { opacity: 0, y: -320 })
+    tl.set('.c4-true', { opacity: 0, scale: 1.9, svgOrigin: `${nx(X)} ${trueY}` })
     tl.set('.c4-bracket', { strokeDashoffset: 1 })
     tl.set(['.c4-dist', '.c4-spot'], { opacity: 0 })
 
@@ -352,7 +356,7 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.to('.c4-far', { y: -40, duration: 1.4, ease: 'power3.inOut' }, b6)
     tl.to('.c4-slate', { opacity: 1, y: 0, duration: 1.1, ease: 'back.out(1.2)' }, b6 + 0.4)
     tl.to('.c4-guess', { opacity: 1, x: 0, duration: 1.0, ease: 'power3.out' }, b6 + 1.5)
-    tl.to('.c4-true', { opacity: 1, y: 0, duration: 0.8, ease: 'bounce.out' }, b6 + 2.6)
+    tl.to('.c4-true', { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2.2)' }, b6 + 2.6)
     tl.to('.c4-bracket', { strokeDashoffset: 0, duration: 0.8, ease: 'power1.inOut' }, b6 + 3.5)
     tl.to(['.c4-dist', '.c4-spot'], { opacity: 1, duration: 0.5 }, b6 + 4.1)
     tl.addLabel('b7', b6 + 5.6)
@@ -400,12 +404,16 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       } else if (move.kind === 'add' || move.kind === 'remove') {
         emit({ type: 'progress', detail: `${move.kind === 'add' ? 'put' : 'took'} a ${move.item} ${move.kind === 'add' ? 'on' : 'off'} the ${move.side} side; now ${now}` })
       }
-      if (was && !level && told.current.tipped < 2) {
+      // Each line once; a second time only after a big tip (two or more apart), so a steady solver isn't talked over.
+      const diff = Math.abs(sideWeight(b.left, X) - sideWeight(b.right, X))
+      if (!level) bigTip.current = Math.max(bigTip.current, diff)
+      if (was && !level && (told.current.tipped === 0 || (told.current.tipped === 1 && diff >= 2))) {
         if (react(LINES.tipped)) told.current.tipped++
-      } else if (!was && level && !isSolved(b, X) && told.current.level < 2) {
-        // Putting the sack back may cut the line asking for it; the fix deserves to be heard.
-        if (react(LINES.level, move.kind === 'add' && move.item === 'sack')) told.current.level++
+      } else if (!was && level && !isSolved(b, X) && (told.current.level === 0 || (told.current.level === 1 && bigTip.current >= 2))) {
+        // Coming back level is the news, so it may cut short the line about tipping.
+        if (react(LINES.level, true)) told.current.level++
       }
+      if (level) bigTip.current = 0
     },
     [emit, react],
   )
@@ -469,15 +477,14 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
   const rightSpan = { l: SB - tileW('11', 'num') / 2 - 7, r: SB + tileW('11', 'num') / 2 + 12 }
   const eqH = EQ.size * 1.3 + 22
   const minusL = (WPLUS - tileW('+', 'op', WK.size) / 2 + WA + tileW('3', 'num', WK.size) / 2) / 2
-  const trueY = guess === X ? NL.y - 6 - 0.55 * 110 - 8 - 44 * 0.65 : NL.y - 6 - 44 * 0.65
 
   return (
     <g ref={root}>
       <defs>
         {/* "Not equal" light for the side that sinks. The kit has no coral glow, so it lives here. */}
         <radialGradient id="c4-coral-glow">
-          <stop offset="0" stopColor={N.coralLight} stopOpacity="0.55" />
-          <stop offset="0.45" stopColor={N.coral} stopOpacity="0.22" />
+          <stop offset="0" stopColor={N.coralLight} stopOpacity="0.8" />
+          <stop offset="0.45" stopColor={N.coral} stopOpacity="0.32" />
           <stop offset="1" stopColor={N.coral} stopOpacity="0" />
         </radialGradient>
       </defs>
@@ -526,7 +533,7 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
                 <Glow x={BP.x} y={PIVOT_Y} r={300 * BP.s} color="teal" opacity={0.55} />
               </g>
               <g className="c4-tipglow">
-                <circle cx={PAN.lx} cy={PAN.y + 6} r={200} fill="url(#c4-coral-glow)" />
+                <circle cx={PAN.lx} cy={PAN.y + 6} r={230} fill="url(#c4-coral-glow)" />
               </g>
               {[
                 ['c4-pg-l', PAN.lx],

@@ -383,7 +383,7 @@ export function BalancePlay({ x = 800, y = 640, s = 0.85, value, start, active, 
         (['trayL', 'trayR'] as const).map((loc) => {
           const t = trayAt(loc)
           return (
-            <g key={loc} transform={`translate(${t.x} ${t.y}) scale(${s})`} data-tutor={loc === 'trayL' ? 'the left tray' : 'the right tray'}>
+            <g key={loc} transform={`translate(${t.x} ${t.y}) scale(${s})`} data-tutor={`${tutor}: ${loc === 'trayL' ? 'left tray' : 'right tray'}`}>
               <ellipse cy={10} rx={TRAY_W / 2 + 10} ry={16} fill={N.shadow} opacity={0.3} />
               <rect x={-TRAY_W / 2} y={-6} width={TRAY_W} height={22} rx={11} fill={N.woodLight} />
               <rect x={-TRAY_W / 2} y={6} width={TRAY_W} height={10} rx={5} fill={N.woodDark} opacity={0.6} />
@@ -401,7 +401,7 @@ export function BalancePlay({ x = 800, y = 640, s = 0.85, value, start, active, 
 
       {/* The splitting line */}
       {canSplit && (
-        <g data-tutor="the splitting line">
+        <g data-tutor={`${tutor}: splitting line`}>
           <line x1={x} y1={knifeTop} x2={x} y2={knifeY ?? knifeTop + 1} stroke={N.tealLight} strokeWidth={7} strokeDasharray="14 10" strokeLinecap="round" filter="url(#fx-glow)" />
           <g
             className={active ? 'hot' : undefined}
@@ -417,7 +417,7 @@ export function BalancePlay({ x = 800, y = 640, s = 0.85, value, start, active, 
         </g>
       )}
 
-      {equation && <Equation terms={terms(equationText(balance, value))} x={x} y={equation.y} size={equation.size ?? 56} tutor="the equation" />}
+      {equation && <Equation terms={terms(equationText(balance, value))} x={x} y={equation.y} size={equation.size ?? 56} tutor={`${tutor}: equation`} />}
 
       {heldStage}
     </g>

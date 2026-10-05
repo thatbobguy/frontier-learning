@@ -106,7 +106,7 @@ const MEET = orbitPt(SP.rM, SP.thE + 180)
 const TRAIL = Array.from({ length: 30 }, (_, i) => transferPt((i + 0.5) / 30))
 
 /* ---------- The knowledge tree (world) ---------- */
-const LANTERN: P = [588, 548]
+const LANTERN: P = [562, 542]
 const SHOOTS: { p: P[]; label: string; lbl: P; petal: string; petalDark: string }[] = [
   { p: [[792, 492], [730, 430], [620, 330], [520, 292]], label: 'Graphs', lbl: [496, 236], petal: N.skyLight, petalDark: N.sky },
   { p: [[800, 478], [804, 390], [812, 290], [830, 192]], label: 'Functions', lbl: [830, 132], petal: N.violetLight, petalDark: N.violet },
@@ -701,28 +701,45 @@ function Planet({ uid }: { uid: string }) {
 
 /* ---------- The knowledge tree ---------- */
 
+/** Leaves on the old wood: along the lantern branch and around the crown. */
+const OLD_LEAVES: [number, number, number, boolean][] = (() => {
+  const r = rng(23)
+  const out: [number, number, number, boolean][] = []
+  for (let i = 0; i < 9; i++) {
+    const t = 0.25 + i * 0.085
+    const [x, y] = cubic([[792, 640], [740, 610], [660, 560], LANTERN], t)
+    out.push([x, y, (i % 2 ? 1 : -1) * (40 + r() * 40) - 90, r() > 0.5])
+  }
+  for (let i = 0; i < 10; i++) {
+    const a = -180 + i * 20 + r() * 10
+    out.push([800 + Math.cos(rad(a)) * (28 + r() * 16), 482 + Math.sin(rad(a)) * (20 + r() * 14), a, r() > 0.4])
+  }
+  return out
+})()
+
 function Tree() {
-  const leaves: [number, number, number][] = [
-    [702, 604, -30],
-    [664, 582, 25],
-    [632, 566, -50],
-    [748, 622, 40],
-    [776, 470, -110],
-    [758, 486, -160],
-    [830, 474, -30],
-  ]
   return (
     <g data-tutor="the knowledge tree">
+      <g className="t-halo">
+        <Glow x={800} y={330} r={560} color="violet" opacity={0.55} />
+        <Glow x={800} y={260} r={330} color="cool" opacity={0.35} />
+        <g transform="translate(380 80)">
+          <Motes w={840} h={520} count={16} seed={61} color={N.violetLight} />
+        </g>
+      </g>
       {/* trunk and the old branch */}
       <g className="t-trunk">
+        <path d="M736 792 Q768 772 774 730 L826 730 Q832 772 864 792 Z" fill={N.woodDark} />
         <path d="M760 806 C766 730 778 650 784 560 C787 520 786 495 783 470 L817 470 C814 495 813 520 816 560 C822 650 834 730 840 806 Z" fill={N.woodDark} />
-        <path d="M772 806 C776 730 784 650 789 560 C791 520 790 495 788 472" stroke={N.woodLight} strokeWidth={5} fill="none" opacity={0.5} />
+        <path d="M800 806 C804 730 810 650 812 560 C814 520 813 495 812 472 L817 470 C814 495 813 520 816 560 C822 650 834 730 840 806 Z" fill={N.shadow} opacity={0.25} />
+        <path d="M772 806 C776 730 784 650 789 560 C791 520 790 495 788 472" stroke={N.woodLight} strokeWidth={5} fill="none" opacity={0.55} />
+        <path d="M796 760 C798 700 800 650 801 600 M808 700 C810 660 811 620 810 590" stroke={N.shadow} strokeWidth={3} fill="none" opacity={0.3} strokeLinecap="round" />
         <circle cx={800} cy={478} r={21} fill={N.woodDark} />
       </g>
       <path className="t-branchA" d={`M792 640 C740 610 660 560 ${LANTERN[0]} ${LANTERN[1]}`} stroke={N.woodDark} strokeWidth={16} strokeLinecap="round" fill="none" pathLength={1} strokeDasharray="1 2" />
-      {leaves.map(([x, y, a], i) => (
+      {OLD_LEAVES.map(([x, y, a, light], i) => (
         <g key={i} transform={`translate(${x} ${y}) rotate(${a})`}>
-          <path className="t-leaf" d="M0 0 Q16 -12 34 0 Q16 12 0 0 Z" fill={i % 2 ? N.leafDark : N.leaf} />
+          <path className="t-leaf" d="M0 0 Q16 -12 36 0 Q16 12 0 0 Z" fill={light ? N.leaf : N.leafDark} />
         </g>
       ))}
       {/* the new branches, each a number line with an x that can be anything */}
@@ -734,13 +751,25 @@ function Tree() {
           const b = cubic(s.p, t + 0.01)
           const len = Math.hypot(b[0] - a[0], b[1] - a[1])
           const n: P = [-(b[1] - a[1]) / len, (b[0] - a[0]) / len]
-          return `M${a[0] - n[0] * 12} ${a[1] - n[1] * 12} L${a[0] + n[0] * 12} ${a[1] + n[1] * 12}`
+          return `M${a[0] - n[0] * 13} ${a[1] - n[1] * 13} L${a[0] + n[0] * 13} ${a[1] + n[1] * 13}`
         }).join(' ')
+        const leaves = [0.38, 0.62].map((t, k) => {
+          const a = cubic(s.p, t)
+          const b = cubic(s.p, t + 0.01)
+          const ang = (Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI + (k ? 55 : -55)
+          return { x: a[0], y: a[1], ang }
+        })
         const [tx, ty] = s.p[3]
         return (
           <g key={i} data-tutor={`the ${s.label} branch`}>
-            <path className={`t-new t-new${i}`} d={d} stroke={N.leafDark} strokeWidth={13} strokeLinecap="round" fill="none" pathLength={1} strokeDasharray="1 2" />
-            <path className={`t-ticks t-ticks${i}`} d={ticks} stroke={N.leafLight} strokeWidth={4} strokeLinecap="round" opacity={0.85} />
+            {leaves.map((l, k) => (
+              <g key={k} transform={`translate(${l.x} ${l.y}) rotate(${l.ang})`}>
+                <path className={`t-sleaf t-sleaf${i}`} d="M0 0 Q14 -10 32 0 Q14 10 0 0 Z" fill={k ? N.leafLight : N.leaf} />
+              </g>
+            ))}
+            <path className={`t-new t-new${i}`} d={d} stroke={N.leafDark} strokeWidth={14} strokeLinecap="round" fill="none" pathLength={1} strokeDasharray="1 2" />
+            <path className={`t-new t-new${i}`} d={d} stroke={N.leaf} strokeWidth={5} strokeLinecap="round" fill="none" pathLength={1} strokeDasharray="1 2" opacity={0.8} />
+            <path className={`t-ticks t-ticks${i}`} d={ticks} stroke={N.leafLight} strokeWidth={4} strokeLinecap="round" />
             <g transform={`translate(${tx} ${ty})`}>
               <g className={`t-bud t-bud${i}`}>
                 <g transform={`rotate(${tipAngle(s.p)})`}>
@@ -749,18 +778,18 @@ function Tree() {
                 </g>
               </g>
               <g className={`t-bloom t-bloom${i}`}>
-                <Glow r={110} color={i === 0 ? 'cool' : i === 1 ? 'violet' : 'cool'} opacity={0.9} />
+                <Glow r={120} color={i === 1 ? 'violet' : 'cool'} opacity={0.95} />
                 {[0, 1, 2, 3, 4].map((k) => (
-                  <ellipse key={k} cx={0} cy={-22} rx={13} ry={22} fill={k % 2 ? s.petal : N.white} opacity={k % 2 ? 1 : 0.9} transform={`rotate(${k * 72 + 10})`} />
+                  <ellipse key={k} cx={0} cy={-23} rx={14} ry={23} fill={k % 2 ? s.petal : N.white} opacity={k % 2 ? 1 : 0.92} transform={`rotate(${k * 72 + 10})`} />
                 ))}
-                <circle r={11} fill={s.petalDark} />
+                <circle r={12} fill={s.petalDark} />
                 <circle r={5} fill={N.cream} />
               </g>
             </g>
             <g className={`t-spark t-spark${i}`} pointerEvents="none">
               <g>
-                <animateMotion dur={`${4.4 + i * 0.6}s`} begin={`${-i * 1.4}s`} repeatCount="indefinite" path={d} keyPoints="0.14;0.9;0.14" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" />
-                <Glow r={48} color="pink" opacity={0.9} />
+                <animateMotion dur={`${4.4 + i * 0.6}s`} begin={`${-i * 1.4}s`} repeatCount="indefinite" path={d} keyPoints="0.14;0.88;0.14" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" />
+                <Glow r={50} color="pink" opacity={0.9} />
                 <circle r={23} fill={N.pink} />
                 <text y={10} textAnchor="middle" fontFamily={FONT2} fontWeight={800} fontSize={33} fill={N.white}>
                   x
@@ -775,7 +804,7 @@ function Tree() {
         <g className="t-lantern" data-tutor="the Solving for x lantern">
           <g className="sway" style={{ animationDuration: '5s' }}>
             <g className="t-lantern-glow">
-              <Glow y={74} r={200} color="warm" opacity={0.85} />
+              <Glow y={74} r={210} color="warm" opacity={0.85} />
             </g>
             <line x1={0} y1={0} x2={0} y2={32} stroke={N.woodDark} strokeWidth={4} />
             <path d="M-14 30 H14 L18 40 H-18 Z" fill={N.woodDark} />
@@ -784,6 +813,7 @@ function Tree() {
               <path d="M-23 40 Q-36 70 -19 102 H19 Q36 70 23 40 Z" fill={N.cream} />
               <path d="M-23 40 Q-36 70 -19 102 H-8 Q-20 70 -10 40 Z" fill={N.white} opacity={0.8} />
               <path d="M8 40 Q20 70 10 102 H19 Q36 70 23 40 Z" fill={N.sandLight} opacity={0.8} />
+              <path d="M-27 71 H27" stroke={N.sand} strokeWidth={3} opacity={0.6} />
             </g>
             <path d="M-19 102 H19 L13 112 H-13 Z" fill={N.woodDark} />
           </g>
@@ -1056,6 +1086,8 @@ export function Ch7World({ cueIndex, playing, onAnimDone, reportState, setHints 
     tl.fromTo('.t-lantern-lit', { opacity: 0 }, { opacity: 1, duration: 0.4 }, b5 + 2.05)
     tl.fromTo('.t-lantern-glow', { opacity: 0, scale: 0.3, svgOrigin: '0 74' }, { opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out' }, b5 + 2.05)
     fadeUp('.t-lbl-solve', b5 + 2.3)
+    tl.fromTo('.t-halo', { opacity: 0 }, { opacity: 0.6, duration: 2, ease: 'sine.inOut' }, b5 + 2.6)
+    tl.to('.t-halo', { opacity: 1, duration: 1.4, ease: 'sine.inOut' }, b5 + 7.8)
     tw(cam, 'cx', 800, b5 + 2.6, 7.4, 'sine.inOut', applyCam)
     tw(cam, 'cy', 440, b5 + 2.6, 7.4, 'sine.inOut', applyCam)
     tw(cam, 'z', Math.log(0.94), b5 + 2.6, 7.4, 'sine.inOut', applyCam)
@@ -1063,6 +1095,7 @@ export function Ch7World({ cueIndex, playing, onAnimDone, reportState, setHints 
       const at = b5 + 2.9 + i * 0.35
       tl.fromTo(`.t-new${i}`, { strokeDashoffset: 1.02 }, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.out', ...later }, at)
       tl.fromTo(`.t-ticks${i}`, { opacity: 0 }, { opacity: 0.85, duration: 0.6 }, at + 0.7)
+      tl.fromTo(`.t-sleaf${i}`, { scale: 0, transformOrigin: '0% 50%' }, { scale: 1, duration: 0.45, stagger: 0.15, ease: 'back.out(2.5)' }, at + 0.5)
       tl.fromTo(`.t-bud${i}`, { scale: 0, opacity: 0, svgOrigin: '0 0' }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2.5)' }, at + 0.9)
       tl.fromTo(`.t-spark${i}`, { opacity: 0 }, { opacity: 1, duration: 0.5 }, b5 + 5.2 + i * 0.3)
       tl.fromTo(`.t-bloom${i}`, { scale: 0, opacity: 0, rotation: -40, svgOrigin: '0 0' }, { scale: 1, opacity: 1, rotation: 0, duration: 0.9, ease: 'back.out(1.8)' }, b5 + 7.8 + i * 0.3)
