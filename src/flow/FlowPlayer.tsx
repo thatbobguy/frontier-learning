@@ -35,14 +35,15 @@ const noopSay = () => Promise.resolve()
 
 /**
  * Handy for testing and sharing: ?chapter=3&cue=2 opens chapter 3 at cue 2 (both counted
- * from 1), &start=1 skips the start screen, &mute=1 turns the voice off.
+ * from 1), &start=1 skips the start screen, &mute=1 turns the voice off. For automated
+ * run-throughs only, &autoplay=1 finishes each learner's turn by itself.
  */
 function readLink(lesson: FlowLesson) {
   const q = new URLSearchParams(window.location.search)
   const num = (k: string) => Math.max(0, (parseInt(q.get(k) ?? '1', 10) || 1) - 1)
   const ch = Math.min(num('chapter'), lesson.chapters.length - 1)
   const cue = Math.min(num('cue'), lesson.chapters[ch].cues.length - 1)
-  return { ch, cue, start: q.get('start') === '1', mute: q.get('mute') === '1' }
+  return { ch, cue, start: q.get('start') === '1', mute: q.get('mute') === '1', autoplay: q.get('autoplay') === '1' }
 }
 
 /**
@@ -252,6 +253,13 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
     },
     [nudge],
   )
+
+  // Test run-throughs: take the learner's turn after a moment.
+  useEffect(() => {
+    if (!link.autoplay || !playing || !cue.play || playDone || !animDone) return
+    const t = window.setTimeout(() => setPlayDone(true), 1500)
+    return () => window.clearTimeout(t)
+  }, [link, playing, cue, playDone, animDone])
 
   // If the learner sits on their turn without doing anything, Pip offers a hint. Nothing stops.
   useEffect(() => {
