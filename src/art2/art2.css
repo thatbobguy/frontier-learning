@@ -79,7 +79,8 @@
 .flow-paused .sway,
 .flow-paused .breathe,
 .flow-paused .float,
-.flow-paused .blink2 {
+.flow-paused .blink2,
+.flow-paused .blink-light {
   animation-play-state: paused;
 }
 

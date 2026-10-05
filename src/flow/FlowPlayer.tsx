@@ -345,6 +345,10 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
         <div className="flow-stage">
           <svg ref={stageRef} viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label={started ? `${chapter.title}: ${cue.say}` : lesson.title}>
             <Defs />
+            {/* During a camera move each chapter is cut to its own frame, so art drawn off-stage never slides over the other one. */}
+            <clipPath id="flow-slot-frame">
+              <rect width={1600} height={900} />
+            </clipPath>
             {!started && <Poster />}
             {started &&
               slots.map((p) => {
@@ -355,6 +359,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
                   <g
                     key={key}
                     className={isLeaving ? 'flow-leaving' : 'flow-current'}
+                    clipPath={isLeaving || leaving?.enter.type === 'pan' ? 'url(#flow-slot-frame)' : undefined}
                     pointerEvents={isLeaving ? 'none' : undefined}
                     ref={(el) => {
                       if (el) slotRefs.current.set(key, el)
