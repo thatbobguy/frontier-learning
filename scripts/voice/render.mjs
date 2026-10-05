@@ -137,7 +137,8 @@ async function main() {
     writeFileSync(MANIFEST, `{"voices": ${JSON.stringify(voices)}, "model": ${JSON.stringify(MODEL)}, "clips": {\n${rows.join(',\n')}\n}}\n`)
   }
   await Promise.all(
-    Array.from({ length: 3 }, async () => {
+    // Two at a time: the free and cheapest ElevenLabs plans refuse more parallel requests.
+    Array.from({ length: 2 }, async () => {
       while (queue.length) {
         const clip = queue.shift()
         try {
@@ -166,6 +167,11 @@ async function main() {
   }
   save()
   console.log(`Recorded ${done} sentences (${chars} characters). ${Object.keys(clips).length} clips in total; removed ${removed} unused.`)
+  // A short note on how the run went, saved with the clips so it can be read without the Actions log.
+  writeFileSync(
+    join(OUT, 'last-run.json'),
+    JSON.stringify({ at: new Date().toISOString(), wanted: wanted.size, recorded: done, characters: chars, clips: Object.keys(clips).length, failed: failed.length, errors: [...new Set(failed.map((f) => f.slice(f.indexOf(': ElevenLabs') + 2, f.indexOf(': ElevenLabs') + 260)))].slice(0, 5) }, null, 2) + '\n',
+  )
   if (failed.length) {
     console.error(`${failed.length} sentences could not be recorded:\n${failed.slice(0, 10).join('\n')}`)
     process.exitCode = 1

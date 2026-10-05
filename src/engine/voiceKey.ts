@@ -50,9 +50,10 @@ export interface VoiceManifest {
 
 /**
  * ElevenLabs voices to use, by name, tried in order until one is in the account.
- * The narrator is warm and clear; Pip is brighter and younger.
+ * The narrator is a warm British storyteller; Pip is brighter and younger.
  */
 export const VOICE_CHOICES: Record<VoiceName, string[]> = {
-  narrator: ['Matilda', 'Alice', 'Sarah', 'Rachel'],
+  // A warm British man tells the story (Bobby's pick); the others are fallbacks if an account lacks him.
+  narrator: ['George', 'Daniel', 'Matilda', 'Alice'],
   tutor: ['Jessica', 'Lily', 'Laura', 'Charlie'],
 }
