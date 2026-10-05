@@ -86,7 +86,7 @@ const SEASONS = [
   { name: 'winter', bg: '#E8EDF6', a: 180 },
 ]
 
-const BEAD_Y = 290
+const BEAD_Y = 310
 const beadX = (i: number) => 290 + i * 170
 const INTRO: BeadColor[] = ['red', 'blue', 'red', 'blue', 'red', 'blue']
 
@@ -361,18 +361,18 @@ function Bead({ color, r = 46 }: { color: BeadColor; r?: number }) {
   )
 }
 
+/** A bracket under a chunk of beads. The dashed kind is a chunk that has only just started. */
 function Bracket({ x0, x1, y, dashed = false }: { x0: number; x1: number; y: number; dashed?: boolean }) {
-  return (
-    <path
-      d={`M ${x0} ${y} L ${x0} ${y + 16} L ${x1} ${y + 16}${dashed ? '' : ` L ${x1} ${y}`}`}
-      stroke={C.violet}
-      strokeWidth={6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeDasharray={dashed ? '4 14' : undefined}
-      fill="none"
-    />
-  )
+  const line = { stroke: C.violet, strokeWidth: 6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' }
+  if (dashed) {
+    return (
+      <g>
+        <path d={`M ${x0} ${y} L ${x0} ${y + 16} L ${x0 + 40} ${y + 16}`} {...line} />
+        <path d={`M ${x0 + 58} ${y + 16} L ${x1} ${y + 16}`} {...line} strokeDasharray="2 16" />
+      </g>
+    )
+  }
+  return <path d={`M ${x0} ${y} L ${x0} ${y + 16} L ${x1} ${y + 16} L ${x1} ${y}`} {...line} />
 }
 
 function IntroBeads() {
@@ -406,17 +406,17 @@ function IntroBeads() {
       </At>
       {[0, 1, 2].map((k) => (
         <g key={k} className={`bd-chunk-${k}`}>
-          <Bracket x0={beadX(2 * k) - 56} x1={beadX(2 * k + 1) + 56} y={354} />
-          <At x={(beadX(2 * k) + beadX(2 * k + 1)) / 2} y={420}>
+          <Bracket x0={beadX(2 * k) - 56} x1={beadX(2 * k + 1) + 56} y={374} />
+          <At x={(beadX(2 * k) + beadX(2 * k + 1)) / 2} y={440}>
             <Label text="red, blue" size={32} color={C.violetDark} weight={700} />
           </At>
         </g>
       ))}
       <g className="bd-chunk-3">
-        <Bracket x0={beadX(6) - 56} x1={1440} y={354} dashed />
+        <Bracket x0={beadX(6) - 56} x1={1440} y={374} dashed />
       </g>
       {['farmers', 'scientists', 'musicians'].map((name, k) => (
-        <At key={name} x={480 + k * 320} y={650} data-tutor={name}>
+        <At key={name} x={480 + k * 320} y={680} data-tutor={name}>
           <g className={`bd-badge-${k}`}>
             <rect x={-135} y={-107} width={270} height={230} rx={34} fill={C.ink} opacity={0.1} />
             <rect x={-135} y={-115} width={270} height={230} rx={34} fill={C.white} />
@@ -516,16 +516,15 @@ function NumberLine() {
 /* ---------------------------------------------------------------- coming soon */
 
 const LEAVES = [
-  { x: 150, y: 192, rot: -150 },
-  { x: 196, y: 168, rot: -40 },
-  { x: 262, y: 140, rot: -130 },
-  { x: 250, y: 104, rot: 20 },
-  { x: 316, y: 120, rot: -30 },
-  { x: 372, y: 96, rot: -120 },
+  { x: 140, y: 198, rot: 120 },
+  { x: 180, y: 178, rot: -60 },
+  { x: 300, y: 136, rot: 110 },
+  { x: 234, y: 112, rot: 200 },
+  { x: 336, y: 124, rot: -50 },
 ]
 
 function Leaf() {
-  return <path d="M 0 0 C 10 -14 34 -16 46 0 C 34 16 10 14 0 0 Z" fill={VIOLET_LIGHT} stroke={C.violet} strokeWidth={3} />
+  return <path d="M 0 0 C 14 -20 46 -22 62 0 C 46 22 14 20 0 0 Z" fill={VIOLET_LIGHT} stroke={C.violet} strokeWidth={3.5} />
 }
 
 /** The end card: the violet branch of the knowledge tree, still only buds. */
@@ -652,7 +651,7 @@ function BeadPuzzle({ onChallengeDone, say, emit, reportState, setHints }: Scene
           </g>
         )}
         {inSlot && (
-          <g ref={slotRef} key={`${inSlot}-${tried.length}`} opacity={solved ? 1 : 0.85}>
+          <g ref={slotRef} key={`${inSlot}-${tried.length}`}>
             <Bead color={inSlot} r={50} />
           </g>
         )}
