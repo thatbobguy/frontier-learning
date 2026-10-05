@@ -3,7 +3,7 @@ import { Pip } from '../art/kit'
 import { Captions } from '../ui/Captions'
 import { KnowledgePath } from '../ui/KnowledgePath'
 import { TutorPanel, type LessonApi, type TutorHandle } from '../tutor/TutorPanel'
-import { setMuted as setNarratorMuted, speak, stop as stopSpeech } from './narrator'
+import { preloadLines, setMuted as setNarratorMuted, speak, stop as stopSpeech } from './narrator'
 import { snapshotStage } from './svg'
 import type { LessonEvent, Stop } from './types'
 
@@ -87,6 +87,11 @@ export function Player({ stops, lessonTitle }: { stops: Stop[]; lessonTitle: str
       take: remount || p.stop !== stopIndex ? p.take + 1 : p.take,
     }))
   }, [])
+
+  // Fetch this stop's recorded narration ahead, so each line starts without a wait.
+  useEffect(() => {
+    if (started) preloadLines(stop.beats.map((b) => b.say))
+  }, [started, stop])
 
   // Narrate the current beat. Resuming after a pause says the line again from the start.
   useEffect(() => {

@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "voice": "node scripts/voice/render.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",

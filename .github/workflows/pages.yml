@@ -2,6 +2,8 @@ name: Deploy to GitHub Pages
 
 # Builds the site on every push to main and publishes it to the gh-pages branch,
 # which GitHub Pages serves (Settings > Pages > Deploy from a branch > gh-pages).
+# When the ELEVENLABS_API_KEY repository secret is set, it first records any new
+# narration with ElevenLabs and saves the clips back to main (public/voice).
 
 on:
   push:
@@ -13,18 +15,37 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # Let a run that is recording voice clips finish, so the recordings are not paid for twice.
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Record new narration with ElevenLabs
+        if: env.ELEVENLABS_API_KEY != ''
+        continue-on-error: true
+        run: npm run voice
+      - name: Save the recordings to main
+        if: env.ELEVENLABS_API_KEY != ''
+        run: |
+          [ -d public/voice ] || exit 0
+          git add public/voice
+          if git diff --cached --quiet; then echo "No new recordings."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Record narration with ElevenLabs [skip ci]"
+          git pull --rebase origin main && git push origin HEAD:main || echo "::warning::Could not save the recordings to main; they will be recorded again next run."
       - run: npm run build
       - name: Publish dist to gh-pages
         run: |

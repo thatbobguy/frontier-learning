@@ -1,6 +1,6 @@
 import { useImperativeHandle, useRef, useState, type Ref } from 'react'
 import { Pip, type PipMood } from '../art/kit'
-import { speak, stop as stopSpeech } from '../engine/narrator'
+import { loadLiveVoiceKey, setLiveVoiceKey, speak, stop as stopSpeech } from '../engine/narrator'
 import { askPip, buildSystemPrompt, describeError, loadKey, saveKey, type TutorReply, type TutorTurn } from './claude'
 import { canListen, listen } from './listen'
 
@@ -60,6 +60,7 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
   const [waitingToResume, setWaitingToResume] = useState(false)
   const [settings, setSettings] = useState(false)
   const [key, setKey] = useState(loadKey)
+  const [voiceKey, setVoiceKey] = useState(loadLiveVoiceKey)
   const history = useRef<TutorTurn[]>([])
   const stopListening = useRef<(() => void) | null>(null)
   const hintStep = useRef(0)
@@ -222,6 +223,19 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
                 />
               </label>
               <p>The key stays in this browser only and is sent straight to Anthropic. Without it, Pip still gives the lesson's built-in hints.</p>
+              <label>
+                ElevenLabs API key (optional)
+                <input
+                  type="password"
+                  value={voiceKey}
+                  placeholder="for Pip's live voice"
+                  onChange={(e) => {
+                    setVoiceKey(e.target.value.trim())
+                    setLiveVoiceKey(e.target.value.trim())
+                  }}
+                />
+              </label>
+              <p>The lesson's own lines are already recorded. This key lets Pip answer your questions in the same voice instead of the browser's.</p>
               <button onClick={() => setSettings(false)}>Done</button>
             </div>
           ) : (

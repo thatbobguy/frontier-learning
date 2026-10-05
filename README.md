@@ -32,7 +32,14 @@ Before real students use this, put a small server or proxy in front of the API s
 
 ## Voices
 
-Narration and Pip use the browser's built-in speech for now. Students talk to Pip using the browser's speech recognition, which works in Chrome, Edge and Safari; anyone can also type a question.
+The narrator and Pip are recorded with ElevenLabs ahead of time, one clip per sentence, in `public/voice` (with `manifest.json` holding each clip's word timings for the captions).
+
+- **Recording:** `scripts/voice/render.mjs` (`npm run voice`) finds every line the lesson speaks, records only new or changed sentences, and removes clips nothing uses. The Pages workflow runs it on every push when the `ELEVENLABS_API_KEY` repository secret is set, then saves the clips to main. `npm run voice -- --dry-run` shows what would be recorded and how many characters it costs.
+- **Lines built at runtime:** sentences made from numbers, like "The shopkeeper counts 32.", are listed in `scripts/voice/extra.mjs`. Keep it in step with the scenes.
+- **Choosing voices:** defaults are in `VOICE_CHOICES` (`src/engine/voiceKey.ts`). Set `NARRATOR_VOICE` or `PIP_VOICE` (a voice name or id) to pick others; changing a voice re-records that voice's lines.
+- **Fallbacks:** a line with no recording is made on the spot if an ElevenLabs key is saved in Pip's settings (this is also how Pip's live answers get the same voice). Otherwise it uses the browser's built-in voice.
+
+Students talk to Pip using the browser's speech recognition, which works in Chrome, Edge and Safari; anyone can also type a question.
 
 ## How it is built
 
