@@ -88,7 +88,7 @@ const WORD_AT = { book: { x: 800, y: 238, s: 1 }, baghdad: { x: BAGHDAD.x, y: BA
 /* ------------------------------------------------------------------ */
 
 /** Book spines: anything but pink, gold and teal, which carry meaning in this lesson. */
-const SPINES = [N.violet, N.violetDark, N.violetLight, N.sky, N.skyDark, N.leaf, N.leafDark, N.sand, N.sandDark, N.stone, N.stoneLight, N.wood, N.woodLight, N.cream, N.plum, N.coralDark]
+const SPINES = [N.violet, N.violetDark, N.violetLight, N.sky, N.skyDark, N.leaf, N.leafDark, N.sand, N.sandDark, N.stone, N.stoneLight, N.wood, N.woodLight, N.cream, N.plum, N.woodDark]
 const ALCOVES = [-190, 140, 470, 800, 1130, 1460, 1790, 2120]
 /** Where books stand on the shelves inside an alcove. */
 const SHELVES = [236, 336, 436, 536, 636]
@@ -107,7 +107,7 @@ const ARRIVALS = [
   { from: { x: 900, y: -260 }, gap: 1, c: N.leaf },
   { from: { x: 1900, y: 260 }, gap: 2, c: N.violetLight },
   { from: { x: -280, y: 520 }, gap: 0, c: N.sand },
-  { from: { x: 1960, y: 110 }, gap: 3, c: N.coralDark },
+  { from: { x: 1960, y: 110 }, gap: 3, c: N.plum },
   { from: { x: 560, y: -300 }, gap: 1, c: N.stoneLight },
   { from: { x: 1920, y: 560 }, gap: 3, c: N.skyLight },
   { from: { x: 1300, y: -300 }, gap: 2, c: N.leafLight },
@@ -985,7 +985,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
                 <g key={lx} transform={`translate(${lx} ${ly})`}>
                   <line x1={0} y1={-900} x2={0} y2={-120} stroke={N.night0} strokeWidth={5} />
                   <g className="sway" style={{ animationDelay: `${-i * 1.7}s` }}>
-                    <Lantern y={0} s={2.1} rope={60} color={i ? N.sky : N.coral} />
+                    <Lantern y={0} s={2.1} rope={60} color={N.sky} />
                   </g>
                 </g>
               ))}
