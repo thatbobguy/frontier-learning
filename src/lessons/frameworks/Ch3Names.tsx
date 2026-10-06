@@ -757,6 +757,18 @@ function ZorpMarket({ active, say, emit, reportState, setHints, onPlayDone }: Ma
   const [busy, setBusy] = useState(false)
   const [finished, setFinished] = useState(false)
   const told = useRef({ over: 0, under: 0 })
+  // The basket's flight up the beam and back is drawn by hand, around the basket's foot,
+  // so GSAP's origin smoothing cannot leave it parked off stage.
+  const pose = useRef({ y: 0, s: 1, o: 1 })
+  const applyPose = () => {
+    const el = basketMove.current
+    if (!el) return
+    const { y, s, o } = pose.current
+    const ox = BASKET.x
+    const oy = BASKET.y + 108
+    el.setAttribute('transform', `translate(${ox} ${oy + y}) scale(${s}) translate(${-ox} ${-oy})`)
+    el.setAttribute('opacity', String(o))
+  }
   const timers = useRef<number[]>([])
   const live = useRef({ inBasket, active })
   live.current = { inBasket, active }
@@ -804,15 +816,14 @@ function ZorpMarket({ active, say, emit, reportState, setHints, onPlayDone }: Ma
           void say(MARKET_LINES.first)
           later(2200, () => {
             if (beam.current) gsap.to(beam.current, { opacity: 0.6, duration: 0.3 })
-            if (basketMove.current) gsap.to(basketMove.current, { y: -330, scale: 0.3, opacity: 0, svgOrigin: `${BASKET.x} ${BASKET.y + 108}`, duration: 1.0, ease: 'power2.in', delay: 0.3 })
+            gsap.to(pose.current, { y: -330, s: 0.3, o: 0, duration: 1.0, ease: 'power2.in', delay: 0.3, onUpdate: applyPose })
           })
           later(3700, () => {
             setRound((r) => r + 1)
             setInBasket([])
             setStatus('idle')
             setMood('happy')
-            if (basketMove.current)
-              gsap.fromTo(basketMove.current, { y: -330, scale: 0.3, opacity: 0 }, { y: 0, scale: 1, opacity: 1, svgOrigin: `${BASKET.x} ${BASKET.y + 108}`, duration: 1.0, ease: 'power2.out' })
+            gsap.fromTo(pose.current, { y: -330, s: 0.3, o: 0 }, { y: 0, s: 1, o: 1, duration: 1.0, ease: 'power2.out', onUpdate: applyPose })
             if (beam.current) gsap.to(beam.current, { opacity: 0, duration: 0.4, delay: 1.0 })
           })
           later(4800, () => setBusy(false))
@@ -1046,13 +1057,13 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     tl.set('.c3-s7-pile-glow', { opacity: 0, x: 0, y: 0 }, 0)
     tl.set('.c3-s7-hands', { y: 360, opacity: 0 }, 0)
     tl.set('.c3-s7-slate', { opacity: 0, x: 0, scale: 0.85, svgOrigin: `${SLATE.x} ${SLATE.y}` }, 0)
-    tl.set('.c3-s7-mark', { strokeDashoffset: 1 }, 0)
+    tl.set('.c3-s7-mark', { attr: { 'stroke-dashoffset': 1 } }, 0)
     tl.set('.c3-cnt', { opacity: 1 }, 0)
     tl.set('.c3-link-dot', { opacity: 0 }, 0)
     for (let k = 0; k < 7; k++) tl.set([`.c3-cnt-peb-${k}`, `.c3-cnt-fin-${k}`, `.c3-cnt-mark-${k}`], { opacity: 0 }, 0)
-    tl.set('.c3-link', { strokeDashoffset: 1, opacity: 1 }, 0)
+    tl.set('.c3-link', { attr: { 'stroke-dashoffset': 1 }, opacity: 1 }, 0)
     tl.set('.c3-seven-tile', { opacity: 0, scale: 0.4, y: 0, svgOrigin: `${SEVEN_TILE.x} ${SEVEN_TILE.y}` }, 0)
-    tl.set('.c3-glyph7', { strokeDashoffset: 1 }, 0)
+    tl.set('.c3-glyph7', { attr: { 'stroke-dashoffset': 1 } }, 0)
     tl.set(['.c3-glyph7-glow', '.c3-mid-glow'], { opacity: 0 }, 0)
     CARDS.forEach((c, k) => tl.set(`.c3-card-${k}`, { opacity: 0, scale: 0.4, svgOrigin: `${c.x} ${c.y}` }, 0))
     tl.set('.c3-card-link', { opacity: 0 }, 0)
@@ -1073,7 +1084,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     for (let j = 0; j < 7; j++) tl.set(`.c3-row7-${j}`, { x: -(nx(j + 1) - nx(0)), opacity: 0, y: 0 }, 0)
     for (let j = 0; j < 3; j++) tl.set(`.c3-row3-${j}`, { x: -(nx(j + 1) - nx(0)), opacity: 0 }, 0)
     tl.set('.c3-gap', { scaleX: 0, svgOrigin: `${nx(3)} ${NL.y}`, opacity: 1 }, 0)
-    tl.set('.c3-gap-arc', { strokeDashoffset: 1 }, 0)
+    tl.set('.c3-gap-arc', { attr: { 'stroke-dashoffset': 1 } }, 0)
     tl.set('.c3-extra-glow', { opacity: 0 }, 0)
     // the market
     tl.set('.c3-zorp-pop', { y: 320 }, 0)
@@ -1179,7 +1190,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     PILE7.forEach((_, i) => tl.to(`.c3-s7-peb-${i}`, { scale: 1, duration: 0.3, ease: 'back.out(2.5)' }, b2 + 0.15 + i * 0.07))
     tl.to('.c3-s7-hands', { y: 0, opacity: 1, duration: 0.6, ease: 'back.out(1.3)' }, b2 + 0.8)
     tl.to('.c3-s7-slate', { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2)' }, b2 + 1.4)
-    MARKS.forEach((_, i) => tl.to(`.c3-s7-mark-${i}`, { strokeDashoffset: 0, duration: 0.13, ease: 'power1.out' }, b2 + 1.65 + i * 0.12))
+    MARKS.forEach((_, i) => tl.to(`.c3-s7-mark-${i}`, { attr: { 'stroke-dashoffset': 0 }, duration: 0.13, ease: 'power1.out' }, b2 + 1.65 + i * 0.12))
     // They count up together, one to one: pebble, finger and mark light up in step.
     for (let k = 0; k < 7; k++) {
       const at = b2 + 3.0 + k * 0.3
@@ -1187,7 +1198,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
       tl.to([`.c3-cnt-peb-${k}`, `.c3-cnt-fin-${k}`, `.c3-cnt-mark-${k}`], { opacity: 0.85, duration: 0.3 }, at + 0.2)
     }
     // "...the same amount": teal links join them.
-    tl.to('.c3-link', { strokeDashoffset: 0, duration: 0.7, ease: 'power1.inOut' }, b2 + 5.0)
+    tl.to('.c3-link', { attr: { 'stroke-dashoffset': 0 }, duration: 0.7, ease: 'power1.inOut' }, b2 + 5.0)
     tl.to('.c3-link-dot', { opacity: 1, duration: 0.2, stagger: 0.1 }, b2 + 5.0)
     // "...a name: seven."
     tl.to('.c3-seven-tile', { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2.2)' }, b2 + 7.4)
@@ -1206,7 +1217,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     tl.set('.c3-symbols', { opacity: 1 }, b3)
     // The squiggle 7 writes itself.
     tl.to('.c3-glyph7-glow', { opacity: 1, duration: 0.8 }, b3 + 0.6)
-    tl.to('.c3-glyph7', { strokeDashoffset: 0, duration: 1.0, ease: 'power1.inOut' }, b3 + 0.6)
+    tl.to('.c3-glyph7', { attr: { 'stroke-dashoffset': 0 }, duration: 1.0, ease: 'power1.inOut' }, b3 + 0.6)
     // "...a way to write that amount."
     tl.to('.c3-mid-glow', { opacity: 1, duration: 0.3, yoyo: true, repeat: 1, ease: 'sine.inOut' }, b3 + 4.0)
     // Other places, other ways.
@@ -1272,7 +1283,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     for (let j = 0; j < 3; j++) tl.to(`.c3-row3-${j}`, { x: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, b6 + 4.7 + j * 0.06)
     // "...so seven is more": the gap from 3 to 7 lights up.
     tl.to('.c3-gap', { scaleX: 1, duration: 0.6, ease: 'power2.out' }, b6 + 5.4)
-    tl.to('.c3-gap-arc', { strokeDashoffset: 0, duration: 0.25, stagger: 0.12 }, b6 + 5.5)
+    tl.to('.c3-gap-arc', { attr: { 'stroke-dashoffset': 0 }, duration: 0.25, stagger: 0.12 }, b6 + 5.5)
     tl.to('.c3-extra-glow', { opacity: 1, duration: 0.25, stagger: 0.1 }, b6 + 5.9)
     for (let j = 3; j < 7; j++) tl.to(`.c3-row7-${j}`, { y: -16, duration: 0.15, yoyo: true, repeat: 1, ease: 'power2.out' }, b6 + 5.9 + (j - 3) * 0.1)
 
@@ -1280,7 +1291,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     tl.addLabel('b7', b6 + 6.9)
     const b7 = tl.labels.b7
     // The sky content floats away as a new day dawns and the camera tilts back down.
-    tl.to('.c3-sky-out', { y: -820, duration: 1.4, ease: 'power2.in' }, b7)
+    tl.to('.c3-sky-out', { y: -820, duration: 1.2, ease: 'power1.in' }, b7)
     tl.to('.c3-sky-motes', { opacity: 0, duration: 1.0 }, b7 + 0.4)
     tl.to('.vl-night', { opacity: 0, duration: 1.3, ease: 'sine.inOut' }, b7 + 0.2)
     tl.to('.vl-dusk', { opacity: 0, duration: 1.2, ease: 'sine.inOut' }, b7 + 1.2)
@@ -1289,7 +1300,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     tl.to('.vl-clouds', { opacity: 1, duration: 1.0 }, b7 + 1.4)
     tl.set('.c3-cue1', { opacity: 0 }, b7)
     tl.set('.c3-market', { opacity: 1 }, b7)
-    tl.to(LAND, { y: 0, duration: 1.9, ease: 'power2.inOut' }, b7 + 0.3)
+    tl.to(LAND, { y: 0, duration: 1.9, ease: 'power2.inOut' }, b7 + 0.45)
     // "Zorp the alien trader" pops up behind the counter and waves.
     tl.to('.c3-zorp-pop', { y: 0, duration: 0.6, ease: 'back.out(1.8)' }, b7 + 1.8)
     tl.to('.c3-zorp-wave', { rotation: -128, duration: 0.3, ease: 'power2.out' }, b7 + 2.3)
@@ -1595,7 +1606,9 @@ function SevenBoard() {
       <g data-tutor="teal links: the same amount">
         {[LINK_A, LINK_B].map((d) => (
           <g key={d}>
-            <path className="c3-link" d={d} pathLength={1} strokeDasharray="1 1" stroke={N.teal} strokeWidth={22} strokeLinecap="round" fill="none" opacity={0.25} filter="url(#fx-soft)" />
+            <g opacity={0.25}>
+              <path className="c3-link" d={d} pathLength={1} strokeDasharray="1 1" stroke={N.teal} strokeWidth={22} strokeLinecap="round" fill="none" filter="url(#fx-soft)" />
+            </g>
             <path className="c3-link" d={d} pathLength={1} strokeDasharray="1 1" stroke={N.teal} strokeWidth={9} strokeLinecap="round" fill="none" />
           </g>
         ))}
