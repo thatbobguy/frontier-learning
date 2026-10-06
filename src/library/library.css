@@ -213,3 +213,27 @@
   font-size: 14px;
   text-decoration: none;
 }
+
+/* The robot hands course card: one wide card above the path. */
+.lib-course-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  align-items: center;
+  max-width: 980px;
+  background: #0a0f1a;
+}
+.lib-course-card .lib-card-body h3 {
+  font-family: 'Fraunces', Georgia, serif;
+}
+@media (max-width: 720px) {
+  .lib-course-card {
+    grid-template-columns: 1fr;
+  }
+}
+.lib-course-card .lib-badge {
+  left: auto;
+  right: 14px;
+}
+.lib-course {
+  margin-bottom: 40px;
+}

@@ -2,6 +2,8 @@ import type { ComponentType } from 'react'
 import '../art2/art2.css'
 import { Pip2 } from '../art2/characters'
 import { Defs } from '../art2/fx'
+import { CineDefs } from '../cine/defs'
+import { robotHands } from '../courses'
 import { Grain } from '../art2/Grain'
 import { algebra } from '../lessons/algebra'
 import { frameworks } from '../lessons/frameworks'
@@ -36,6 +38,7 @@ const PATH: Card[] = [
 ]
 
 const SOON = algebra.next ?? []
+const HandsPoster = robotHands.nodes[0]?.lesson?.Poster
 
 /** The home page: every lesson as a stop on one path, with the branches still growing. */
 export function Library() {
@@ -51,6 +54,30 @@ export function Library() {
           <p className="lib-lede">Each lesson plays like a short animated film. When it's your turn, the picture itself becomes the game. Pip the owl rides along if you get stuck or curious.</p>
         </div>
       </header>
+
+      <section className="lib-path lib-course" aria-label="Courses">
+        <h2>New: a course for teens and adults</h2>
+        <a className="lib-card lib-course-card" href={`#/course/${robotHands.id}`}>
+          <div className="lib-thumb">
+            <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden>
+              <CineDefs />
+              {HandsPoster && <HandsPoster />}
+            </svg>
+            <Grain />
+            <span className="lib-play" aria-hidden>
+              <svg viewBox="0 0 40 40">
+                <path d="M14 10 L31 20 L14 30 Z" fill="currentColor" />
+              </svg>
+            </span>
+            <span className="lib-badge new">New · 10 films</span>
+          </div>
+          <div className="lib-card-body">
+            <h3>{robotHands.title}</h3>
+            <p>{robotHands.tagline}</p>
+            <span className="lib-meta">Teens and adults · a main path of six films, plus a branch on robot data</span>
+          </div>
+        </a>
+      </section>
 
       <section className="lib-path" aria-label="Lessons">
         <h2>The path so far</h2>

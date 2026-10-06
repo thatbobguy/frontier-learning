@@ -21,6 +21,8 @@ export interface LessonContext {
 export interface LessonApi {
   lessonTitle: string
   script: string
+  /** Who the learner is, for lessons not made for young children. */
+  audience?: string
   context: () => LessonContext
   snapshot: () => Promise<string | null>
   pause: () => void
@@ -128,7 +130,7 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
       setBubble('Hmm, let me think…')
       const reply = await askPip({
         apiKey: key,
-        system: buildSystemPrompt(lesson.lessonTitle, lesson.script),
+        system: buildSystemPrompt(lesson.lessonTitle, lesson.script, lesson.audience),
         situation: situationText(
           c,
           explaining

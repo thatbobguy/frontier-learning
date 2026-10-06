@@ -39,7 +39,7 @@ function collectFile(path, { beatVoice, sayVoice, sayCalls }) {
       if (node.name.text === 'say') starts.push([node.initializer, beatVoice])
     }
     if (ts.isCallExpression(node)) {
-      const voice = sayCalls[calleeName(node)]
+      const voice = Object.hasOwn(sayCalls, calleeName(node)) && sayCalls[calleeName(node)]
       if (voice) node.arguments.forEach((a) => starts.push([a, voice]))
     }
     ts.forEachChild(node, index)
@@ -49,7 +49,7 @@ function collectFile(path, { beatVoice, sayVoice, sayCalls }) {
   const found = []
   const keep = (voice, text) => {
     const t = normalizeLine(text)
-    if (isSentence(t)) found.push({ voice, text: t })
+    if (isSentence(t)) found.push({ voice, text: t, file: path })
   }
   const seen = { narrator: new Set(), tutor: new Set() }
   const follow = (node, voice) => {
@@ -96,11 +96,11 @@ function tsxFiles(dir) {
     .sort()
     .flatMap((f) => {
       const p = join(dir, f)
-      return statSync(p).isDirectory() ? tsxFiles(p) : f.endsWith('.tsx') ? [p] : []
+      return statSync(p).isDirectory() ? tsxFiles(p) : /\.tsx?$/.test(f) ? [p] : []
     })
 }
 
-/** Every line to record: `{ voice: 'narrator' | 'tutor', text }`, de-duplicated. */
+/** Every line to record: `{ voice: 'narrator' | 'tutor', text, file }`, de-duplicated. */
 export function collectLines() {
   const lines = []
   // Every chapter of every lesson.

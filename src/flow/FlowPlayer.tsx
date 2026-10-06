@@ -8,8 +8,10 @@ import { snapshotStage } from '../engine/svg'
 import type { LessonEvent } from '../engine/types'
 import { TutorPanel, type LessonApi, type TutorHandle } from '../tutor/TutorPanel'
 import { Captions } from '../ui/Captions'
+import { CourseNext } from '../courses/CourseNext'
+import { markFinished } from '../courses/types'
 import './flow.css'
-import type { Enter, FlowLesson } from './types'
+import type { Enter, FlowLesson, Reading } from './types'
 
 interface Pos {
   ch: number
@@ -70,6 +72,8 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
     return link.mute
   })
   const [pointer, setPointer] = useState<Pointer | null>(null)
+  const [deeperOpen, setDeeperOpen] = useState(false)
+  const [reading, setReading] = useState<{ r: Reading; wasPlaying: boolean } | null>(null)
 
   const stageRef = useRef<SVGSVGElement>(null)
   const slotRefs = useRef(new Map<string, SVGGElement>())
@@ -140,7 +144,10 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
   const next = useCallback(() => {
     if (pos.cue < chapter.cues.length - 1) goTo(pos.ch, pos.cue + 1)
     else if (pos.ch < lesson.chapters.length - 1) cutTo(pos.ch + 1, 0, lesson.chapters[pos.ch + 1].enter ?? { type: 'dissolve' })
-    else setEnded(true)
+    else {
+      setEnded(true)
+      markFinished(lesson.id)
+    }
   }, [pos, chapter, lesson, goTo, cutTo])
 
   // Move on the moment the line is said and the picture has played (or the learner has done their part).
@@ -285,7 +292,8 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
   // Space bar pauses and plays, like a video.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code !== 'Space' || (e.target as HTMLElement)?.closest('input, textarea, button')) return
+      if (e.code !== 'Space' || (e.target as HTMLElement)?.closest('input, textarea, button, .reading')) return
+      if (document.querySelector('.reading')) return
       e.preventDefault()
       if (playing) pause()
       else resume()
@@ -326,6 +334,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
     () => ({
       lessonTitle: lesson.title,
       script,
+      audience: lesson.audience,
       context: () => {
         const svg = stageRef.current
         const targets = svg
@@ -359,7 +368,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
   const Poster = lesson.Poster
 
   return (
-    <div className={playing ? 'flow' : 'flow flow-paused'}>
+    <div className={`flow${lesson.look === 'cine' ? ' flow-cine' : ''}${playing ? '' : ' flow-paused'}`}>
       <header className="flow-top">
         <button className="flow-back" onClick={onExit}>
           ← Lessons
@@ -371,6 +380,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
         <div className="flow-stage">
           <svg ref={stageRef} viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label={started ? `${chapter.title}: ${cue.say}` : lesson.title}>
             <Defs />
+            {lesson.Defs && <lesson.Defs />}
             {/* During a camera move each chapter is cut to its own frame, so art drawn off-stage never slides over the other one. */}
             <clipPath id="flow-slot-frame">
               <rect width={1600} height={900} />
@@ -423,7 +433,34 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
               <p className="flow-fine">Sound on. Pip the owl is here if you get stuck or curious.</p>
             </div>
           )}
-          {started && !playing && !ended && (
+          {started && !ended && !!chapter.deeper?.length && (
+            <>
+              <button className="flow-deeper" onClick={() => setDeeperOpen((v) => !v)} aria-expanded={deeperOpen}>
+                <i>+</i> Go deeper
+              </button>
+              {deeperOpen && (
+                <div className="flow-deeper-menu" role="menu">
+                  {chapter.deeper.map((r) => (
+                    <button
+                      key={r.id}
+                      role="menuitem"
+                      onClick={() => {
+                        setDeeperOpen(false)
+                        setReading({ r, wasPlaying: playing })
+                        pause()
+                      }}
+                    >
+                      <strong>{r.title}</strong>
+                      <span>
+                        {r.blurb} · {r.minutes} min read
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+          {started && !playing && !ended && !deeperOpen && (
             <button className="flow-paused-overlay" onClick={resume} aria-label="Play">
               <span>
                 <svg viewBox="0 0 40 40" aria-hidden>
@@ -434,8 +471,10 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
           )}
           {ended && (
             <div className="flow-end">
-              <h2>You did it!</h2>
-              {lesson.next?.length ? (
+              <h2>{lesson.course ? 'End of this stop' : 'You did it!'}</h2>
+              {lesson.course ? (
+                <CourseNext courseId={lesson.course} lessonId={lesson.id} />
+              ) : lesson.next?.length ? (
                 <>
                   <p>Where this branch of the knowledge tree grows next:</p>
                   <div className="flow-next">
@@ -520,6 +559,38 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
           </button>
         </div>
       </div>
+
+      {reading && (
+        <div
+          className="reading"
+          onClick={(e) => {
+            if (e.target !== e.currentTarget) return
+            const back = reading.wasPlaying
+            setReading(null)
+            if (back) resume()
+          }}
+        >
+          <article className="reading-sheet" aria-label={reading.r.title}>
+            <div className="reading-top">
+              <span>Go deeper · {chapter.title}</span>
+              <button
+                onClick={() => {
+                  const back = reading.wasPlaying
+                  setReading(null)
+                  if (back) resume()
+                }}
+              >
+                Back to the film
+              </button>
+            </div>
+            <h2>{reading.r.title}</h2>
+            <p className="reading-meta">
+              {reading.r.blurb} · {reading.r.minutes} min read
+            </p>
+            <reading.r.Body />
+          </article>
+        </div>
+      )}
 
       <TutorPanel ref={tutorRef} lesson={api} />
     </div>
