@@ -5,6 +5,7 @@ import { N } from './palette'
 import { Book, Equation, NumberMachine, Sack, Scale, Title, Weight, terms, weightSpots } from './props'
 import { Lantern, Moon, Palm, River, Skyline, Stall } from './scenery'
 import { BalancePlay } from '../lessons/algebra/balance'
+import { Ama, Bag, Bundle, GROUND_Y, Hand, NumberLine, Pebble, Pen, PlaceNumber, Sheep, Stick, Valley } from '../lessons/frameworks/art'
 
 /** A test page for the art kit: open #/kit. Not linked from anywhere. */
 export function Gallery({ page = 0 }: { page?: number }) {
@@ -86,6 +87,40 @@ export function Gallery({ page = 0 }: { page?: number }) {
               <Stars count={60} />
             </Backdrop>
             <BalancePlay key="a" x={800} y={620} value={3} start={{ left: { sacks: 3, weights: 1 }, right: { sacks: 1, weights: 7 } }} active canSplit equation={{ y: 760 }} glow onMove={(b, m) => console.log('move', JSON.stringify(m), JSON.stringify(b))} onSolved={(b) => console.log('solved', JSON.stringify(b))} />
+          </g>
+        )}
+        {(page === 4 || page === 5 || page === 6) && (
+          <g>
+            <Valley time={page === 4 ? 'day' : page === 5 ? 'dusk' : 'night'} />
+            <Pen x={1130} y={GROUND_Y} />
+            <Ama x={760} y={GROUND_Y + 40} s={1.1} />
+            <Bag x={900} y={GROUND_Y + 50} />
+            <Sheep x={300} y={GROUND_Y + 40} />
+            <g style={{ ['--walk' as string]: 1 }}>
+              <Sheep x={480} y={GROUND_Y + 70} s={1.1} flip />
+            </g>
+            <Sheep x={1330} y={GROUND_Y + 60} s={0.9} wool={N.sandLight} />
+            {[0, 1, 2, 3, 4].map((i) => (
+              <Pebble key={i} x={960 + i * 40} y={GROUND_Y + 80} seed={i} />
+            ))}
+          </g>
+        )}
+        {page === 7 && (
+          <g>
+            <Backdrop kind="deep">
+              <Stars count={60} />
+            </Backdrop>
+            <Hand x={200} y={420} fingers={5} />
+            <Hand x={400} y={420} fingers={2} flip />
+            <Hand x={600} y={420} fingers={0} />
+            <Bundle x={800} y={400} />
+            <Bundle x={920} y={400} />
+            <Stick x={1020} y={400} />
+            <Stick x={1050} y={400} />
+            <Stick x={1080} y={400} rot={6} />
+            <PlaceNumber value={34} x={1300} y={300} />
+            <PlaceNumber value={7} x={1300} y={440} size={56} />
+            <NumberLine x={160} y={700} from={0} to={40} unit={32} labelEvery={10} />
           </g>
         )}
       </svg>

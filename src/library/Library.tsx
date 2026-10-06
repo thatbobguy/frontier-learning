@@ -3,7 +3,7 @@ import '../art2/art2.css'
 import { Pip2 } from '../art2/characters'
 import { Defs } from '../art2/fx'
 import { algebra } from '../lessons/algebra'
-import { FrameworksPoster } from './FrameworksPoster'
+import { frameworks } from '../lessons/frameworks'
 import './library.css'
 
 interface Card {
@@ -18,10 +18,10 @@ interface Card {
 const PATH: Card[] = [
   {
     href: '#/lesson/frameworks',
-    title: 'The Frameworks of Mathematics',
-    tagline: 'Why people invented math at all, and the first big ideas that grew out of counting.',
-    meta: 'Ages 7 to 8 · about 15 minutes',
-    Poster: FrameworksPoster,
+    title: frameworks.title,
+    tagline: frameworks.tagline,
+    meta: `${frameworks.age} · about ${frameworks.minutes} minutes`,
+    Poster: frameworks.Poster,
     badge: 'Lesson 1',
   },
   {

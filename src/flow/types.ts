@@ -71,5 +71,5 @@ export interface FlowLesson {
   /** A still picture for the start screen and the library card (stage coordinates, 1600 x 900). */
   Poster: ComponentType
   /** Where the learner could go next, shown at the end. */
-  next?: { title: string; blurb: string }[]
+  next?: { title: string; blurb: string; /** A lesson that already exists, e.g. '#/lesson/algebra'. */ href?: string }[]
 }

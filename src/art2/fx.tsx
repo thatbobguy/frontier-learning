@@ -31,6 +31,17 @@ export function Defs() {
         <stop offset="0.6" stopColor={N.plum} />
         <stop offset="1" stopColor={N.haze} />
       </linearGradient>
+      <linearGradient id="fx-sky-day" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#2f6fd6" />
+        <stop offset="0.55" stopColor="#62a8f2" />
+        <stop offset="1" stopColor="#c8e6ff" />
+      </linearGradient>
+      <linearGradient id="fx-sky-dawn" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor={N.night2} />
+        <stop offset="0.5" stopColor={N.dusk} />
+        <stop offset="0.82" stopColor={N.coralLight} />
+        <stop offset="1" stopColor={N.sandLight} />
+      </linearGradient>
       <radialGradient id="fx-glow-warm">
         <stop offset="0" stopColor={N.goldLight} stopOpacity="0.9" />
         <stop offset="0.35" stopColor={N.gold} stopOpacity="0.35" />
@@ -141,12 +152,16 @@ export function Motes({ w = 1600, h = 900, count = 26, seed = 3, color = N.goldL
 }
 
 /** A full-stage background: gradient sky with big soft colour blooms. */
-export function Backdrop({ kind = 'night', children }: { kind?: 'night' | 'deep' | 'dusk'; children?: ReactNode }) {
+export function Backdrop({ kind = 'night', children }: { kind?: 'night' | 'deep' | 'dusk' | 'dawn' | 'day'; children?: ReactNode }) {
   return (
     <g>
       <rect x={-400} y={-300} width={2400} height={1500} fill={`url(#fx-sky-${kind})`} />
-      <circle cx={260} cy={160} r={420} fill={N.violet} opacity={0.12} filter="url(#fx-blur-big)" />
-      <circle cx={1350} cy={260} r={380} fill={N.pink} opacity={0.08} filter="url(#fx-blur-big)" />
+      {kind !== 'day' && (
+        <>
+          <circle cx={260} cy={160} r={420} fill={N.violet} opacity={0.12} filter="url(#fx-blur-big)" />
+          <circle cx={1350} cy={260} r={380} fill={N.pink} opacity={0.08} filter="url(#fx-blur-big)" />
+        </>
+      )}
       {children}
     </g>
   )

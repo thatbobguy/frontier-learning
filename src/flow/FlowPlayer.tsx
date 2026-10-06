@@ -429,13 +429,21 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
                 <>
                   <p>Where this branch of the knowledge tree grows next:</p>
                   <div className="flow-next">
-                    {lesson.next.map((n) => (
-                      <div key={n.title} className="flow-next-card">
-                        <strong>{n.title}</strong>
-                        <span>{n.blurb}</span>
-                        <em>Coming soon</em>
-                      </div>
-                    ))}
+                    {lesson.next.map((n) =>
+                      n.href ? (
+                        <a key={n.title} className="flow-next-card ready" href={n.href}>
+                          <strong>{n.title}</strong>
+                          <span>{n.blurb}</span>
+                          <em>Play it now</em>
+                        </a>
+                      ) : (
+                        <div key={n.title} className="flow-next-card">
+                          <strong>{n.title}</strong>
+                          <span>{n.blurb}</span>
+                          <em>Coming soon</em>
+                        </div>
+                      ),
+                    )}
                   </div>
                 </>
               ) : null}

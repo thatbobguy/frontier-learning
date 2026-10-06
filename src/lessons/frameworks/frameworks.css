@@ -1,0 +1,51 @@
+/* Sheep trot on the spot while --walk is 1 (set it on the sheep or any group around it). */
+.sheep-leg-f,
+.sheep-leg-b,
+.sheep-bob {
+  transform-box: fill-box;
+  animation-duration: 0.34s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.sheep-leg-f {
+  transform-origin: top center;
+  animation-name: sheep-step-f;
+}
+.sheep-leg-b {
+  transform-origin: top center;
+  animation-name: sheep-step-b;
+}
+.sheep-bob {
+  transform-origin: center;
+  animation-name: sheep-bob;
+}
+@keyframes sheep-step-f {
+  from {
+    transform: rotate(calc(var(--walk, 0) * 16deg));
+  }
+  to {
+    transform: rotate(calc(var(--walk, 0) * -16deg));
+  }
+}
+@keyframes sheep-step-b {
+  from {
+    transform: rotate(calc(var(--walk, 0) * -16deg));
+  }
+  to {
+    transform: rotate(calc(var(--walk, 0) * 16deg));
+  }
+}
+@keyframes sheep-bob {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(var(--walk, 0) * -5px));
+  }
+}
+.flow-paused .sheep-leg-f,
+.flow-paused .sheep-leg-b,
+.flow-paused .sheep-bob {
+  animation-play-state: paused;
+}

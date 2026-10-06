@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Gallery } from './art2/Gallery'
-import { Player } from './engine/Player'
 import { FlowPlayer } from './flow/FlowPlayer'
-import { STOPS } from './lesson'
 import { algebra } from './lessons/algebra'
+import { frameworks } from './lessons/frameworks'
 import { Library } from './library/Library'
 import './library/library.css'
 
@@ -33,16 +32,7 @@ function App() {
   const oldLink = new URLSearchParams(window.location.search).has('stop')
   if (route.startsWith('/kit')) return <Gallery page={Number(route.split('/')[2] ?? 0)} />
   if (route === '/lesson/algebra') return <FlowPlayer key="algebra" lesson={algebra} onExit={toLibrary} />
-  if (route === '/lesson/frameworks' || (oldLink && !route.startsWith('/lesson'))) {
-    return (
-      <>
-        <Player stops={STOPS} lessonTitle="The Frameworks of Mathematics" />
-        <a className="back-to-library" href="#/" onClick={(e) => (e.preventDefault(), toLibrary())}>
-          ← All lessons
-        </a>
-      </>
-    )
-  }
+  if (route === '/lesson/frameworks' || (oldLink && !route.startsWith('/lesson'))) return <FlowPlayer key="frameworks" lesson={frameworks} onExit={toLibrary} />
   return <Library />
 }
 
