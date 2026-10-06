@@ -221,15 +221,15 @@ function ScaleIcon() {
 function UndoIcon() {
   return (
     <g data-tutor="the undo arrow: undo, step by step">
-      <Glow x={UNDO.x} y={UNDO.y} r={200} color="warm" opacity={0.35} />
-      <g stroke={N.gold} strokeWidth={14} strokeLinecap="round" fill="none" filter="url(#fx-glow)">
+      <Glow x={UNDO.x} y={UNDO.y} r={200} color="violet" opacity={0.45} />
+      <g stroke={N.violetLight} strokeWidth={14} strokeLinecap="round" fill="none" filter="url(#fx-glow)">
         {UNDO_SEGS.map(([a, b], i) => {
           const p = undoPt(a)
           const q = undoPt(b)
           return <path key={i} className={`r-seg r-seg${i}`} d={`M${p[0]} ${p[1]} A${UNDO.r} ${UNDO.r} 0 0 0 ${q[0]} ${q[1]}`} pathLength={1} strokeDasharray="1 2" />
         })}
       </g>
-      <path className="r-head" d={undoHead} fill={N.gold} filter="url(#fx-glow)" />
+      <path className="r-head" d={undoHead} fill={N.violetLight} filter="url(#fx-glow)" />
     </g>
   )
 }
@@ -1196,11 +1196,11 @@ export function Ch7World({ cueIndex, playing, onAnimDone, reportState, setHints 
 
           {/* Run it backwards */}
           <g className="rw-sym" data-tutor="the rewind symbol">
-            <Glow x={800} y={175} r={150} color="warm" opacity={0.5} />
-            <circle cx={800} cy={175} r={64} fill={N.night0} fillOpacity={0.75} stroke={N.gold} strokeWidth={6} />
+            <Glow x={800} y={175} r={150} color="violet" opacity={0.6} />
+            <circle cx={800} cy={175} r={64} fill={N.night0} fillOpacity={0.75} stroke={N.violetLight} strokeWidth={6} />
             <g className="rw-tri">
-              <path d="M802 145 L758 175 L802 205 Z" fill={N.gold} />
-              <path d="M846 145 L802 175 L846 205 Z" fill={N.gold} />
+              <path d="M802 145 L758 175 L802 205 Z" fill={N.violetLight} />
+              <path d="M846 145 L802 175 L846 205 Z" fill={N.violetLight} />
             </g>
           </g>
           <g className="rw-title">
@@ -1241,5 +1241,5 @@ export const ch7: Chapter = {
   title: 'Running the world backwards',
   cues: CUES,
   Scene: Ch7World,
-  enter: { type: 'pan', dir: 'up' },
+  enter: { type: 'dissolve' },
 }

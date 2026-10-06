@@ -13,7 +13,7 @@ export const algebra: FlowLesson = {
   title: 'Solving for x',
   tagline: 'A riddle in a Baghdad night market, the scholar who turned it into a method, and the one rule that lets you run the world backwards.',
   age: 'Ages 10 to 12',
-  minutes: 14,
+  minutes: 10,
   chapters: [ch1, ch2, ch3, ch4, ch5, ch6, ch7],
   Poster: AlgebraPoster,
   next: [
