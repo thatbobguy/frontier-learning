@@ -11,10 +11,10 @@ export function FrameworksPoster() {
       <Glow x={1180} y={540} r={380} color="warm" opacity={0.45} />
       {/* numbers rising like sparks */}
       {[
-        ['1', 1060, 300, 64],
-        ['2', 1190, 230, 72],
-        ['3', 1320, 300, 60],
-        ['10', 1440, 210, 54],
+        ['1', 1230, 320, 64],
+        ['2', 1330, 240, 72],
+        ['3', 1430, 310, 60],
+        ['10', 1520, 210, 54],
       ].map(([t, x, y, size]) => (
         <text key={t} x={x} y={y} textAnchor="middle" fontFamily={FONT2} fontWeight={800} fontSize={size} fill={N.gold} filter="url(#fx-glow)">
           {t}
