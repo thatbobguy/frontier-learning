@@ -1,9 +1,11 @@
 {
-  "at": "2026-10-06T04:03:53.301Z",
-  "wanted": 449,
-  "recorded": 0,
-  "characters": 0,
-  "clips": 449,
+  "at": "2026-10-06T12:26:49.167Z",
+  "wanted": 1085,
+  "recorded": 636,
+  "characters": 36313,
+  "clips": 1085,
+  "skipped": 0,
+  "creditsLeft": null,
   "failed": 0,
   "errors": []
 }
