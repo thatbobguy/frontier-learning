@@ -279,7 +279,12 @@ function playParts(parts: Part[], onWord: SpeakOptions['onWord'], isCancelled: (
       audio.onerror = () => finish(i === 1 ? 'failed' : 'done')
       const tick = () => {
         const t = audio.currentTime * 1000
-        while (w < part.words.length && part.words[w][1] <= t + 60) onWord?.(part.offset + part.words[w++][0])
+        // Advance w outside the call: with no onWord, `onWord?.(…)` skips its arguments, w++ included.
+        while (w < part.words.length && part.words[w][1] <= t + 60) {
+          const at = part.offset + part.words[w][0]
+          w++
+          onWord?.(at)
+        }
         raf = requestAnimationFrame(tick)
       }
       cancelAnimationFrame(raf)
