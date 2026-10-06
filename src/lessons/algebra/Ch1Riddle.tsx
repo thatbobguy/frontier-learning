@@ -55,7 +55,7 @@ export function Ch1Riddle({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     tl.set('.ch1-market', { opacity: 0 })
     tl.set(['.ld-sack', '.ld-w', '.rd-w', '.ld-sack2', '.rd-sack', '.fly-sack', '.ch1-q', '.ch1-slate', '.ch1-trail-glow'], { opacity: 0 })
     tl.set('.ch1-level', { opacity: 0, scale: 0.6, svgOrigin: `${SC.x} ${SC.y - 360 * SC.s - 110}` })
-    tl.set('.ch1-trail', { strokeDashoffset: 1 })
+    tl.set('.ch1-trail', { attr: { 'stroke-dashoffset': 1 } })
     tl.set('.dome-glow', { opacity: 0.35, scale: 1, svgOrigin: `${CITY.dome.x} ${CITY.dome.y}` })
 
     // 0. The city: the camera drifts back to reveal the sky over Baghdad.
@@ -127,7 +127,7 @@ export function Ch1Riddle({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     tl.to('.ch1-market', { opacity: 0, duration: 0.5 }, b5 + 0.7)
     tl.fromTo('.ch1-city', { opacity: 0 }, { opacity: 1, duration: 0.6, ...later }, b5 + 0.6)
     tl.fromTo('.ch1-city-zoom', { scale: 7 }, { scale: 1, duration: 2, ease: 'power3.out', ...later }, b5 + 0.6)
-    tl.fromTo('.ch1-trail', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.6, ease: 'power1.inOut', ...later }, b5 + 2.4)
+    tl.fromTo('.ch1-trail', { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 1.6, ease: 'power1.inOut', ...later }, b5 + 2.4)
     tl.to('.ch1-trail-glow', { opacity: 1, duration: 0.6 }, b5 + 3.6)
     tl.to('.dome-glow', { opacity: 1, scale: 1.25, duration: 1, ease: 'power2.out' }, b5 + 3.7)
     tl.addLabel('b6', b5 + 4.8)

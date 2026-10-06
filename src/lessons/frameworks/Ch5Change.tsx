@@ -438,7 +438,7 @@ function HopArc({ cls, a, b, h, color }: { cls: string; a: number; b: number; h:
 
 /** A bundle or loose stick, drawn at the origin: the timeline places it with x and y. */
 function Piece({ cls, kind, tutor }: { cls: string; kind: 'b' | 's'; tutor?: string }) {
-  return <g className={cls}>{kind === 'b' ? <Bundle s={PS} tutor={tutor} /> : <Stick s={PS} tutor={tutor} />}</g>
+  return <g className={`c5-pc ${cls}`}>{kind === 'b' ? <Bundle s={PS} tutor={tutor} /> : <Stick s={PS} tutor={tutor} />}</g>
 }
 
 /** A digit tile the timeline flies around. */
@@ -646,7 +646,7 @@ const TILT = 'transform 0.9s cubic-bezier(.34,1.45,.55,1)'
 const BOX_B = { x: 1150, y: 830 }
 const BOX_S = { x: 1408, y: 830 }
 const TIE_BTN = { x: 902, y: 838 }
-const NUM_Y = 150
+const NUM_Y = 84
 
 interface TrayPiece {
   id: number
@@ -765,6 +765,7 @@ function TrayArt({ glow }: { glow: boolean }) {
       <rect x={-w / 2 + 16} y={-h + 10} width={tens - 28} height={9} rx={4.5} fill={N.violet} opacity={0.6} />
       <rect x={-w / 2 + tens + 12} y={-h + 10} width={w - tens - 28} height={9} rx={4.5} fill={N.gold} opacity={0.8} />
       <line x1={-w / 2 + tens} y1={-h + 6} x2={-w / 2 + tens} y2={-6} stroke={N.sandDark} strokeWidth={3} strokeDasharray="8 8" opacity={0.5} />
+      <rect x={-w / 2 - 14} y={-h - 10} width={w + 28} height={h + 20} rx={32} fill="none" stroke={N.coral} strokeWidth={6} style={{ opacity: glow ? 0 : 0.85, transition: 'opacity 0.5s' }} />
       <rect x={-w / 2 - 14} y={-h - 10} width={w + 28} height={h + 20} rx={32} fill="none" stroke={N.teal} strokeWidth={8} style={{ opacity: glow ? 1 : 0, transition: 'opacity 0.5s' }} />
     </g>
   )
@@ -1096,7 +1097,9 @@ function Seesaw({
       <g style={{ opacity: balanced ? 1 : 0, transition: 'opacity 0.6s' }} pointerEvents="none">
         <Glow x={PIV.x} y={PIV.y - 140} r={640} color="teal" opacity={0.75} />
       </g>
-      <ellipse cx={lowEnd.x} cy={lowEnd.y - 60} rx={300} ry={190} fill="url(#c5-coral-glow)" style={{ opacity: balanced ? 0 : 0.85, transition: 'opacity 0.6s, cx 0.9s, cy 0.9s' }} pointerEvents="none" />
+      <g style={{ transform: `translate(${lowEnd.x}px, ${lowEnd.y + 40}px)`, opacity: balanced ? 0 : 1, transition: 'opacity 0.6s, transform 0.9s' }} pointerEvents="none">
+        <ellipse rx={360} ry={200} fill="url(#c5-coral-glow)" />
+      </g>
 
       {/* the two amounts, written above their sides */}
       <PlaceNumber value={L} x={PIV.x - ARM} y={NUM_Y} size={TS} tutor="the left amount" />
@@ -1117,7 +1120,7 @@ function Seesaw({
       {/* rounds */}
       <g data-tutor="rounds">
         {range(3).map((i) => (
-          <circle key={i} cx={PIV.x - 40 + i * 40} cy={58} r={13} fill={i < g.solved ? N.teal : N.white} opacity={i < g.solved || i === g.round ? 1 : 0.5} stroke={N.night0} strokeOpacity={0.25} strokeWidth={3} />
+          <circle key={i} cx={PIV.x - 40 + i * 40} cy={NUM_Y + 100} r={13} fill={i < g.solved ? N.teal : N.white} opacity={i < g.solved || i === g.round ? 1 : 0.5} stroke={N.night0} strokeOpacity={0.25} strokeWidth={3} />
         ))}
       </g>
 
@@ -1264,15 +1267,15 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     const later = { immediateRender: false }
     const at0 = (sel: string | string[], vars: gsap.TweenVars) => tl.set(sel, vars, 0)
     const pop = (sel: string | string[], t: number, dur = 0.45) =>
-      tl.fromTo(sel, { opacity: 0, scale: 0.3, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, duration: dur, ease: 'back.out(2.2)', ...later }, t)
+      tl.fromTo(sel, { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: dur, ease: 'back.out(2.2)', ...later }, t)
     const hide = (sel: string | string[], t: number, dur = 0.4) => tl.to(sel, { opacity: 0, duration: dur }, t)
     const swap = (out: string | string[], inn: string | string[], t: number) => {
       tl.set(out, { opacity: 0 }, t)
       tl.set(inn, { opacity: 1 }, t)
     }
-    const pulse = (sel: string, t: number, k = 1.22) => tl.to(sel, { scale: k, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.out', transformOrigin: '50% 50%' }, t)
+    const pulse = (sel: string, t: number, k = 1.22) => tl.to(sel, { scale: k, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.out' }, t)
     /** A tile that has just changed lands with a little bump. */
-    const bump = (sel: string, t: number) => tl.fromTo(sel, { scale: 1.4 }, { scale: 1, duration: 0.45, ease: 'back.out(3)', transformOrigin: '50% 50%', ...later }, t)
+    const bump = (sel: string, t: number) => tl.fromTo(sel, { scale: 1.4 }, { scale: 1, duration: 0.45, ease: 'back.out(3)', ...later }, t)
     const flash = (sel: string, t: number, hold = 1) => {
       tl.to(sel, { opacity: 1, duration: 0.3 }, t)
       tl.to(sel, { opacity: 0, duration: 0.5 }, t + hold)
@@ -1282,7 +1285,7 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       tl.to(sel, { y: Math.min(fromY, to.y) - lift, duration: dur / 2, ease: 'sine.out' }, t)
       tl.to(sel, { y: to.y, duration: dur / 2, ease: 'sine.in' }, t + dur / 2)
     }
-    const land = (sel: string, t: number) => tl.to(sel, { scaleY: 0.86, scaleX: 1.08, duration: 0.09, yoyo: true, repeat: 1, ease: 'power1.out', transformOrigin: '50% 100%' }, t)
+    const land = (sel: string, t: number) => tl.to(sel, { scaleY: 0.86, scaleX: 1.08, duration: 0.09, yoyo: true, repeat: 1, ease: 'power1.out' }, t)
     const place = (sel: string, p: P, extra: gsap.TweenVars = {}) => at0(sel, { x: p.x, y: p.y, ...extra })
     const pan = (from: number, to: number, t: number, k: number) => {
       tl.to(`.st${from}`, { x: -1600, duration: PAN, ease: 'power3.inOut' }, t)
@@ -1303,6 +1306,17 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       })
 
     /* ---------- starting state */
+    // Pivot points first, before anything is scaled or turned: changing one later shifts the element (GSAP's smoothOrigin).
+    at0('.c5-pc', { transformOrigin: '50% 100%' })
+    at0(
+      [
+        '.s1-plus', '.s1-bt-t', '.s1-bt-o', '.s1-n25', '.s1-n35', '.s1-n38', '.s1-n25 .pv-tens', '.s1-n25 .pv-ones', '.s1-n35 .pv-tens', '.s1-n38 .pv-tens', '.s1-n38 .pv-ones',
+        '.s2-n27 .pv-ones', '.s2-bt', '.s2-c-o12', '.s2-c-o2', '.s2-carry', '.s2-n32', '.s2-n32 .pv-tens', '.s2-rib', '.s2-sp',
+        '.s4-minus', '.s4-seven', '.s4-n32', '.s4-n32 .pv-ones', '.s4-c-t', '.s4-c-o12', '.s4-n25', '.s4-n25 .pv-ones', '.s4-bk7', '.s4-rib',
+        '.s5-eq1', '.s5-eq2', '.s5-hl', '.s5-icon', '.nl-label-35', '.s5-face',
+      ],
+      { transformOrigin: '50% 50%' },
+    )
     at0('.st1', { x: 0 })
     at0(['.st2', '.st3', '.st4', '.st5', '.st6'], { x: 1600 })
     at0('.c5-mid', { x: 0 })
@@ -1335,14 +1349,14 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     // station 4: 32 − 7
     ;[0, 1, 2].forEach((k) => place(`.s4-b${k}`, { x: tensAt(A4, k), y: FEET }))
     ;[0, 1].forEach((k) => place(`.s4-s${k}`, { x: onesAt(A4, k), y: FEET }, { rotation: 0 }))
-    range(10).forEach((i) => place(`.s4-u${i}`, { x: UNTIE4.x + fan(i).dx, y: UNTIE4.y }, { rotation: fan(i).r, transformOrigin: '50% 100%' }))
-    place('.s4-rib', { x: UNTIE4.x, y: UNTIE4.y }, { rotation: 0, scale: PS, transformOrigin: '50% 50%' })
+    range(10).forEach((i) => place(`.s4-u${i}`, { x: UNTIE4.x + fan(i).dx, y: UNTIE4.y }, { rotation: fan(i).r }))
+    place('.s4-rib', { x: UNTIE4.x, y: UNTIE4.y }, { rotation: 0, scale: PS })
     at0(['.s4-u', '.s4-rib', '.s4-c', '.s4-n25', '.s4-bk7', '.s4-sum'], { opacity: 0 })
 
     // station 5: the number line
     place('.s5-hopper', { x: nlx(25), y: HOP_Y })
     at0('.s5-hopper', { opacity: 0 })
-    at0('.s5-face', { scaleX: 1, transformOrigin: '50% 50%' })
+    at0('.s5-face', { scaleX: 1 })
     at0('.s5-arc', { strokeDashoffset: 1, opacity: 1 })
     at0(['.s5-eq1', '.s5-eq2', '.s5-hl', '.s5-icon'], { opacity: 0 })
 
@@ -1350,7 +1364,7 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     tl.addLabel('b0', 0)
     tl.set('.c5-sheep', { '--walk': 1 }, 0)
     tl.set('.c5-sheep', { '--walk': 0 }, PAN)
-    tl.fromTo('.c5-world', { scale: 1.05 }, { scale: 1, duration: 7, ease: 'sine.inOut', svgOrigin: '800 700' }, 0)
+    tl.fromTo('.c5-world', { scale: 1.05, svgOrigin: '800 700' }, { scale: 1, duration: 7, ease: 'sine.inOut' }, 0)
     tl.to('.s1-B', { x: 170, duration: 1.4, ease: 'power3.out' }, 2.0)
     land('.s1-bb0', 3.3)
     tl.to('.s1-A', { x: 0, duration: 1.2, ease: 'power2.inOut' }, 4.5)
@@ -1404,7 +1418,7 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     hop('.s2-bt', { x: onesTileX(centre(A2)) + WIDE_DX, y: TILE_Y }, b2 + 4.5, 0.8, 70, TILE_Y)
     swap(['.s2-n27', '.s2-bt'], ['.s2-c-t', '.s2-c-o12'], b2 + 5.3)
     bump('.s2-c-o12', b2 + 5.3)
-    tl.to('.s2-c-o12', { rotation: 7, duration: 0.08, yoyo: true, repeat: 5, ease: 'sine.inOut', transformOrigin: '50% 50%' }, b2 + 5.8)
+    tl.to('.s2-c-o12', { rotation: 7, duration: 0.08, yoyo: true, repeat: 5, ease: 'sine.inOut' }, b2 + 5.8)
     hide(['.s2-clothB', '.s2-plus'], b2 + 5.4, 0.5)
     flash('.s2-ring10', b2 + 5.8, 0.6)
     const TEN = [...range(7).map((k) => `.s2-as${k}`), '.s2-bs0', '.s2-bs1', '.s2-bs2']
@@ -1412,11 +1426,11 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       const f = fan(i)
       const t = b2 + 6.2 + i * 0.03
       hop(sel, { x: TIE2.x + f.dx, y: TIE2.y }, t, 0.75, 80)
-      tl.to(sel, { rotation: f.r, duration: 0.75, ease: 'power2.inOut', transformOrigin: '50% 100%' }, t)
+      tl.to(sel, { rotation: f.r, duration: 0.75, ease: 'power2.inOut' }, t)
     })
-    tl.fromTo('.s2-rib', { opacity: 0, scale: 0.1, rotation: -160 }, { opacity: 1, scale: PS, rotation: 0, duration: 0.45, ease: 'back.out(2)', transformOrigin: '50% 50%', ...later }, b2 + 7.0)
+    tl.fromTo('.s2-rib', { opacity: 0, scale: 0.1, rotation: -160 }, { opacity: 1, scale: PS, rotation: 0, duration: 0.45, ease: 'back.out(2)', ...later }, b2 + 7.0)
     swap([...TEN, '.s2-rib'], '.s2-nb', b2 + 7.45)
-    tl.fromTo('.s2-nb', { scale: 1.25 }, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.45)', transformOrigin: '50% 100%', ...later }, b2 + 7.45)
+    tl.fromTo('.s2-nb', { scale: 1.25 }, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.45)', ...later }, b2 + 7.45)
     flash('.s2-g-tie', b2 + 7.45, 0.7)
     sparkles('s2-sp', b2 + 7.45)
     sheepHop(b2 + 7.55)
@@ -1449,11 +1463,11 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     pulse('.s4-n32', b4 + 3.7)
     flash('.s4-g-s2', b4 + 5.2, 1.3)
     pulse('.s4-n32 .pv-ones', b4 + 5.3)
-    tl.to(['.s4-s0', '.s4-s1'], { rotation: 6, duration: 0.1, yoyo: true, repeat: 3, ease: 'sine.inOut', transformOrigin: '50% 100%' }, b4 + 5.7)
+    tl.to(['.s4-s0', '.s4-s1'], { rotation: 6, duration: 0.1, yoyo: true, repeat: 3, ease: 'sine.inOut' }, b4 + 5.7)
     flash('.s4-g-b2', b4 + 7.1, 0.9)
     hop('.s4-b2', UNTIE4, b4 + 7.4, 0.9, 50)
     swap('.s4-b2', ['.s4-u', '.s4-rib'], b4 + 8.3)
-    tl.to('.s4-rib', { x: UNTIE4.x + 120, y: UNTIE4.y - 200, rotation: 220, opacity: 0, duration: 0.9, ease: 'power2.out', transformOrigin: '50% 50%' }, b4 + 8.35)
+    tl.to('.s4-rib', { x: UNTIE4.x + 120, y: UNTIE4.y - 200, rotation: 220, opacity: 0, duration: 0.9, ease: 'power2.out' }, b4 + 8.35)
     swap('.s4-n32', ['.s4-c-t', '.s4-c-o2'], b4 + 8.4)
     bump('.s4-c-t', b4 + 8.4)
     range(10).forEach((i) => {
@@ -1482,7 +1496,7 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     const b5 = b4 + 16.0
     tl.addLabel('b5', b5)
     pan(4, 5, b5, 4)
-    tl.fromTo('.s5-cam', { scale: 1 }, { scale: 1.035, duration: 14, ease: 'sine.inOut', svgOrigin: '800 430', ...later }, b5 + PAN)
+    tl.fromTo('.s5-cam', { scale: 1, svgOrigin: '800 430' }, { scale: 1.035, duration: 14, ease: 'sine.inOut', ...later }, b5 + PAN)
     tl.to('.s5-hopper', { opacity: 1, duration: 0.2 }, b5 + 2.0)
     tl.fromTo('.s5-hopper', { y: HOP_Y - 220 }, { y: HOP_Y, duration: 0.8, ease: 'bounce.out', ...later }, b5 + 2.0)
     ;[0, 1, 2].forEach((i) => pop(`.s5-eq1-${i}`, b5 + 5.6 + i * 0.2))

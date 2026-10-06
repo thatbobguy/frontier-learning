@@ -42,6 +42,14 @@ export function Defs() {
         <stop offset="0.82" stopColor={N.coralLight} />
         <stop offset="1" stopColor={N.sandLight} />
       </linearGradient>
+      {(['violet', 'violetDark', 'pink', 'sky', 'plum', 'dusk'] as const).map((c) => (
+        <radialGradient key={c} id={`fx-bloom-${c}`}>
+          <stop offset="0" stopColor={N[c]} stopOpacity="1" />
+          <stop offset="0.55" stopColor={N[c]} stopOpacity="0.8" />
+          <stop offset="0.8" stopColor={N[c]} stopOpacity="0.3" />
+          <stop offset="1" stopColor={N[c]} stopOpacity="0" />
+        </radialGradient>
+      ))}
       <radialGradient id="fx-glow-warm">
         <stop offset="0" stopColor={N.goldLight} stopOpacity="0.9" />
         <stop offset="0.35" stopColor={N.gold} stopOpacity="0.35" />
@@ -94,6 +102,16 @@ export function Defs() {
       </filter>
     </defs>
   )
+}
+
+export type BloomColor = 'violet' | 'violetDark' | 'pink' | 'sky' | 'plum' | 'dusk'
+
+/**
+ * A big, very soft patch of colour in the sky. Drawn with a gradient rather than a blur
+ * filter: Chrome cuts large blurred shapes off with a hard edge when they are scaled.
+ */
+export function Bloom({ x = 0, y = 0, r = 400, color = 'violet', opacity = 0.12 }: { x?: number; y?: number; r?: number; color?: BloomColor; opacity?: number }) {
+  return <circle cx={x} cy={y} r={r + 80} fill={`url(#fx-bloom-${color})`} opacity={opacity} />
 }
 
 export type GlowColor = 'warm' | 'pink' | 'teal' | 'cool' | 'violet'
@@ -158,8 +176,8 @@ export function Backdrop({ kind = 'night', children }: { kind?: 'night' | 'deep'
       <rect x={-400} y={-300} width={2400} height={1500} fill={`url(#fx-sky-${kind})`} />
       {kind !== 'day' && (
         <>
-          <circle cx={260} cy={160} r={420} fill={N.violet} opacity={0.12} filter="url(#fx-blur-big)" />
-          <circle cx={1350} cy={260} r={380} fill={N.pink} opacity={0.08} filter="url(#fx-blur-big)" />
+          <Bloom x={260} y={160} r={420} color="violet" opacity={0.12} />
+          <Bloom x={1350} y={260} r={380} color="pink" opacity={0.08} />
         </>
       )}
       {children}

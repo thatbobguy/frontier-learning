@@ -158,11 +158,26 @@ const SINK = 560
 // Cue 2: one, two, three.
 const NAMES = [
   { x: 400, word: 'one', pts: [[0, 0]] },
-  { x: 800, word: 'two', pts: [[-50, 8], [50, -8]] },
-  { x: 1200, word: 'three', pts: [[-56, 24], [56, 20], [0, -38]] },
+  {
+    x: 800,
+    word: 'two',
+    pts: [
+      [-50, 8],
+      [50, -8],
+    ],
+  },
+  {
+    x: 1200,
+    word: 'three',
+    pts: [
+      [-56, 24],
+      [56, 20],
+      [0, -38],
+    ],
+  },
 ] as const
-const NAME_Y = 410
-const NAME_TILE_Y = 600
+const NAME_Y = 400
+const NAME_TILE_Y = 610
 
 // Cue 3: seven pebbles, seven fingers, seven marks.
 const PILE = { x: 330, y: 560 }
@@ -235,15 +250,15 @@ const FIND = [
   { n: 5, x: 800, seed: 23, tutor: 'the middle pile' },
   { n: 7, x: 1270, seed: 41, tutor: 'the right pile' },
 ]
-const FIND_PTS = FIND.map((p) => scatter(p.n, 140, 92, 56, p.seed))
-const FIND_Y = 470
+const FIND_PTS = FIND.map((p) => scatter(p.n, 150, 96, 64, p.seed))
+const FIND_Y = 490
 const COUNT_STEP = 0.32
 const countMs = (n: number) => (0.6 + n * COUNT_STEP + 0.7) * 1000
 
 // Cues 6 and 7: the number line.
 const NL = { x: 200, y: 650, unit: 120 }
 const nx = (k: number) => NL.x + NL.unit * k
-const colY = (j: number) => NL.y - 34 - j * 31
+const colY = (j: number) => NL.y - 38 - j * 32
 const ROW3_Y = NL.y - 58
 const ROW7_Y = NL.y - 140
 
@@ -284,34 +299,34 @@ const CHART_PILES: Record<Kind, Pt[]> = {
 const CHART = { x: 40, y: 120, w: 440, h: 640 }
 const ROWS_Y = [262, 448, 634]
 const COUNTER_Y = 640
-const BASKET = { x: 1230, y: 532 }
-const ZORP = { x: 1475, y: 700, s: 1.15 }
+const BASKET = { x: 1185, y: 532 }
+const ZORP = { x: 1420, y: 700, s: 1.15 }
 const SUPPLY: Pt[] = [
-  ...[0, 1, 2, 3, 4].map((i) => ({ x: 805 + (i - 2) * 96, y: 602 })),
-  ...[0, 1, 2, 3].map((i) => ({ x: 805 + (i - 1.5) * 96, y: 530 })),
-  ...[0, 1, 2].map((i) => ({ x: 805 + (i - 1) * 96, y: 458 })),
+  ...[0, 1, 2, 3, 4].map((i) => ({ x: 780 + (i - 2) * 96, y: 602 })),
+  ...[0, 1, 2, 3].map((i) => ({ x: 780 + (i - 1.5) * 96, y: 530 })),
+  ...[0, 1, 2].map((i) => ({ x: 780 + (i - 1) * 96, y: 458 })),
 ]
 /** Where fruits sit in a basket, relative to the middle of its rim. */
-const SLOTS: Pt[] = [
-  ...[-104, -52, 0, 52, 104].map((x) => ({ x, y: -14 })),
-  ...[-78, -26, 26, 78].map((x) => ({ x, y: -48 })),
-  ...[-52, 0, 52].map((x) => ({ x, y: -82 })),
-]
+const SLOTS: Pt[] = [...[-104, -52, 0, 52, 104].map((x) => ({ x, y: -14 })), ...[-78, -26, 26, 78].map((x) => ({ x, y: -48 })), ...[-52, 0, 52].map((x) => ({ x, y: -82 }))]
 const inBasketZone = (p: Pt) => p.x > BASKET.x - 180 && p.x < BASKET.x + 180 && p.y > BASKET.y - 170 && p.y < BASKET.y + 130
 const SETTLE_MS = 1900
 
 const STATE: string[] = [
-  "Ama the shepherd stands in her sunny valley holding her little pebble bag, then lifts it over her head. Sheep trot in, fish hang on a drying line and jars of grain stand nearby; each one lights up gold and sends one pebble flying into her bag. The bag swells huge, she wobbles, and it squashes her flat. Pebbles spill over the meadow. Carrying a pebble for every single thing gets far too heavy.",
+  'Ama the shepherd stands in her sunny valley holding her little pebble bag, then lifts it over her head. Sheep trot in, fish hang on a drying line and jars of grain stand nearby; each one lights up gold and sends one pebble flying into her bag. The bag swells huge, she wobbles, and it squashes her flat. Pebbles spill over the meadow. Carrying a pebble for every single thing gets far too heavy.',
   "The sun sets and the camera tilts up into the night sky. Pebbles rise from the meadow into three small groups: 1 pebble with a gold name tile 'one', 2 pebbles named 'two', 3 pebbles named 'three'. Each amount gets a name.",
   "Three groups side by side in the night sky: a pile of 7 pebbles, two hands holding up 5 and 2 fingers, and 7 chalk tally marks on a slate (a bundle of five and two more). They count up together one at a time, each lighting gold in step. Teal links join the three groups: the same amount. A gold tile 'seven' appears above them: that amount's name.",
   "The 7 pebbles gather in the middle under a big gold 7 that writes itself, with the gold tile 'seven' above. Around them four cards show other ways people wrote seven: Roman VII (Rome), Chinese 七 (China), Eastern Arabic ٧ (Baghdad), and the Maya's bar and two dots (Mexico). Dotted teal lines join every card to the same pile of 7.",
   '',
   'Pebbles pop up in columns: 1 pebble, then 2, then 3, up to 10, one more each time. The columns sink into a number line from 0 to 10 with gold numbers. A pebble hops along the line from 0 to 10, one step at a time, with +1 over each hop: each step right is one more.',
-  "On the number line, 7 lights up and a row of 7 pebbles slides along to it; then 3 lights up with a row of 3 pebbles. The stretch of line from 3 to 7 glows, and the 4 extra pebbles in the row of 7 light up: 7 is further along, so 7 is more than 3.",
+  'On the number line, 7 lights up and a row of 7 pebbles slides along to it; then 3 lights up with a row of 3 pebbles. The stretch of line from 3 to 7 glows, and the 4 extra pebbles in the row of 7 light up: 7 is further along, so 7 is more than 3.',
   '',
 ]
 
-const FIND_HINTS = ['Pick a pile and count its pebbles one at a time.', 'Seven is one whole hand of fingers and two more.', 'Touch each pebble with your eyes as you count, so you never count one twice.']
+const FIND_HINTS = [
+  'Pick a pile and count its pebbles one at a time.',
+  'Seven is one whole hand of fingers and two more.',
+  'Touch each pebble with your eyes as you count, so you never count one twice.',
+]
 const MARKET_HINTS = [
   "Look at the symbol on the basket's tag. Find the same symbol on Zorp's chart.",
   'The star fruits next to that symbol on the chart show how many it means. Put one in the basket for each one on the chart.',
@@ -609,7 +624,12 @@ function ZorpChart() {
         <Glow x={CHART.x + CHART.w / 2} y={CHART.y + CHART.h / 2} r={460} color="warm" opacity={0.8} />
       </g>
       {/* easel legs */}
-      <path d={`M${CHART.x + 70} ${CHART.y + CHART.h - 20} L${CHART.x + 40} 812 M${CHART.x + CHART.w - 70} ${CHART.y + CHART.h - 20} L${CHART.x + CHART.w - 40} 812`} stroke={N.woodDark} strokeWidth={16} strokeLinecap="round" />
+      <path
+        d={`M${CHART.x + 70} ${CHART.y + CHART.h - 20} L${CHART.x + 40} 812 M${CHART.x + CHART.w - 70} ${CHART.y + CHART.h - 20} L${CHART.x + CHART.w - 40} 812`}
+        stroke={N.woodDark}
+        strokeWidth={16}
+        strokeLinecap="round"
+      />
       <ellipse cx={CHART.x + CHART.w / 2} cy={814} rx={230} ry={14} fill={N.shadow} opacity={0.25} />
       <rect x={CHART.x - 10} y={CHART.y - 10} width={CHART.w + 20} height={CHART.h + 20} rx={30} fill={N.woodDark} />
       <rect x={CHART.x} y={CHART.y} width={CHART.w} height={CHART.h} rx={24} fill={N.night1} />
@@ -626,7 +646,19 @@ function ZorpChart() {
         const y = ROWS_Y[r]
         return (
           <g key={k} data-tutor={`the ${ZORP_NAME[k]} row of Zorp's chart`}>
-            <rect className={`c3-row-glow c3-row-glow-${k}`} x={CHART.x + 10} y={y - 84} width={CHART.w - 20} height={168} rx={22} fill={N.gold} fillOpacity={0.12} stroke={N.goldLight} strokeWidth={6} opacity={0} />
+            <rect
+              className={`c3-row-glow c3-row-glow-${k}`}
+              x={CHART.x + 10}
+              y={y - 84}
+              width={CHART.w - 20}
+              height={168}
+              rx={22}
+              fill={N.gold}
+              fillOpacity={0.12}
+              stroke={N.goldLight}
+              strokeWidth={6}
+              opacity={0}
+            />
             <g className={`c3-chart-symglow-${r}`} opacity={0}>
               <Glow x={128} y={y} r={110} color="warm" />
             </g>
@@ -684,7 +716,7 @@ function FindPiles({ active, counted, onTap }: { active: boolean; counted: numbe
                     transition: `transform 0.45s ease-in-out ${on ? j * 0.05 : 0}s`,
                   }}
                 >
-                  <Pebble s={on ? 1.15 : 1.45} seed={j + i * 3} />
+                  <Pebble s={on ? 1.2 : 1.75} seed={j + i * 3} />
                 </g>
               ))}
               {FIND_PTS[i].map((_, j) => (
@@ -779,7 +811,8 @@ function ZorpMarket({ active, say, emit, reportState, setHints, onPlayDone }: Ma
             setInBasket([])
             setStatus('idle')
             setMood('happy')
-            if (basketMove.current) gsap.fromTo(basketMove.current, { y: -330, scale: 0.3, opacity: 0 }, { y: 0, scale: 1, opacity: 1, svgOrigin: `${BASKET.x} ${BASKET.y + 108}`, duration: 1.0, ease: 'power2.out' })
+            if (basketMove.current)
+              gsap.fromTo(basketMove.current, { y: -330, scale: 0.3, opacity: 0 }, { y: 0, scale: 1, opacity: 1, svgOrigin: `${BASKET.x} ${BASKET.y + 108}`, duration: 1.0, ease: 'power2.out' })
             if (beam.current) gsap.to(beam.current, { opacity: 0, duration: 0.4, delay: 1.0 })
           })
           later(4800, () => setBusy(false))
@@ -795,7 +828,8 @@ function ZorpMarket({ active, say, emit, reportState, setHints, onPlayDone }: Ma
       setMood(over ? 'oops' : 'puzzled')
       emit({ type: 'attempt', correct: false, detail: `put ${count} star fruits in the ${ZORP_NAME[kind]} basket (it means ${target}): ${over ? 'too full' : 'not full enough'}` })
       if (over) {
-        if (basketShake.current) gsap.fromTo(basketShake.current, { rotation: 0 }, { rotation: 4, duration: 0.09, yoyo: true, repeat: 7, ease: 'sine.inOut', svgOrigin: `${BASKET.x} ${BASKET.y + 108}` })
+        if (basketShake.current)
+          gsap.fromTo(basketShake.current, { rotation: 0 }, { rotation: 4, duration: 0.09, yoyo: true, repeat: 7, ease: 'sine.inOut', svgOrigin: `${BASKET.x} ${BASKET.y + 108}` })
         if (told.current.over < 2) {
           told.current.over++
           void say(MARKET_LINES.over)
@@ -904,14 +938,12 @@ function ZorpMarket({ active, say, emit, reportState, setHints, onPlayDone }: Ma
       {/* the star fruit pyramid */}
       <g data-tutor="the pile of star fruits">
         <g className="c3-supply-glow" opacity={0}>
-          <Glow x={805} y={530} r={260} color="warm" />
+          <Glow x={780} y={530} r={260} color="warm" />
         </g>
-        <rect x={596} y={COUNTER_Y - 12} width={418} height={18} rx={9} fill={N.sandDark} />
-        <rect x={604} y={COUNTER_Y - 12} width={402} height={7} rx={3} fill={N.sandLight} opacity={0.7} />
+        <rect x={571} y={COUNTER_Y - 12} width={418} height={18} rx={9} fill={N.sandDark} />
+        <rect x={579} y={COUNTER_Y - 12} width={402} height={7} rx={3} fill={N.sandLight} opacity={0.7} />
         {supply.map(({ p, id }) => fruit(id, p.x, p.y, false))}
-        {active && !busy && !finished && inBasket.length === 0 && (
-          <circle className="hot-ring" cx={SUPPLY[11].x} cy={SUPPLY[11].y} r={46} fill="none" stroke={N.white} strokeWidth={4} />
-        )}
+        {active && !busy && !finished && inBasket.length === 0 && <circle className="hot-ring" cx={SUPPLY[11].x} cy={SUPPLY[11].y} r={46} fill="none" stroke={N.white} strokeWidth={4} />}
       </g>
 
       {/* the basket, with Zorp's symbol on its tag */}
@@ -1007,9 +1039,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     // the sky: groups waiting off stage
     tl.set(['.c3-names', '.c3-seven', '.c3-symbols', '.c3-find', '.c3-nl'], { opacity: 0 }, 0)
     tl.set('.c3-sky-out', { y: 0 }, 0)
-    NAMES.forEach((g, k) =>
-      g.pts.forEach((q, j) => tl.set(`.c3-name-peb-${k}-${j}`, { x: 1100 - (g.x + q[0]) + j * 30, y: 1060 - (NAME_Y + q[1]), opacity: 0 }, 0)),
-    )
+    NAMES.forEach((g, k) => g.pts.forEach((q, j) => tl.set(`.c3-name-peb-${k}-${j}`, { x: 1100 - (g.x + q[0] * 1.2) + j * 30, y: 1060 - (NAME_Y + q[1] * 1.2), opacity: 0 }, 0)))
     tl.set('.c3-name-glow', { opacity: 0 }, 0)
     NAMES.forEach((g, k) => tl.set(`.c3-name-tile-${k}`, { opacity: 0, scale: 0.4, svgOrigin: `${g.x} ${NAME_TILE_Y}` }, 0))
     PILE7.forEach((q, i) => tl.set(`.c3-s7-peb-${i}`, { scale: 0, x: 0, y: 0, svgOrigin: `${PILE.x + q.x} ${PILE.y + q.y}` }, 0))
@@ -1017,7 +1047,9 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     tl.set('.c3-s7-hands', { y: 360, opacity: 0 }, 0)
     tl.set('.c3-s7-slate', { opacity: 0, x: 0, scale: 0.85, svgOrigin: `${SLATE.x} ${SLATE.y}` }, 0)
     tl.set('.c3-s7-mark', { strokeDashoffset: 1 }, 0)
-    tl.set(['.c3-cnt', '.c3-link-dot'], { opacity: 0 }, 0)
+    tl.set('.c3-cnt', { opacity: 1 }, 0)
+    tl.set('.c3-link-dot', { opacity: 0 }, 0)
+    for (let k = 0; k < 7; k++) tl.set([`.c3-cnt-peb-${k}`, `.c3-cnt-fin-${k}`, `.c3-cnt-mark-${k}`], { opacity: 0 }, 0)
     tl.set('.c3-link', { strokeDashoffset: 1, opacity: 1 }, 0)
     tl.set('.c3-seven-tile', { opacity: 0, scale: 0.4, y: 0, svgOrigin: `${SEVEN_TILE.x} ${SEVEN_TILE.y}` }, 0)
     tl.set('.c3-glyph7', { strokeDashoffset: 1 }, 0)
@@ -1026,6 +1058,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     tl.set('.c3-card-link', { opacity: 0 }, 0)
     FIND.forEach((_, i) => tl.set(`.c3-find-${i}`, { opacity: 0, y: -90 }, 0))
     tl.set('.c3-nl-cliprect', { attr: { width: 0 } }, 0)
+    tl.set('.c3-nl-cam', { scale: 1, svgOrigin: '800 600' }, 0)
     for (let k = 1; k <= 10; k++) {
       for (let j = 0; j < k; j++) tl.set(`.c3-col-${k}-${j}`, { scale: 0, y: 0, opacity: 1, svgOrigin: `${nx(k)} ${colY(j)}` }, 0)
     }
@@ -1151,7 +1184,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     for (let k = 0; k < 7; k++) {
       const at = b2 + 3.0 + k * 0.3
       tl.to([`.c3-cnt-peb-${k}`, `.c3-cnt-fin-${k}`, `.c3-cnt-mark-${k}`], { opacity: 1, duration: 0.12 }, at)
-      tl.to([`.c3-cnt-peb-${k}`, `.c3-cnt-fin-${k}`, `.c3-cnt-mark-${k}`], { opacity: 0.45, duration: 0.4 }, at + 0.2)
+      tl.to([`.c3-cnt-peb-${k}`, `.c3-cnt-fin-${k}`, `.c3-cnt-mark-${k}`], { opacity: 0.85, duration: 0.3 }, at + 0.2)
     }
     // "...the same amount": teal links join them.
     tl.to('.c3-link', { strokeDashoffset: 0, duration: 0.7, ease: 'power1.inOut' }, b2 + 5.0)
@@ -1225,6 +1258,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     tl.addLabel('b6', b5 + 9.9)
     const b6 = tl.labels.b6
     tl.to('.c3-hop', { opacity: 0, duration: 0.3 }, b6)
+    tl.to('.c3-nl-cam', { scale: 1.12, duration: 1.6, ease: 'power2.inOut' }, b6)
     // A light runs along the line: further along, bigger.
     tl.to('.c3-sweep', { opacity: 1, duration: 0.3 }, b6 + 0.2)
     tl.to('.c3-sweep', { x: nx(10), duration: 2.4, ease: 'sine.inOut' }, b6 + 0.2)
@@ -1454,20 +1488,18 @@ function Cue1World() {
       </g>
       {/* dust and dizzy stars when the sack lands */}
       <g className="c3-puff">
-        {[-150, -70, 70, 150].map((dx, i) => (
-          <circle key={dx} cx={AMA.x + dx} cy={AMA.y - 10 - (i % 2) * 14} r={34 - (i % 2) * 8} fill={N.cream} opacity={0.85} />
-        ))}
+        {[-1, 1].map((side) => [0, 1, 2].map((i) => <circle key={`${side}${i}`} cx={AMA.x + side * (150 + i * 46)} cy={AMA.y - 14 - (i % 2) * 18} r={36 - i * 7} fill={N.sandLight} opacity={0.8} />))}
       </g>
+      {/* dizzy stars spin around Ama's squashed head */}
       <g className="c3-dizzy">
-        <g transform={`translate(${AMA.x} ${AMA.y - 70})`}>
+        <g transform={`translate(${AMA.x} ${AMA.y - 150})`}>
           <g className="spin">
+            <circle r={80} fill="none" />
             {[0, 120, 240].map((a) => (
-              <path
-                key={a}
-                transform={`rotate(${a}) translate(70 0) scale(1 0.5)`}
-                d="M0 -14 L4 -4 L14 0 L4 4 L0 14 L-4 4 L-14 0 L-4 -4 Z"
-                fill={N.white}
-              />
+              <g key={a} transform={`rotate(${a}) translate(80 0)`}>
+                <circle r={16} fill={N.white} opacity={0.25} />
+                <path d="M0 -17 L5 -5 L17 0 L5 5 L0 17 L-5 5 L-17 0 L-5 -5 Z" fill={N.white} />
+              </g>
             ))}
           </g>
         </g>
@@ -1492,11 +1524,11 @@ function NamesGroups() {
           </g>
           {g.pts.map((q, j) => (
             <g key={j} className={`c3-name-peb-${k}-${j}`}>
-              <Pebble x={g.x + q[0]} y={NAME_Y + q[1]} s={2.3} seed={k + j} />
+              <Pebble x={g.x + q[0] * 1.2} y={NAME_Y + q[1] * 1.2} s={2.8} seed={k + j} />
             </g>
           ))}
           <g className={`c3-name-tile-${k}`}>
-            <NameTile x={g.x} y={NAME_TILE_Y} word={g.word} tutor={`the name ${g.word}`} />
+            <NameTile x={g.x} y={NAME_TILE_Y} word={g.word} size={76} tutor={`the name ${g.word}`} />
           </g>
         </g>
       ))}
@@ -1511,16 +1543,15 @@ function SevenBoard() {
       <g className="c3-s7-pile-glow">
         <Glow x={PILE.x} y={PILE.y} r={220} color="warm" opacity={0.45} />
       </g>
-      {PILE7.map((q, i) => (
-        <g key={`c${i}`} className="c3-cnt">
-          <g className={`c3-cnt-peb-${i}`}>
-            <Glow x={PILE.x + q.x} y={PILE.y + q.y} r={56} color="warm" />
-          </g>
-        </g>
-      ))}
       <g data-tutor="seven pebbles">
         {PILE7.map((q, i) => (
           <g key={i} className={`c3-s7-peb-${i}`}>
+            <g className="c3-cnt">
+              <g className={`c3-cnt-peb-${i}`}>
+                <Glow x={PILE.x + q.x} y={PILE.y + q.y} r={62} color="warm" />
+                <ellipse cx={PILE.x + q.x} cy={PILE.y + q.y + 3} rx={40} ry={30} fill="none" stroke={N.goldLight} strokeWidth={4} />
+              </g>
+            </g>
             <Pebble x={PILE.x + q.x} y={PILE.y + q.y} s={1.9} seed={i} />
           </g>
         ))}
@@ -1535,8 +1566,8 @@ function SevenBoard() {
         {TIPS.map((t, i) => (
           <g key={i} className="c3-cnt">
             <g className={`c3-cnt-fin-${i}`}>
-              <Glow x={t.x} y={t.y} r={40} color="warm" />
-              <circle cx={t.x} cy={t.y} r={15} fill="none" stroke={N.goldLight} strokeWidth={4} />
+              <Glow x={t.x} y={t.y} r={46} color="warm" />
+              <circle cx={t.x} cy={t.y} r={18} fill="none" stroke={N.goldLight} strokeWidth={5} />
             </g>
           </g>
         ))}
@@ -1546,15 +1577,17 @@ function SevenBoard() {
       <g className="c3-s7-slate" data-tutor="seven tally marks">
         <rect x={SLATE.x - SLATE.w / 2 - 10} y={SLATE.y - SLATE.h / 2 - 10} width={SLATE.w + 20} height={SLATE.h + 20} rx={30} fill={N.woodDark} />
         <rect x={SLATE.x - SLATE.w / 2} y={SLATE.y - SLATE.h / 2} width={SLATE.w} height={SLATE.h} rx={22} fill={N.night0} />
+        {MARKS.map((d, i) => (
+          <path key={i} className={`c3-s7-mark c3-s7-mark-${i}`} d={d} pathLength={1} strokeDasharray="1 1" stroke={N.cream} strokeWidth={13} strokeLinecap="round" fill="none" />
+        ))}
+        {/* each mark turns gold as it is counted */}
         {MARK_C.map((c, i) => (
           <g key={`c${i}`} className="c3-cnt">
             <g className={`c3-cnt-mark-${i}`}>
-              <Glow x={c.x} y={c.y} r={56} color="warm" />
+              <Glow x={c.x} y={c.y} r={60} color="warm" opacity={0.7} />
+              <path d={MARKS[i]} stroke={N.gold} strokeWidth={13} strokeLinecap="round" fill="none" />
             </g>
           </g>
-        ))}
-        {MARKS.map((d, i) => (
-          <path key={i} className={`c3-s7-mark c3-s7-mark-${i}`} d={d} pathLength={1} strokeDasharray="1 1" stroke={N.cream} strokeWidth={13} strokeLinecap="round" fill="none" />
         ))}
       </g>
 
@@ -1577,7 +1610,7 @@ function SevenBoard() {
       </g>
 
       <g className="c3-seven-tile">
-        <NameTile x={SEVEN_TILE.x} y={SEVEN_TILE.y} word="seven" size={72} tutor="the name seven" />
+        <NameTile x={SEVEN_TILE.x} y={SEVEN_TILE.y} word="seven" size={84} tutor="the name seven" />
       </g>
     </g>
   )
@@ -1636,70 +1669,82 @@ function SymbolsBoard() {
 function NumberLineBoard({ uid }: { uid: string }) {
   return (
     <g className="c3-nl">
-      <clipPath id={`${uid}-nl`}>
-        <rect className="c3-nl-cliprect" x={120} y={NL.y - 90} width={0} height={220} />
-      </clipPath>
-      <g className="c3-sweep">
-        <Glow x={0} y={NL.y} r={150} color="warm" />
-      </g>
-      <g clipPath={`url(#${uid}-nl)`}>
-        <NumberLine x={NL.x} y={NL.y} from={0} to={10} unit={NL.unit} size={44} />
-      </g>
-      {/* columns: one more pebble each time */}
-      {Array.from({ length: 10 }, (_, i) => {
-        const k = i + 1
-        return (
-          <g key={k} data-tutor={`a column of ${k} pebbles`}>
-            {Array.from({ length: k }, (_, j) => (
-              <g key={j} className={`c3-col-${k}-${j}`}>
-                <Pebble x={nx(k)} y={colY(j)} s={1.15} seed={j + k} />
-              </g>
-            ))}
-          </g>
-        )
-      })}
-      {/* +1 over every hop */}
-      {Array.from({ length: 10 }, (_, i) => (
-        <g key={i} className={`c3-plus c3-plus-${i + 1}`}>
-          <Title x={nx(i) + 60} y={NL.y - 110} size={36} color={N.goldLight}>
-            +1
-          </Title>
+      <g className="c3-nl-cam">
+        <clipPath id={`${uid}-nl`}>
+          <rect className="c3-nl-cliprect" x={120} y={NL.y - 90} width={0} height={220} />
+        </clipPath>
+        <g className="c3-sweep">
+          <Glow x={0} y={NL.y} r={150} color="warm" />
         </g>
-      ))}
-      <g className="c3-hop" data-tutor="a pebble hopping along the number line">
-        <Pebble s={1.3} seed={3} />
-      </g>
-      {/* further is more */}
-      <g className="c3-gap" data-tutor="the stretch from three to seven">
-        <rect x={nx(3)} y={NL.y - 9} width={nx(7) - nx(3)} height={18} rx={9} fill={N.goldLight} filter="url(#fx-glow)" />
-      </g>
-      {[3, 4, 5, 6].map((k) => (
-        <path key={k} className="c3-gap-arc" d={`M${nx(k) + 8} ${NL.y - 18} Q${nx(k) + 60} ${NL.y - 64} ${nx(k + 1) - 8} ${NL.y - 18}`} pathLength={1} strokeDasharray="1 1" stroke={N.goldLight} strokeWidth={5} strokeLinecap="round" fill="none" />
-      ))}
-      {[3, 7].map((k) => (
-        <g key={k} className={`c3-ring-${k}`} data-tutor={k === 3 ? 'three on the number line' : 'seven on the number line'}>
-          <Glow x={nx(k)} y={NL.y + 42} r={90} color="warm" />
-          <circle cx={nx(k)} cy={NL.y + 42} r={40} fill="none" stroke={N.goldLight} strokeWidth={6} />
-        </g>
-      ))}
-      <g data-tutor="a row of seven pebbles">
-        {Array.from({ length: 7 }, (_, j) => (
-          <g key={j} className={`c3-row7-${j}`}>
-            {j >= 3 && (
-              <g className="c3-extra-glow">
-                <Glow x={nx(j + 1)} y={ROW7_Y} r={52} color="warm" />
-              </g>
-            )}
-            <Pebble x={nx(j + 1)} y={ROW7_Y} s={1.4} seed={j} />
+        {[3, 7].map((k) => (
+          <g key={k} className={`c3-ring-${k}`} data-tutor={k === 3 ? 'three on the number line' : 'seven on the number line'}>
+            <Glow x={nx(k)} y={NL.y + 42} r={90} color="warm" opacity={0.7} />
+            <circle cx={nx(k)} cy={NL.y + 42} r={40} fill={N.night0} fillOpacity={0.5} stroke={N.goldLight} strokeWidth={6} />
           </g>
         ))}
-      </g>
-      <g data-tutor="a row of three pebbles">
-        {Array.from({ length: 3 }, (_, j) => (
-          <g key={j} className={`c3-row3-${j}`}>
-            <Pebble x={nx(j + 1)} y={ROW3_Y} s={1.4} seed={j + 4} />
+        <g clipPath={`url(#${uid}-nl)`}>
+          <NumberLine x={NL.x} y={NL.y} from={0} to={10} unit={NL.unit} size={44} />
+        </g>
+        {/* columns: one more pebble each time */}
+        {Array.from({ length: 10 }, (_, i) => {
+          const k = i + 1
+          return (
+            <g key={k} data-tutor={`a column of ${k} pebbles`}>
+              {Array.from({ length: k }, (_, j) => (
+                <g key={j} className={`c3-col-${k}-${j}`}>
+                  <Pebble x={nx(k)} y={colY(j)} s={1.4} seed={j + k} />
+                </g>
+              ))}
+            </g>
+          )
+        })}
+        {/* +1 over every hop */}
+        {Array.from({ length: 10 }, (_, i) => (
+          <g key={i} className={`c3-plus c3-plus-${i + 1}`}>
+            <Title x={nx(i) + 60} y={NL.y - 110} size={36} color={N.goldLight}>
+              +1
+            </Title>
           </g>
         ))}
+        <g className="c3-hop" data-tutor="a pebble hopping along the number line">
+          <Pebble s={1.3} seed={3} />
+        </g>
+        {/* further is more */}
+        <g className="c3-gap" data-tutor="the stretch from three to seven">
+          <rect x={nx(3)} y={NL.y - 9} width={nx(7) - nx(3)} height={18} rx={9} fill={N.goldLight} filter="url(#fx-glow)" />
+        </g>
+        {[3, 4, 5, 6].map((k) => (
+          <path
+            key={k}
+            className="c3-gap-arc"
+            d={`M${nx(k) + 8} ${NL.y - 18} Q${nx(k) + 60} ${NL.y - 64} ${nx(k + 1) - 8} ${NL.y - 18}`}
+            pathLength={1}
+            strokeDasharray="1 1"
+            stroke={N.goldLight}
+            strokeWidth={5}
+            strokeLinecap="round"
+            fill="none"
+          />
+        ))}
+        <g data-tutor="a row of seven pebbles">
+          {Array.from({ length: 7 }, (_, j) => (
+            <g key={j} className={`c3-row7-${j}`}>
+              {j >= 3 && (
+                <g className="c3-extra-glow">
+                  <Glow x={nx(j + 1)} y={ROW7_Y} r={64} color="warm" />
+                </g>
+              )}
+              <Pebble x={nx(j + 1)} y={ROW7_Y} s={1.8} seed={j} />
+            </g>
+          ))}
+        </g>
+        <g data-tutor="a row of three pebbles">
+          {Array.from({ length: 3 }, (_, j) => (
+            <g key={j} className={`c3-row3-${j}`}>
+              <Pebble x={nx(j + 1)} y={ROW3_Y} s={1.8} seed={j + 4} />
+            </g>
+          ))}
+        </g>
       </g>
     </g>
   )

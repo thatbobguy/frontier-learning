@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, type CSSProperties, type ReactNode } from 'react'
-import { Glow, Motes, Stars, Vignette, rng } from '../../art2/fx'
+import { Bloom, Glow, Motes, rng, Stars, Vignette } from '../../art2/fx'
 import { FONT2, N } from '../../art2/palette'
 import { Title } from '../../art2/props'
 import { Moon } from '../../art2/scenery'
@@ -254,13 +254,13 @@ function BudShape({ big = false }: { big?: boolean }) {
 }
 
 /** One stroke of a branch with a thicker base; every path carries `cls` so it grows with dashoffset. */
-function BranchStroke({ b, w, cls }: { b: Bez; w: number; cls: string }) {
+function BranchStroke({ b, w, cls, flare = 1.5 }: { b: Bez; w: number; cls: string; flare?: number }) {
   const d = bezD(b)
   const base = bezD(bezHead(b, 0.4))
   const common = { fill: 'none', strokeLinecap: 'round' as const, pathLength: 1, strokeDasharray: '1 2' }
   return (
     <g>
-      <path className={cls} d={base} stroke={N.woodDark} strokeWidth={w * 1.5} {...common} />
+      <path className={cls} d={base} stroke={N.woodDark} strokeWidth={w * flare} {...common} />
       <path className={cls} d={d} stroke={N.woodDark} strokeWidth={w} {...common} />
       <path className={cls} d={d} stroke={N.wood} strokeWidth={w * 0.42} opacity={0.85} transform="translate(-1 -3)" {...common} />
       <path className={cls} d={d} stroke={N.woodLight} strokeWidth={w * 0.16} opacity={0.6} transform="translate(-2 -6)" {...common} />
@@ -271,7 +271,7 @@ function BranchStroke({ b, w, cls }: { b: Bez; w: number; cls: string }) {
 function SunIcon() {
   return (
     <g>
-      <Glow r={60} color="warm" opacity={0.45} />
+      <circle r={34} fill={N.sandLight} opacity={0.3} filter="url(#fx-soft)" />
       {Array.from({ length: 8 }, (_, i) => (
         <path key={i} d="M0 -25 V-33" stroke={N.sand} strokeWidth={6} strokeLinecap="round" transform={`rotate(${i * 45})`} />
       ))}
@@ -513,7 +513,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
     /* --- Start: a bare hilltop with the pebble; no tree yet, lanterns below the sky. --- */
     tl.set('.c6-trunk', { scaleY: 0, svgOrigin: `${PEB[0]} ${PEB[1] + 6}` }, 0)
     tl.set('.c6-roots', { scale: 0, svgOrigin: `${PEB[0]} ${PEB[1] + 6}` }, 0)
-    tl.set(['.c6-br', '.c6-link-line'], { strokeDashoffset: 1.05 }, 0)
+    tl.set(['.c6-br', '.c6-link-line'], { attr: { 'stroke-dashoffset': 1.05 } }, 0)
     tl.set(['.c6-leaf', '.c6-bud', '.c6-newleaf'], { scale: 0, svgOrigin: '0 0' }, 0)
     tl.set(['.c6-pat', '.c6-shp'], { scale: 0.3, opacity: 0, svgOrigin: '0 0' }, 0)
     tl.set('.c6-xscale', { scale: 0.3, opacity: 0, svgOrigin: '0 -40' }, 0)
@@ -555,7 +555,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
       tl.to(`.c6-oicon${i}`, { scale: 1, duration: 0.55, ease: 'back.out(3)' }, lit + 0.3)
     })
     // One sheep, one pebble: the matching line.
-    tl.to('.c6-link-line', { strokeDashoffset: 0, duration: 0.6, ease: 'power1.inOut' }, 2.6)
+    tl.to('.c6-link-line', { attr: { 'stroke-dashoffset': 0 }, duration: 0.6, ease: 'power1.inOut' }, 2.6)
     // Put together, then taken apart.
     tl.to('.c6-add-l', { x: 12, duration: 0.6, ease: 'power2.inOut' }, 7.5)
     tl.to('.c6-add-r', { x: -12, duration: 0.6, ease: 'power2.inOut' }, 7.5)
@@ -573,9 +573,9 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
     tl.to('.c6-pulse', { y: FORK[1] - PEB[1] + 20, duration: 1.4, ease: 'power2.out' }, b1 + 0.4)
     tl.to('.c6-pulse', { opacity: 0, duration: 0.4 }, b1 + 1.6)
     const growAt: Record<BranchId, number> = { A: 1.45, D: 1.55, B: 1.7, C: 1.8 }
-    ORDER.forEach((id) => tl.to(`.c6-br-${id}`, { strokeDashoffset: 0, duration: 1.0, ease: 'power2.out' }, b1 + growAt[id]))
-    tl.to('.c6-br-tA', { strokeDashoffset: 0, duration: 0.6, ease: 'power2.out' }, b1 + growAt.A + 0.5)
-    tl.to('.c6-br-tC', { strokeDashoffset: 0, duration: 0.6, ease: 'power2.out' }, b1 + growAt.C + 0.5)
+    ORDER.forEach((id) => tl.to(`.c6-br-${id}`, { attr: { 'stroke-dashoffset': 0 }, duration: 1.0, ease: 'power2.out' }, b1 + growAt[id]))
+    tl.to('.c6-br-tA', { attr: { 'stroke-dashoffset': 0 }, duration: 0.6, ease: 'power2.out' }, b1 + growAt.A + 0.5)
+    tl.to('.c6-br-tC', { attr: { 'stroke-dashoffset': 0 }, duration: 0.6, ease: 'power2.out' }, b1 + growAt.C + 0.5)
     tl.to('.c6-leaf-A', { scale: 1, duration: 0.4, ease: 'back.out(2.5)', stagger: 0.06 }, b1 + 2.1)
     tl.to('.c6-leaf-C', { scale: 1, duration: 0.4, ease: 'back.out(2.5)', stagger: 0.06 }, b1 + 2.3)
     tl.to('.c6-bud-D', { scale: 1, duration: 0.5, ease: 'back.out(2.5)' }, b1 + 2.45)
@@ -631,7 +631,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
     ;[1.9, 3.0, 4.2, 5.0].forEach((t, k) => tl.to(`.c6-shp${k}`, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2.2)' }, b3 + t))
 
     /* 4. The change branch grows up and up, to Solving for x. */
-    const b4 = b3 + 5.9
+    const b4 = b3 + 5.6
     tl.addLabel('b4', b4)
     tl.to('.c6-shp', { opacity: 0, duration: 0.6 }, b4)
     tl.to('.c6-budglow-D', { opacity: 0.25, duration: 0.8 }, b4)
@@ -640,11 +640,13 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
     fly(960, 326, 1.45, b4, 2.0)
     tl.to('.c6-litglow-C', { scale: 1.25, duration: 0.5, yoyo: true, repeat: 1, ease: 'sine.inOut', svgOrigin: '930 330' }, b4 + 1.0)
     const grow = { at: b4 + 2.3, dur: 3.0 }
-    tl.to('.c6-br-E', { strokeDashoffset: 0, duration: grow.dur, ease: 'sine.inOut' }, grow.at)
+    tl.to('.c6-br-E', { attr: { 'stroke-dashoffset': 0 }, duration: grow.dur, ease: 'sine.inOut' }, grow.at)
+    // The names below are left behind as we climb.
+    tl.to(['.c6-lbl-trunk', '.c6-lbl-A', '.c6-lbl-B', '.c6-lbl-C', '.c6-lbl-D'], { opacity: 0, duration: 0.8 }, grow.at + 0.4)
     // Each leaf pops as the growing tip passes it (inverse of sine.inOut).
     LEAVES.E.forEach((l, k) => {
       const p = Math.acos(1 - 2 * l.t) / Math.PI
-      tl.to(`.c6-leaf-E${k}`, { scale: 1, duration: 0.4, ease: 'back.out(2.5)' }, grow.at + grow.dur * p - 0.05)
+      tl.to(`.c6-leaf-E${k}`, { scale: 1, duration: 0.4, ease: 'back.out(2.5)' }, grow.at + grow.dur * p + 0.04)
     })
     camTo('cx', 960, grow.at, 3.2, 'sine.inOut')
     camTo('cy', -334, grow.at + 0.1, 3.3, 'sine.inOut')
@@ -705,8 +707,8 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
       {/* The sky, far away: it barely moves with the camera */}
       <g className="c6-far">
         <rect x={-1600} y={-1800} width={4800} height={3800} fill={`url(#${uid}-sky)`} />
-        <circle cx={300} cy={120} r={460} fill={N.sky} opacity={0.07} filter="url(#fx-blur-big)" />
-        <circle cx={1300} cy={-300} r={420} fill={N.sky} opacity={0.06} filter="url(#fx-blur-big)" />
+        <Bloom x={300} y={120} r={460} color="sky" opacity={0.07} />
+        <Bloom x={1300} y={-300} r={420} color="sky" opacity={0.06} />
         <g transform="translate(-700 -1400)">
           <Stars w={3000} h={2200} count={340} seed={66} />
         </g>
@@ -776,14 +778,14 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
                 ))}
                 {id === 'C' && (
                   <g data-tutor="the branch growing up to Solving for x">
-                    <BranchStroke b={EXT} w={16} cls="c6-br c6-br-E" />
+                    <BranchStroke b={EXT} w={17} flare={1.15} cls="c6-br c6-br-E" />
                     {LEAVES.E.map((l, k) => (
                       <Leaf key={k} l={l} cls={`c6-leaf c6-leaf-E c6-leaf-E${k}`} />
                     ))}
                     <g className="c6-xglow">
                       <g className="c6-throb">
                         <Glow x={XTIP[0]} y={XTIP[1] - 90} r={300} color="cool" opacity={0.9} />
-                        <Glow x={XTIP[0]} y={XTIP[1] - 30} r={110} color="warm" opacity={0.35} />
+                        <circle cx={XTIP[0]} cy={XTIP[1] - 34} r={46} fill={N.cream} opacity={0.18} filter="url(#fx-soft)" />
                       </g>
                     </g>
                     <g transform={`translate(${XTIP[0]} ${XTIP[1]}) rotate(${((bezAngle(EXT, 1) + 90) * 0.3).toFixed(1)}) scale(1.5)`}>
@@ -946,7 +948,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
           </g>
           <g className="c6-peb-warm">
             <g className="c6-throb">
-              <Glow x={PEB[0]} y={PEB[1] - 4} r={150} color="warm" opacity={0.75} />
+              <Glow x={PEB[0]} y={PEB[1] - 4} r={130} color="warm" opacity={0.6} />
             </g>
             <Glow x={PEB[0]} y={PEB[1]} r={64} color="warm" />
           </g>

@@ -139,17 +139,17 @@ const S43 = [1260, 1296, 1332]
 
 /** Hands for "why ten". */
 const HS = 1.55
-const HL: Pt = { x: 900, y: 960 }
-const HR: Pt = { x: 1260, y: 960 }
+const HL: Pt = { x: 900, y: 915 }
+const HR: Pt = { x: 1260, y: 915 }
 const HC: Pt = { x: 1080, y: 360 }
 
 /** The number line on the chalkboard (cue 7). */
-const NL = { x0: 210, unit: 27, y: 540 }
+const NL = { x0: 210, unit: 27, y: 494 }
 const nx = (v: number) => NL.x0 + v * NL.unit
-const B_BOARD: Pt[] = [5, 15, 25].map((v) => ({ x: nx(v), y: 372 }))
+const B_BOARD: Pt[] = [5, 15, 25].map((v) => ({ x: nx(v), y: 326 }))
 const LS = 0.72
-const L_BOARD: Pt[] = [0, 1, 2, 3].map((j) => ({ x: nx(30.5 + j), y: 492 }))
-const PN_BOARD = { x: nx(34), y: 250, s: 0.667 }
+const L_BOARD: Pt[] = [0, 1, 2, 3].map((j) => ({ x: nx(30.5 + j), y: 446 }))
+const PN_BOARD = { x: nx(34), y: 226, s: 0.667 }
 
 /* Finger geometry, copied from the kit's Hand so lights land on the fingertips. */
 const FING: [number, number, number, number][] = [
@@ -556,7 +556,7 @@ export function Ch4Bundles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       bounce(`.c4-bun-${k}`, at + 0.12)
     }
     const gather = (k: number, start: number, gap: number, dur: number) => {
-      tl.to(`.c4-cnt-${k}`, { opacity: 1, duration: 0.2 }, start)
+      tl.to(`.c4-cnt-${k}`, { opacity: 1, duration: 0.12 }, start + dur * 0.8)
       for (let n = 0; n < 10; n++) {
         const t = start + n * gap
         const f = inBundle(B_HOME[k], n, 1.6)
@@ -855,7 +855,8 @@ function Sticks34() {
       {B_HOME.map((b, k) => (
         <g key={k} className={`c4-bun c4-bun-${k}`} data-tutor={`bundle of ten ${k + 1}`}>
           <g className={`c4-bglow c4-bglow-${k}`}>
-            <Glow x={b.x} y={b.y - 80} r={130} color="violet" />
+            <Glow x={b.x} y={b.y - 80} r={140} color="violet" />
+            <Glow x={b.x} y={b.y - 80} r={100} color="violet" />
           </g>
           <g className={`c4-bsh-${k}`}>
             <ellipse cy={3} rx={50} ry={8} fill={N.shadow} opacity={0.28} />
@@ -957,7 +958,8 @@ function Group43() {
         </g>
       </g>
       <g className="c4-x43">
-        <Glow x={B43[3]} y={CY - 80} r={150} color="violet" />
+        <Glow x={B43[3]} y={CY - 80} r={170} color="violet" />
+        <Glow x={B43[3]} y={CY - 80} r={120} color="violet" />
       </g>
       {B43.map((x, k) => (
         <g key={k} className={`c4-b43 c4-b43-${k}`}>
@@ -969,6 +971,9 @@ function Group43() {
           <Stick x={x} y={CY} tutor="43: a loose stick" />
         </g>
       ))}
+      <g className="c4-x43">
+        <rect x={B43[3] - 58} y={CY - 168} width={116} height={186} rx={26} fill="none" stroke={N.violet} strokeWidth={8} filter="url(#fx-glow)" />
+      </g>
       <g className="c4-u4" data-tutor="the 4 in 43 (bundles of ten)">
         <PlaceNumber value={43} x={PN43.x} y={PN43.y} size={PN34.size} />
       </g>
@@ -1600,7 +1605,7 @@ function MatBundle({ at, from, counted, away, instant, handlers, active }: { at:
         <g ref={hop}>
           {counted && <Glow y={-70} r={80} color="violet" />}
           <g {...drag} style={{ ...drag.style, cursor: active ? 'grab' : 'default' }} data-tutor="a bundle of ten on the counter">
-            <rect x={-44} y={-140} width={88} height={150} fill="transparent" />
+            <rect x={-48} y={-140} width={96} height={150} fill="transparent" />
             <Bundle s={PS} />
           </g>
         </g>
@@ -1848,7 +1853,7 @@ function ItemDrop({ kind, sold }: { kind: number; sold: boolean }) {
             <path d="M14 -104 H40 Q58 -80 50 -16 Q48 0 0 0 Q36 -8 34 -40 Q32 -80 14 -104 Z" fill={N.sandDark} opacity={0.55} />
             <rect x={-44} y={-126} width={88} height={26} rx={10} fill={N.wood} />
             <rect x={-30} y={-78} width={60} height={42} rx={10} fill={N.cream} />
-            <path d="M-14 -58 q14 -14 28 0" stroke={N.woodDark} strokeWidth={5} fill="none" strokeLinecap="round" />
+            <path d="M0 -72 Q11 -58 11 -51 A11 11 0 0 1 -11 -51 Q-11 -58 0 -72 Z" fill={N.wood} />
             <ellipse cx={-30} cy={-70} rx={8} ry={20} fill={N.white} opacity={0.35} />
           </g>
         )}

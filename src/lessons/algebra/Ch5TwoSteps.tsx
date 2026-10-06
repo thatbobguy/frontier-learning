@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Backdrop, Glow, Motes, Stars, Vignette } from '../../art2/fx'
+import { Backdrop, Bloom, Glow, Motes, Stars, Vignette } from '../../art2/fx'
 import { FONT2, N } from '../../art2/palette'
 import { Equation, SCALE, Sack, Scale, Title, Weight, termWidth, terms, tiltFor, tiltScale, type Term } from '../../art2/props'
 import { useBeatTimeline } from '../../engine/useBeatTimeline'
@@ -419,7 +419,7 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
       tl.to(sel, { opacity: 0, scale: 1.8, duration: 0.25, ease: 'power1.out' }, at + 0.5)
     }
     const draw = (cls: string, at: number, dur = 0.6) => {
-      tl.fromTo(`${cls}-line`, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: 'power2.inOut' }, at)
+      tl.fromTo(`${cls}-line`, { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: dur, ease: 'power2.inOut' }, at)
       tl.fromTo(`${cls}-head`, { opacity: 0 }, { opacity: 1, duration: 0.2 }, at + dur - 0.15)
     }
     const flash = (cls: string, at: number) => tl.fromTo(`${cls}-glow`, { opacity: 0 }, { opacity: 0.35, duration: 0.2, yoyo: true, repeat: 1, ease: 'sine.inOut', immediateRender: false }, at)
@@ -434,7 +434,7 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
     tl.set(['.ch5-foot', '.ch5-sock', '.ch5-shoe', '.ch5-mrow', '.ch5-xglow', '.ch5-endglow', '.ch5-tv8', '.ch5-tv9', '.ch5-ghost'], { opacity: 0 })
     tl.set('.ch5-foot', { x: FOOT_AT[0] })
     tl.set(['.ch5-arr-f1-head', '.ch5-arr-f2-head', '.ch5-arr-b1-head', '.ch5-arr-b2-head', '.ch5-floor-f-head', '.ch5-floor-b-head'], { opacity: 0 })
-    tl.set(['.ch5-arr-f1-line', '.ch5-arr-f2-line', '.ch5-arr-b1-line', '.ch5-arr-b2-line', '.ch5-floor-f-line', '.ch5-floor-b-line'], { strokeDashoffset: 1 })
+    tl.set(['.ch5-arr-f1-line', '.ch5-arr-f2-line', '.ch5-arr-b1-line', '.ch5-arr-b2-line', '.ch5-floor-f-line', '.ch5-floor-b-line'], { attr: { 'stroke-dashoffset': 1 } })
     tl.set(['.ch5-mA-b', '.ch5-mB-b'], { scaleY: 0, transformOrigin: '50% 50%' })
     tl.set('.ch5-tok', { x: STOP[0], y: TOKEN_Y })
     tl.set(['.ch5-mA-glow', '.ch5-mB-glow'], { opacity: 0.4 })
@@ -485,7 +485,7 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
     tl.fromTo('.ch5-live', { scale: 1, svgOrigin: `${EQ.x} ${EQ.y}` }, { scale: 1.1, duration: 0.35, yoyo: true, repeat: 1, ease: 'sine.inOut' }, b2 + 0.3)
     tl.to('.ch5-eqglow', { opacity: 0.55, duration: 0.8 }, b2 + 1.9)
     fadeIn('.ch5-halo-s', b2 + 2.5, 0.6)
-    tl.fromTo('.ch5-prev', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.8, ease: 'power2.inOut' }, b2 + 3.6)
+    tl.fromTo('.ch5-prev', { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.8, ease: 'power2.inOut' }, b2 + 3.6)
     fadeIn('.ch5-prevwrap', b2 + 3.6, 0.3)
     fadeIn('.ch5-halves', b2 + 3.9, 0.6)
 
@@ -623,7 +623,7 @@ export function Ch5TwoSteps({ cueIndex, playing, onAnimDone, onPlayDone, say, em
       <g className="ch5-sky">
         <Backdrop kind="deep" />
         <Stars h={1200} count={130} seed={55} />
-        <circle cx={1250} cy={230} r={300} fill={N.violet} opacity={0.1} filter="url(#fx-blur-big)" />
+        <Bloom x={1250} y={230} r={300} color="violet" opacity={0.1} />
       </g>
 
       {/* The balance scale on its stage */}

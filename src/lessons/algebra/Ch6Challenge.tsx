@@ -1,6 +1,6 @@
 import gsap from 'gsap'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Glow, Motes, Stars, Vignette, rng, type GlowColor } from '../../art2/fx'
+import { Bloom, Glow, Motes, rng, Stars, type GlowColor, Vignette } from '../../art2/fx'
 import { N } from '../../art2/palette'
 import { Equation, terms } from '../../art2/props'
 import { Lantern, Moon, Skyline } from '../../art2/scenery'
@@ -361,7 +361,7 @@ export function Ch6Challenge({ cueIndex, playing, onAnimDone, onPlayDone, say, e
     FIREWORKS.forEach((f, i) => {
       const at = b5 + f.at
       tl.set(`.ch6-fwt-${i}`, { opacity: 1 }, at)
-      tl.fromTo(`.ch6-fwt-${i}`, { strokeDashoffset: 0.18 }, { strokeDashoffset: -0.95, duration: 0.6, ease: 'power2.out', ...later }, at)
+      tl.fromTo(`.ch6-fwt-${i}`, { attr: { 'stroke-dashoffset': 0.18 } }, { attr: { 'stroke-dashoffset': -0.95 }, duration: 0.6, ease: 'power2.out', ...later }, at)
       tl.to(`.ch6-fwt-${i}`, { opacity: 0, duration: 0.15 }, at + 0.55)
       const pop = at + 0.6
       tl.fromTo(`.ch6-fwf-${i}`, { opacity: 0 }, { opacity: 1, duration: 0.12, yoyo: true, repeat: 1, repeatDelay: 0.1, ease: 'power1.out', ...later }, pop)
@@ -590,9 +590,9 @@ export function Ch6Challenge({ cueIndex, playing, onAnimDone, onPlayDone, say, e
       {/* Sky: barely moves, so the market slides across it */}
       <g className="ch6-L ch6-L-sky">
         <rect x={-500} y={-700} width={3400} height={2000} fill="url(#fx-sky-night)" />
-        <circle cx={300} cy={60} r={520} fill={N.violet} opacity={0.12} filter="url(#fx-blur-big)" />
-        <circle cx={1700} cy={-100} r={600} fill={N.sky} opacity={0.08} filter="url(#fx-blur-big)" />
-        <circle cx={1000} cy={-420} r={500} fill={N.violetDark} opacity={0.14} filter="url(#fx-blur-big)" />
+        <Bloom x={300} y={60} r={520} color="violet" opacity={0.12} />
+        <Bloom x={1700} y={-100} r={600} color="sky" opacity={0.08} />
+        <Bloom x={1000} y={-420} r={500} color="violetDark" opacity={0.14} />
         <g transform="translate(-400 -660)">
           <Stars w={3200} h={1280} count={300} seed={61} />
         </g>

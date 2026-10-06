@@ -208,7 +208,7 @@ type JobKind = 'baker' | 'builder' | 'astronaut' | 'gamer'
 const JOB_R = 108
 const JOBS: { kind: JobKind; x: number; y: number; links: QId[]; uses: string }[] = [
   { kind: 'baker', x: 800, y: 118, links: ['howMany', 'change'], uses: 'counts cookies, and bakes more' },
-  { kind: 'builder', x: 800, y: 790, links: ['next', 'shape'], uses: 'lays bricks in a pattern and measures walls' },
+  { kind: 'builder', x: 800, y: 780, links: ['next', 'shape'], uses: 'lays bricks in a pattern and measures walls' },
   { kind: 'astronaut', x: 160, y: 465, links: ['howMany', 'next'], uses: 'counts down, and knows where the planets go next' },
   { kind: 'gamer', x: 1440, y: 465, links: ['change', 'shape'], uses: 'makes points go up and down, and draws shapes' },
 ]
@@ -306,6 +306,8 @@ export function Ch2Questions(props: ChapterProps) {
     tl.set('.vl-dusk', { opacity: 1 }, 0)
     tl.set('.vl-land-night', { opacity: 0.45 }, 0)
     tl.set('.vl-night', { opacity: 0 }, 0)
+    tl.set('.vl-moon', { opacity: 1 }, 0)
+    tl.set('.vl-night > circle', { opacity: 0.12 }, 0)
     tl.set('.vl-sun', { y: 330 }, 0)
     tl.set('.vl-clouds', { x: 0 }, 0)
     tl.set('.q2-hi', { opacity: 0 }, 0)
@@ -354,7 +356,7 @@ export function Ch2Questions(props: ChapterProps) {
     // the jobs
     JOBS.forEach((j, i) => {
       tl.set(`.q2-job-${i}`, { scale: 0, svgOrigin: `${j.x} ${j.y}` }, 0)
-      j.links.forEach((_, k) => tl.set(`.q2-link-${i}-${k}`, { strokeDashoffset: 1, opacity: 1 }, 0))
+      j.links.forEach((_, k) => tl.set(`.q2-link-${i}-${k}`, { attr: { 'stroke-dashoffset': 1 }, opacity: 1 }, 0))
     })
 
     /* ---------- 0. The time-lapse: huts, a village, a market town, and questions ---------- */
@@ -395,6 +397,7 @@ export function Ch2Questions(props: ChapterProps) {
     tl.to('.q2-hi', { opacity: 1, duration: 1.2 }, b1 + 0.4)
     tl.to('.q2-world', { y: RISE, duration: 2.6, ease: 'power2.inOut' }, b1 + 0.15)
     tl.to('.q2-sky', { y: 0, duration: 2.6, ease: 'power2.inOut' }, b1 + 0.15)
+    tl.to(['.vl-moon', '.vl-night > circle'], { opacity: 0, duration: 0.5 }, b1 + 2.2)
     // four constellation rings take shape in the sky as we arrive
     IDS.forEach((id, i) => tl.to(`.q2-ring-${id}`, { scale: 1, opacity: 1, duration: 0.9, ease: 'power2.out' }, b1 + 1.4 + i * 0.15))
     // the question marks drift up as the town sinks away, then fly to their big question
@@ -501,7 +504,7 @@ export function Ch2Questions(props: ChapterProps) {
       tl.to(`.q2-job-${i}`, { scale: 1, duration: 0.5, ease: 'back.out(2)' }, b6 + jobAt[i])
       j.links.forEach((id, k) => {
         const at = b6 + Math.max(1.2, jobAt[i] + 0.4) + k * 0.15
-        tl.to(`.q2-link-${i}-${k}`, { strokeDashoffset: 0, duration: 0.5, ease: 'power1.inOut' }, at)
+        tl.to(`.q2-link-${i}-${k}`, { attr: { 'stroke-dashoffset': 0 }, duration: 0.5, ease: 'power1.inOut' }, at)
         tl.to(`.q2-tpulse-${id}`, { scale: 1.06, duration: 0.16, ease: 'power2.out', yoyo: true, repeat: 1 }, at + 0.45)
       })
     })
@@ -540,6 +543,14 @@ export function Ch2Questions(props: ChapterProps) {
           <stop offset="0.6" stopColor={N.space} />
           <stop offset="1" stopColor={N.space} />
         </linearGradient>
+        <radialGradient id="q2-bloom-v">
+          <stop offset="0" stopColor={N.dusk} stopOpacity="0.45" />
+          <stop offset="1" stopColor={N.dusk} stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="q2-bloom-s">
+          <stop offset="0" stopColor={N.sky} stopOpacity="0.14" />
+          <stop offset="1" stopColor={N.sky} stopOpacity="0" />
+        </radialGradient>
         <radialGradient id="q2-plate" cx="0.5" cy="0.25" r="0.8">
           <stop offset="0" stopColor={N.night3} />
           <stop offset="0.7" stopColor={N.night1} />
@@ -550,13 +561,14 @@ export function Ch2Questions(props: ChapterProps) {
       {/* The valley and the town, with the night sky above them; the camera rises through it */}
       <g className="q2-world" pointerEvents="none">
         <g className="q2-drift">
-          <rect x={-500} y={-2000} width={2600} height={1710} fill="url(#q2-high)" />
           <Valley time="dusk">
             <Town tutor={cueIndex === 0} />
           </Valley>
+          {/* the sky above the valley; it overlaps the valley's own sky a little so no seam shows */}
+          <rect x={-500} y={-2000} width={2600} height={1705} fill="url(#q2-high)" />
           <g className="q2-hi">
-            <circle cx={300} cy={-700} r={460} fill={N.violet} opacity={0.14} filter="url(#fx-blur-big)" />
-            <circle cx={1350} cy={-420} r={420} fill={N.sky} opacity={0.1} filter="url(#fx-blur-big)" />
+            <circle cx={300} cy={-700} r={620} fill="url(#q2-bloom-v)" />
+            <circle cx={1350} cy={-420} r={560} fill="url(#q2-bloom-s)" />
             <Stars w={1700} h={1300} y={-1300} count={170} seed={23} />
           </g>
         </g>
@@ -859,7 +871,7 @@ function SortGame({ cueIndex, onPlayDone, say, emit, reportState, setHints, scop
             <g key={c.id} transform={`translate(${s.x} ${s.y})`} data-tutor={`card on ${Q[id].name}: ${c.short}`} pointerEvents="none">
               <Glow r={84} color="teal" opacity={0.55} />
               <g transform={`scale(${CHIP_S})`}>
-                <CardFace card={c} edge={N.teal} lifted={false} />
+                <CardFace card={c} edge={N.teal} lifted={false} chip />
               </g>
             </g>
           )
@@ -875,18 +887,9 @@ function SortGame({ cueIndex, onPlayDone, say, emit, reportState, setHints, scop
           {Array.from({ length: Math.min(left, 2) }, (_, k) => {
             const o = (Math.min(left, 2) - k) * 9
             return (
-              <rect
-                key={k}
-                x={DECK.x - CARD_W / 2 + o}
-                y={DECK.y - CARD_H / 2 + o}
-                width={CARD_W}
-                height={CARD_H}
-                rx={26}
-                fill={N.sandLight}
-                stroke={N.sandDark}
-                strokeWidth={4}
-                pointerEvents="none"
-              />
+              <g key={k} transform={`translate(${DECK.x + o} ${DECK.y + o})`} pointerEvents="none">
+                <CardBack />
+              </g>
             )
           })}
           <g ref={outer} {...drag} className={myTurn ? 'hot' : undefined} data-tutor="the puzzle card">
@@ -903,12 +906,36 @@ function SortGame({ cueIndex, onPlayDone, say, emit, reportState, setHints, scop
   )
 }
 
-function CardFace({ card, edge, lifted }: { card: PuzzleCard; edge: string; lifted: boolean }) {
+/** The back of a card still in the pile: another puzzle waiting. */
+function CardBack() {
+  return (
+    <g>
+      <rect x={-CARD_W / 2} y={-CARD_H / 2 + 8} width={CARD_W} height={CARD_H} rx={26} fill={N.shadow} opacity={0.25} />
+      <rect x={-CARD_W / 2} y={-CARD_H / 2} width={CARD_W} height={CARD_H} rx={26} fill={N.sandLight} stroke={N.sandDark} strokeWidth={5} />
+      <rect x={-CARD_W / 2 + 16} y={-CARD_H / 2 + 16} width={CARD_W - 32} height={CARD_H - 32} rx={16} fill="none" stroke={N.sand} strokeWidth={4} strokeDasharray="2 12" strokeLinecap="round" />
+      <circle r={54} fill={N.cream} />
+      <text y={26} textAnchor="middle" fontFamily={FONT2} fontWeight={800} fontSize={76} fill={N.pink}>
+        ?
+      </text>
+    </g>
+  )
+}
+
+function CardFace({ card, edge, lifted, chip = false }: { card: PuzzleCard; edge: string; lifted: boolean; chip?: boolean }) {
   const n = card.lines.length
+  if (chip) {
+    // A sorted card, shrunk onto its question: just the picture, framed in teal.
+    return (
+      <g>
+        <rect x={-CARD_W / 2} y={-CARD_H / 2} width={CARD_W} height={CARD_H} rx={26} fill={N.white} stroke={edge} strokeWidth={14} />
+        <g transform="scale(1.08)">{card.Pic()}</g>
+      </g>
+    )
+  }
   return (
     <g>
       <rect x={-CARD_W / 2} y={-CARD_H / 2 + (lifted ? 18 : 8)} width={CARD_W} height={CARD_H} rx={26} fill={N.shadow} opacity={lifted ? 0.35 : 0.25} />
-      <rect x={-CARD_W / 2} y={-CARD_H / 2} width={CARD_W} height={CARD_H} rx={26} fill={N.cream} stroke={edge} strokeWidth={edge === N.teal ? 12 : 5} />
+      <rect x={-CARD_W / 2} y={-CARD_H / 2} width={CARD_W} height={CARD_H} rx={26} fill={N.cream} stroke={edge} strokeWidth={5} />
       <rect x={-130} y={-104} width={260} height={112} rx={18} fill={N.white} />
       <g transform="translate(0 -48)">{card.Pic()}</g>
       {card.lines.map((line, k) => (
@@ -1559,7 +1586,7 @@ function JobScene({ kind }: { kind: JobKind }) {
             <rect key={`${row}-${k}`} x={-110 + k * 40 + (row % 2) * 20} y={10 + row * 22} width={38} height={20} rx={3} fill={(row + k) % 2 ? N.wood : N.woodLight} />
           )),
         )}
-        <Person x={0} y={98} s={0.5} robe={N.sand} robeLight={N.sandLight} robeDark={N.sandDark} skin={N.skin2} skinDark={N.skin2Dark} head="cap" headColor={N.white} headDark={N.mist} pose="hold" holding={<Ruler />} />
+        <Person x={0} y={84} s={0.5} robe={N.sand} robeLight={N.sandLight} robeDark={N.sandDark} skin={N.skin2} skinDark={N.skin2Dark} head="cap" headColor={N.white} headDark={N.mist} pose="hold" holding={<Ruler />} />
       </g>
     )
   }

@@ -556,7 +556,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       tl.set(['.c2-thoughts', '.c2-dark', '.c2-mach', '.c2-bk', '.c2-year', '.c2-map', '.c2-word', '.c2-link', '.c2-spot', '.c2-deskglow', '.c2-hall-dim'], { opacity: 0 })
       tl.set('.c2-bub', { scale: 0.2, opacity: 0, svgOrigin: '0 0' })
       tl.set('.c2-dot', { scale: 0, transformOrigin: '50% 50%' })
-      tl.set('.c2-link-path', { strokeDashoffset: 1 })
+      tl.set('.c2-link-path', { attr: { 'stroke-dashoffset': 1 } })
       // the machine
       tl.set('.c2-mach-in', { scale: 0.2, svgOrigin: `${HEAD.x} ${HEAD.y}` })
       tl.set('.c2-in8', { y: -240, opacity: 0, scale: 1, svgOrigin: '0 0' })
@@ -565,7 +565,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       tl.set('.c2-out8', { y: 120, scale: 0.5, opacity: 0, svgOrigin: '0 0' })
       tl.set('.c2-ring8', { opacity: 0 })
       tl.set('.c2-qf', { scale: 0, opacity: 0, svgOrigin: '0 -38' })
-      tl.set(['.c2-arrow-f', '.c2-arrow-b'], { strokeDashoffset: 1 })
+      tl.set(['.c2-arrow-f', '.c2-arrow-b'], { attr: { 'stroke-dashoffset': 1 } })
       tl.set(['.c2-arrow-fh', '.c2-arrow-fl', '.c2-arrow-bh', '.c2-arrow-bl'], { opacity: 0 })
       tl.set('.c2-op-minus', { opacity: 0 })
       tl.set('.c2-op-plus', { opacity: 1 })
@@ -584,7 +584,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       tl.set('.c2-restoring', { opacity: 0, y: 16 })
       // the map
       tl.set('.c2-map-zoom', { scale: 3, svgOrigin: `${BAGHDAD.x} ${BAGHDAD.y}` })
-      tl.set('.c2-trail', { strokeDashoffset: 1 })
+      tl.set('.c2-trail', { attr: { 'stroke-dashoffset': 1 } })
       tl.set('.c2-dest', { scale: 0, opacity: 0, svgOrigin: '0 0' })
       tl.set('.c2-scrim', { opacity: 0 })
       tl.set('.c2-wst', { opacity: 0 })
@@ -621,7 +621,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       tl.to('.c2-dot', { scale: 1, duration: 0.3, stagger: 0.07, ease: 'back.out(3)' }, b1 + 3.0)
       BUBBLES.forEach((_, i) => tl.to(`.c2-bub${i}`, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.7)' }, b1 + 3.5 + i * 0.6))
       tl.to('.c2-link', { opacity: 1, duration: 0.2 }, b1 + 6.5)
-      tl.to('.c2-link-path', { strokeDashoffset: 0, duration: 1.0, ease: 'power1.inOut' }, b1 + 6.5)
+      tl.to('.c2-link-path', { attr: { 'stroke-dashoffset': 0 }, duration: 1.0, ease: 'power1.inOut' }, b1 + 6.5)
       tl.to('.c2-vq', { scale: 1.3, duration: 0.25, yoyo: true, repeat: 3, ease: 'sine.inOut', transformOrigin: '50% 50%' }, b1 + 6.6)
 
       // 2. Into his thoughts: the number machine runs forwards, 8 in and 11 out.
@@ -633,7 +633,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       tl.to('.c2-dark', { opacity: 0.88, duration: 1.0, ease: 'power1.in' }, b2 + 0.4)
       tl.to('.c2-mach', { opacity: 1, duration: 0.5 }, b2 + 0.7)
       tl.to('.c2-mach-in', { scale: 1, duration: 1.2, ease: 'power3.out' }, b2 + 0.7)
-      tl.to('.c2-arrow-f', { strokeDashoffset: 0, duration: 0.8, ease: 'power1.inOut' }, b2 + 1.2)
+      tl.to('.c2-arrow-f', { attr: { 'stroke-dashoffset': 0 }, duration: 0.8, ease: 'power1.inOut' }, b2 + 1.2)
       tl.to(['.c2-arrow-fh', '.c2-arrow-fl'], { opacity: 1, duration: 0.3 }, b2 + 1.8)
       tl.to('.c2-in8', { y: 0, opacity: 1, duration: 0.6, ease: 'bounce.out' }, b2 + 2.0)
       tl.to('.c2-in8', { y: 150, scale: 0.7, duration: 0.45, ease: 'power2.in' }, b2 + 3.0)
@@ -658,7 +658,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       tl.set('.c2-out8', { opacity: 1, y: 0, scale: 1 }, after)
       tl.set('.c2-op-plus', { opacity: 0 }, after)
       tl.set('.c2-op-minus', { opacity: 1 }, after)
-      tl.set('.c2-arrow-b', { strokeDashoffset: 0 }, after)
+      tl.set('.c2-arrow-b', { attr: { 'stroke-dashoffset': 0 } }, after)
       tl.set(['.c2-arrow-bh', '.c2-arrow-bl'], { opacity: 1 }, after)
       tl.to('.c2-mach-in', { scale: 0.2, duration: 0.9, ease: 'power3.in' }, b4 + 0.2)
       tl.to('.c2-mach', { opacity: 0, duration: 0.5 }, b4 + 0.6)
@@ -695,7 +695,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
       tl.to('.c2-map-zoom', { scale: 1, duration: 1.6, ease: 'power3.out' }, b5 + 0.3)
       tl.to(W, { x: WORD_AT.baghdad.x, y: WORD_AT.baghdad.y, s: WORD_AT.baghdad.s, duration: 1.2, ease: 'power2.inOut', onUpdate: applyWord }, b5 + 0.1)
       TRAILS.forEach((_, i) => {
-        tl.to(`.c2-trail${i}`, { strokeDashoffset: 0, duration: 1.0, ease: 'power1.inOut' }, b5 + 1.0 + i * 0.2)
+        tl.to(`.c2-trail${i}`, { attr: { 'stroke-dashoffset': 0 }, duration: 1.0, ease: 'power1.inOut' }, b5 + 1.0 + i * 0.2)
         tl.to(`.c2-dest${i}`, { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(3)' }, b5 + 1.9 + i * 0.2)
       })
       const T = { t: 0 }
@@ -755,7 +755,7 @@ export function Ch2Wisdom({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     tl.set(q('.c2-op-plus'), { opacity: 0 }, 0.36)
     tl.set(q('.c2-op-minus'), { opacity: 1 }, 0.36)
     tl.to(q('.c2-screen'), { scaleY: 1, duration: 0.3, ease: 'back.out(3)' }, 0.36)
-    tl.to(q('.c2-arrow-b'), { strokeDashoffset: 0, duration: 0.8, ease: 'power1.inOut' }, 0.45)
+    tl.to(q('.c2-arrow-b'), { attr: { 'stroke-dashoffset': 0 }, duration: 0.8, ease: 'power1.inOut' }, 0.45)
     tl.to(q('.c2-arrow-bh, .c2-arrow-bl'), { opacity: 1, duration: 0.3 }, 1.05)
     tl.to(G, { a: G.a - 540, duration: 1.7, ease: 'power1.inOut', onUpdate: applyGears }, 0.4)
     tl.to(q('.c2-out11'), { x: -96, scale: 0.35, opacity: 0, duration: 0.65, ease: 'power2.in' }, 0.5)

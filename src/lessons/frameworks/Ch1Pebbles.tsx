@@ -1,6 +1,6 @@
 import gsap from 'gsap'
-import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
-import { Glow, Motes, Stars, Vignette } from '../../art2/fx'
+import { useCallback, useEffect, useId, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
+import { Bloom, Glow, Motes, Stars, Vignette } from '../../art2/fx'
 import { FONT2, N } from '../../art2/palette'
 import { Title } from '../../art2/props'
 import { useBeatTimeline } from '../../engine/useBeatTimeline'
@@ -104,10 +104,10 @@ const MILL = [
 const FACE_HOME = HOME.map((h) => (h.x > GATE_IN.x ? -1 : 1))
 
 /** The two answers, as thought bubbles over the pen, and the question between them. */
-const B_ALL: Pt = { x: 915, y: 470 }
-const B_MISS: Pt = { x: 1305, y: 470 }
-const B_R = 100
-const Q_AT: Pt = { x: 1110, y: 512 }
+const B_ALL: Pt = { x: 925, y: 502 }
+const B_MISS: Pt = { x: 1295, y: 502 }
+const B_R = 88
+const Q_AT: Pt = { x: 1110, y: 530 }
 
 /** The night sky high above the valley, where the big idea is drawn (stage coordinates inside it). */
 const SKY_Y = -1010
@@ -126,9 +126,10 @@ const F = {
   drift: cam(830, 462, 1.05),
   ama: cam(1160, 690, 1.75),
   meadow: cam(590, 668, 1.6),
-  threads: cam(700, 618, 1.35),
+  threads: cam(745, 605, 1.3),
   gate: cam(1150, 738, 2.1),
-  play: cam(1130, 650, 1.5),
+  play: cam(1125, 640, 1.45),
+  watch: cam(1150, 716, 1.9),
   lost: cam(360, 540, 2),
   sky: cam(800, SKY_Y + 450, 1),
   meet: cam(760, 610, 1.3),
@@ -256,7 +257,7 @@ function CoralGlow({ x, y, r }: Pt & { r: number }) {
 
 /** A curved link between two points, drawn by animating its dash (pathLength 1). */
 function arc(a: Pt, b: Pt, lift = 60) {
-  const mx = (a.x + b.x) / 2
+  const mx = (a.x + b.x) / 2 + 30
   const my = Math.min(a.y, b.y) - lift
   return `M${a.x} ${a.y} Q${mx} ${my} ${b.x} ${b.y}`
 }
@@ -275,9 +276,13 @@ function Flash({ className, a, b, lift = 60 }: { className: string; a: Pt; b: Pt
 /* ---- Ama's thought bubbles: the two answers ---- */
 
 function NightDisc({ children }: { children: ReactNode }) {
+  const id = `c1-disc-${useId().replace(/:/g, '')}`
   return (
-    <g>
-      <circle r={B_R - 8} fill={N.night1} />
+    <g clipPath={`url(#${id})`}>
+      <clipPath id={id}>
+        <circle r={B_R - 6} />
+      </clipPath>
+      <circle r={B_R - 6} fill={N.night1} />
       <circle cx={-46} cy={-46} r={11} fill={N.cream} opacity={0.9} />
       {[
         [30, -60],
@@ -322,9 +327,9 @@ function ThoughtTrail() {
   return (
     <g pointerEvents="none">
       {[
-        [AMA.x - 38, 664, 7],
-        [AMA.x - 92, 650, 9],
-        [AMA.x - 156, 642, 11],
+        [AMA.x - 46, 684, 6],
+        [AMA.x - 94, 672, 8],
+        [AMA.x - 146, 652, 10],
       ].map(([tx, ty, r], i) => (
         <circle key={i} cx={tx} cy={ty} r={r} fill={N.cream} opacity={0.9} />
       ))}
@@ -373,6 +378,17 @@ function Mark({ x, y, tilt = 0 }: Pt & { tilt?: number }) {
   )
 }
 
+/** A teal link in the chart: a bright line over a soft glow, drawn by its dash. */
+function ChartLink({ className, x, y1, y2 }: { className: string; x: number; y1: number; y2: number }) {
+  const d = `M${x} ${y1} V${y2}`
+  return (
+    <g className={className}>
+      <path d={d} pathLength={1} strokeDasharray="1 1" stroke={N.teal} strokeWidth={22} strokeLinecap="round" opacity={0.25} />
+      <path d={d} pathLength={1} strokeDasharray="1 1" stroke={N.tealLight} strokeWidth={8} strokeLinecap="round" />
+    </g>
+  )
+}
+
 function MatchingChart() {
   return (
     <g className="c1-match" data-tutor="the matching chart">
@@ -388,11 +404,11 @@ function MatchingChart() {
           <g className={`c1-ms c1-ms-${k}`}>
             <Sheep x={x} y={392} s={0.72} flip={k % 2 === 1} />
           </g>
-          <path className={`c1-mla c1-mla-${k}`} d={`M${x} 412 V474`} pathLength={1} strokeDasharray="1 1" stroke={N.teal} strokeWidth={7} strokeLinecap="round" filter="url(#fx-glow)" />
+          <ChartLink className={`c1-mla c1-mla-${k}`} x={x} y1={414} y2={474} />
           <g className={`c1-mp c1-mp-${k}`}>
             <Pebble x={x} y={512} s={2} seed={k} />
           </g>
-          <path className={`c1-mlb c1-mlb-${k}`} d={`M${x} 552 V610`} pathLength={1} strokeDasharray="1 1" stroke={N.teal} strokeWidth={7} strokeLinecap="round" filter="url(#fx-glow)" />
+          <ChartLink className={`c1-mlb c1-mlb-${k}`} x={x} y1={552} y2={610} />
           <g className={`c1-mm c1-mm-${k}`}>
             <Mark x={x} y={694} tilt={k % 2 ? 4 : -3} />
           </g>
@@ -483,23 +499,23 @@ function Tablet() {
 function History() {
   const date = (x: number, num: string) => (
     <g>
-      <Title x={x} y={706} size={58}>
+      <Title x={x} y={722} size={60}>
         {num}
       </Title>
-      <Title x={x} y={760} size={38} color={N.mist} weight={700}>
+      <Title x={x} y={776} size={38} color={N.mist} weight={700}>
         years ago
       </Title>
     </g>
   )
   return (
     <g className="c1-hist">
-      <path className="c1-harrow" d="M120 600 H1420" pathLength={1} strokeDasharray="1 1" stroke={N.cream} strokeWidth={8} strokeLinecap="round" opacity={0.85} />
-      <path className="c1-hhead" d="M1410 578 L1446 600 L1410 622" stroke={N.cream} strokeWidth={8} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.85} />
+      <path className="c1-harrow" d="M110 626 H1430" pathLength={1} strokeDasharray="1 1" stroke={N.cream} strokeWidth={8} strokeLinecap="round" opacity={0.85} />
+      <path className="c1-hhead" d="M1420 604 L1456 626 L1420 648" stroke={N.cream} strokeWidth={8} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.85} />
       {HIST_X.map((x, i) => (
         <g key={x} className={`c1-hst c1-hst-${i}`}>
-          <Glow x={x} y={440} r={230} color="cool" opacity={0.55} />
-          <circle cx={x} cy={600} r={15} fill={N.cream} />
-          <g transform={`translate(${x} ${i === 2 ? 432 : 450})`}>
+          <Glow x={x} y={430} r={270} color="cool" opacity={0.6} />
+          <circle cx={x} cy={626} r={16} fill={N.cream} />
+          <g transform={`translate(${x} ${i === 2 ? 420 : 446}) scale(1.35)`}>
             <g className={`c1-hpic c1-hpic-${i}`}>{i === 0 ? <NotchedBone /> : i === 1 ? <ClayTokens /> : <Tablet />}</g>
           </g>
           {date(x, ['20,000', '10,000', '5,000'][i])}
@@ -532,9 +548,11 @@ function SheepRig({ i, pebble, tutor }: { i: number; pebble: number | null; tuto
                   <Sheep tutor={tutor} />
                 </g>
                 {pebble !== null && (
-                  <g transform={`translate(0 ${-112}) scale(${k})`} className="c1-pop">
-                    <circle r={30} fill="none" stroke={N.teal} strokeWidth={5} />
-                    <Pebble s={PEB_S} seed={pebble} />
+                  <g transform={`translate(0 ${-112}) scale(${k})`}>
+                    <g className="c1-pop">
+                      <circle r={25} fill="none" stroke={N.teal} strokeWidth={5} />
+                      <Pebble s={1.1} seed={pebble} />
+                    </g>
                   </g>
                 )}
               </g>
@@ -586,6 +604,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
   const linkId = useRef(0)
   const endTl = useRef<gsap.core.Timeline | null>(null)
   const endCtx = useRef<gsap.Context | null>(null)
+  const pullTween = useRef<gsap.core.Tween | null>(null)
   const mills = useRef(new Map<number, gsap.core.Timeline>())
   const cueRef = useRef(cueIndex)
   cueRef.current = cueIndex
@@ -636,13 +655,18 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
 
     /* Sheep: where each one is, which way it faces and how big it is (perspective). */
     const sp = HOME.map((h) => ({ x: h.x, y: h.y, s: SHEEP_S, face: 1 }))
-    const trot = (i: number, pts: SPt[], at: number, speed = 360) => {
+    /** Walk sheep i through these points. `face` turns it once at the start and keeps it facing that way. */
+    const trot = (i: number, pts: SPt[], at: number, speed = 360, face?: 1 | -1) => {
       let t = at
       tl.set(`.sh-${i}`, { '--walk': 1 }, t)
+      if (face !== undefined && face !== sp[i].face) {
+        tl.to(`.shd-${i}`, { scaleX: face, duration: 0.2, ease: 'power1.inOut' }, t)
+        sp[i].face = face
+      }
       pts.forEach((p, n) => {
         const st = sp[i]
         const dur = Math.max(0.16, Math.hypot(p.x - st.x, p.y - st.y) / speed)
-        if (Math.abs(p.x - st.x) > 8) {
+        if (face === undefined && Math.abs(p.x - st.x) > 8) {
           const face = p.x < st.x ? 1 : -1
           if (face !== st.face) {
             tl.to(`.shd-${i}`, { scaleX: face, duration: 0.2, ease: 'power1.inOut' }, t)
@@ -678,7 +702,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     const flash = (sel: string, at: number) => {
       tl.fromTo(`${sel} .c1-fl-path`, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.28, ease: 'power2.out', ...later }, at)
       tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.08, ...later }, at)
-      tl.to(sel, { opacity: 0, duration: 0.6, ease: 'power1.in' }, at + 0.5)
+      tl.to(sel, { opacity: 0, duration: 0.45, ease: 'power1.in' }, at + 0.35)
     }
     const gate = (open: boolean, at: number) => tl.to('.pen-gate', { scaleX: open ? 0.12 : 1, duration: 0.55, ease: open ? 'back.out(1.4)' : 'back.out(2)' }, at)
 
@@ -742,7 +766,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.set('.c1-th path', { strokeDashoffset: 1 })
     tl.set('.c1-coral path', { strokeDashoffset: 1 })
     tl.set(['.c1-ms', '.c1-mp', '.c1-mm'], { opacity: 0, y: 24 })
-    tl.set(['.c1-mla', '.c1-mlb'], { strokeDashoffset: 1 })
+    tl.set(['.c1-mla path', '.c1-mlb path'], { strokeDashoffset: 1 })
     tl.set(['.c1-mpanel', '.c1-mtitle'], { opacity: 0 })
     tl.set('.c1-mtitle', { scale: 0.6, svgOrigin: '800 160' })
     tl.set('.c1-harrow', { strokeDashoffset: 1 })
@@ -761,6 +785,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     move(2.4, 3.6, F.ama, 'power2.inOut')
     tl.fromTo('.vl-clouds', { x: 0 }, { x: 90, duration: 24, ease: 'none', ...later }, 0)
     tl.fromTo('.c1-birds', { x: 0, y: 0 }, { x: -1250, y: -60, duration: 9, ease: 'none', ...later }, 0.2)
+    tl.to('.c1-birds', { opacity: 0, duration: 1 }, 8.4)
     mood('wave', 4.3)
     hop(0, 5.0)
     hop(3, 5.25)
@@ -773,7 +798,10 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     mood('point', b1 + 0.15)
     gate(true, b1 + 0.35)
     move(b1 + 0.6, 3.4, F.meadow, 'power2.inOut')
-    HOME.forEach((_, i) => trot(i, [GATE_IN, GATE_OUT, LANE, GRAZE[i]], b1 + 0.7 + i * 0.4, 380))
+    HOME.forEach((_, i) => {
+      const t = trot(i, [GATE_IN, GATE_OUT], b1 + 0.7 + i * 0.4, 380, 1)
+      trot(i, [LANE, GRAZE[i]], t, 380)
+    })
     mood('idle', b1 + 4.2)
 
     /* 2. Sunset to night; the flock trots home. Ama can't tell if one is missing. */
@@ -813,7 +841,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     /** Sheep i steps out of the gate at T and stands while its pebble drops in, then trots off. */
     const outBeat = (i: number, T: number, pause: number, speed = 330, outSpeed = 400) => {
       const pts = [GATE_IN, GATE_OUT]
-      trot(i, pts, T - span(i, pts, speed), speed)
+      trot(i, pts, T - span(i, pts, speed), speed, 1)
       trot(i, [LANE, GRAZE[i]], T + pause, outSpeed)
       const p = `.c1-sp-${i}`
       tl.set(p, { x: HAND.x, y: HAND.y, opacity: 1 }, T - 0.12)
@@ -825,8 +853,8 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       flash(`.c1-fd-${i % 2}`, T + 0.4)
     }
     mood('drop', b4 + 3.6)
-    outBeat(0, b4 + 4.6, 0.55)
-    outBeat(1, b4 + 6.5, 0.55)
+    outBeat(0, b4 + 4.6, 0.75)
+    outBeat(1, b4 + 6.5, 0.7)
 
     /* 5. One sheep, one pebble, in rhythm; then threads from every sheep to the bag. */
     tl.addLabel('b5', b4 + 7.6)
@@ -902,9 +930,9 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.to('.c1-mpanel', { opacity: 1, duration: 0.8 }, b8 + 1.3)
     MATCH_COLS.forEach((_, k) => {
       tl.to(`.c1-ms-${k}`, { opacity: 1, y: 0, duration: 0.45, ease: 'back.out(2.2)' }, b8 + 1.6 + k * 0.12)
-      tl.to(`.c1-mla-${k}`, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out' }, b8 + 3.6 + k * 0.22)
+      tl.to(`.c1-mla-${k} path`, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out' }, b8 + 3.6 + k * 0.22)
       tl.to(`.c1-mp-${k}`, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(2.5)' }, b8 + 3.75 + k * 0.22)
-      tl.to(`.c1-mlb-${k}`, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out' }, b8 + 5.3 + k * 0.16)
+      tl.to(`.c1-mlb-${k} path`, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out' }, b8 + 5.3 + k * 0.16)
       tl.to(`.c1-mm-${k}`, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(2.5)' }, b8 + 5.45 + k * 0.16)
       tl.fromTo(`.c1-mcol-${k}`, { opacity: 0 }, { opacity: 1, duration: 0.3, yoyo: true, repeat: 1, ease: 'sine.inOut', ...later }, b8 + 7.0 + k * 0.16)
     })
@@ -915,8 +943,8 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     const b9 = tl.labels.b9
     tl.to('.c1-match', { opacity: 0, duration: 0.7, ease: 'power1.in' }, b9)
     tl.set('.c1-hist', { opacity: 1 }, b9)
-    tl.to('.c1-harrow', { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }, b9 + 0.5)
-    tl.to('.c1-hhead', { opacity: 0.85, duration: 0.3 }, b9 + 1.8)
+    tl.to('.c1-harrow', { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }, b9 + 0.2)
+    tl.to('.c1-hhead', { opacity: 0.85, duration: 0.3 }, b9 + 1.5)
     const station = (i: number, at: number) => {
       tl.to(`.c1-hst-${i}`, { opacity: 1, duration: 0.4 }, at)
       tl.to(`.c1-hpic-${i}`, { scale: 1, duration: 0.7, ease: 'back.out(2)' }, at)
@@ -932,7 +960,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.addLabel('b10', b9 + 10.4)
     const b10 = tl.labels.b10
     tl.to('.c1-hist', { opacity: 0, duration: 0.6 }, b10)
-    move(b10 + 0.2, 2.6, F.play, 'power2.inOut')
+    move(b10 + 0.2, 2.6, F.watch, 'power2.inOut')
     tl.set('.c1-sp', { opacity: 0 }, b10)
     tl.set('.c1-game', { opacity: 1 }, b10)
     for (let k = 0; k < PEBBLES; k++) {
@@ -988,8 +1016,8 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       if (playing) t.resume()
       else t.pause()
     }
-    const e = endTl.current
-    if (e) {
+    for (const e of [endTl.current, pullTween.current]) {
+      if (!e) continue
       if (playing) e.resume()
       else e.pause()
     }
@@ -1001,9 +1029,20 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       mills.current.clear()
       endTl.current?.kill()
       endCtx.current?.kill()
+      pullTween.current?.kill()
     },
     [],
   )
+
+  /* ---------------- Every sheep has a pebble: the camera eases back to show Ama's two thoughts ---------------- */
+  const pulledBack = useRef(false)
+  useEffect(() => {
+    const api = camApi.current
+    if (cueIndex !== 10 || !allMatched || !watchReady || pulledBack.current || !api) return
+    pulledBack.current = true
+    const t = gsap.to(api.cam, { ...F.play, duration: 1.4, ease: 'power2.inOut', onUpdate: api.apply, paused: !playingRef.current })
+    pullTween.current = t
+  }, [cueIndex, allMatched, watchReady])
 
   /* ---------------- Dawn: Ama spots the lost sheep and brings it home ---------------- */
   useEffect(() => {
@@ -1012,6 +1051,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     const api = camApi.current
     if (!el || !api) return
     const { cam: c, apply } = api
+    pullTween.current?.kill()
     endCtx.current = gsap.context(() => {
       const et = gsap.timeline({ paused: !playingRef.current, onComplete: () => playDoneRef.current() })
       endTl.current = et
@@ -1229,8 +1269,8 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       {/* The night sky high above the valley, drifting slower than the world (parallax). */}
       <g className="c1-skyL">
         <rect x={-1200} y={-2600} width={4000} height={3200} fill={N.space} />
-        <circle cx={300} cy={-900} r={520} fill={N.violet} opacity={0.12} filter="url(#fx-blur-big)" />
-        <circle cx={1350} cy={-500} r={460} fill={N.plum} opacity={0.14} filter="url(#fx-blur-big)" />
+        <Bloom x={300} y={-900} r={520} color="violet" opacity={0.12} />
+        <Bloom x={1350} y={-500} r={460} color="plum" opacity={0.14} />
         <Stars w={2000} h={1900} y={-1500} count={300} seed={41} />
       </g>
 
@@ -1244,7 +1284,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
           <Glow x={1240} y={640} r={620} color="warm" opacity={0.85} />
         </g>
         <g className="c1-dawnglow" pointerEvents="none">
-          <Glow x={360} y={650} r={640} color="warm" opacity={0.7} />
+          <Glow x={360} y={650} r={640} color="warm" opacity={0.45} />
         </g>
         <g className="c1-birds" pointerEvents="none">
           <Bird x={1520} y={250} s={1.1} />
@@ -1426,7 +1466,7 @@ function ChoiceBubble({ which, active, picked, onPick }: { which: 'all' | 'miss'
         {active && !picked && <circle className="hot-ring" r={B_R + 14} fill="none" stroke={ring} strokeWidth={6} />}
         {which === 'all' ? <AllHomePic /> : <MissingPic />}
         <circle r={B_R - 4} fill="none" stroke={N.cream} strokeWidth={9} />
-        <Title y={B_R + 58} size={30}>
+        <Title x={0} y={B_R + 50} size={29}>
           {label}
         </Title>
       </g>

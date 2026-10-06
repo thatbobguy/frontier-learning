@@ -238,7 +238,7 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.set('.c4-scrim', { opacity: 0 })
     tl.set('.c4-guess', { opacity: 0, x: guess === undefined ? 0 : NL.x0 - 110 - nx(guess) })
     tl.set('.c4-true', { opacity: 0, scale: 1.9, svgOrigin: `${nx(X)} ${trueY}` })
-    tl.set('.c4-bracket', { strokeDashoffset: 1 })
+    tl.set('.c4-bracket', { attr: { 'stroke-dashoffset': 1 } })
     tl.set(['.c4-dist', '.c4-spot'], { opacity: 0 })
 
     // 0. Chapter 3's equals sign fills the screen, then becomes the scale: its top bar the beam, its bottom bar the "=" below.
@@ -357,7 +357,7 @@ export function Ch4Balance({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.to('.c4-slate', { opacity: 1, y: 0, duration: 1.1, ease: 'back.out(1.2)' }, b6 + 0.4)
     tl.to('.c4-guess', { opacity: 1, x: 0, duration: 1.0, ease: 'power3.out' }, b6 + 1.5)
     tl.to('.c4-true', { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2.2)' }, b6 + 2.6)
-    tl.to('.c4-bracket', { strokeDashoffset: 0, duration: 0.8, ease: 'power1.inOut' }, b6 + 3.5)
+    tl.to('.c4-bracket', { attr: { 'stroke-dashoffset': 0 }, duration: 0.8, ease: 'power1.inOut' }, b6 + 3.5)
     tl.to(['.c4-dist', '.c4-spot'], { opacity: 1, duration: 0.5 }, b6 + 4.1)
     tl.addLabel('b7', b6 + 5.6)
     // The timeline is built once, when the chapter mounts; the guess is read then too.

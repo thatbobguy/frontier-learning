@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useRef, type ReactNode } from 'react'
 import { Person } from '../../art2/characters'
-import { Glow, Motes, Stars, Vignette, rng } from '../../art2/fx'
+import { Bloom, Glow, Motes, rng, Stars, Vignette } from '../../art2/fx'
 import { FONT2, N } from '../../art2/palette'
 import { Equation, Title, type TermKind } from '../../art2/props'
 import { Moon, River } from '../../art2/scenery'
@@ -960,8 +960,8 @@ export function Ch7World({ cueIndex, playing, onAnimDone, reportState, setHints 
 
     /* --- Start: high in the night sky. Everything that arrives later is hidden. --- */
     tl.set(['.r-light', '.r-flare', '.t-seed', '.k-gold-pulse', '.k-pink-pulse', '.w-vhs', '.b-level', '.b-th'], { opacity: 0 })
-    tl.set('.r-seg', { strokeDashoffset: 1.02 })
-    tl.set(['.t-branchA', '.t-new'], { strokeDashoffset: 1.02 })
+    tl.set('.r-seg', { attr: { 'stroke-dashoffset': 1.02 } })
+    tl.set(['.t-branchA', '.t-new'], { attr: { 'stroke-dashoffset': 1.02 } })
     tl.set('.g-target-teal', { opacity: 0 })
     WINS.forEach(([x, y], i) => tl.set(`.w-win${i}`, { opacity: 0, scale: 0.15, svgOrigin: `${x} ${y}` }))
 
@@ -977,7 +977,7 @@ export function Ch7World({ cueIndex, playing, onAnimDone, reportState, setHints 
     tl.fromTo('.r-then', { opacity: 0, x: -30 }, { opacity: 0.7, x: 0, duration: 0.5, ease: 'power2.out' }, 1.5)
     pop('.r-undo-g', 1.7, `${UNDO.x} ${UNDO.y}`, 0.5, 'back.out(1.6)')
     fadeUp('.r-lbl1', 1.9)
-    UNDO_SEGS.forEach((_, i) => tl.fromTo(`.r-seg${i}`, { strokeDashoffset: 1.02 }, { strokeDashoffset: 0, duration: 0.3, ease: 'power1.inOut', immediateRender: false }, 2.0 + i * 0.36))
+    UNDO_SEGS.forEach((_, i) => tl.fromTo(`.r-seg${i}`, { attr: { 'stroke-dashoffset': 1.02 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.3, ease: 'power1.inOut', immediateRender: false }, 2.0 + i * 0.36))
     pop('.r-head', 3.05, `${undoPt(-212)[0]} ${undoPt(-212)[1]}`, 0.35, 'back.out(3)')
     tl.to('.r-all', { y: -150, scale: 0.12, opacity: 0, svgOrigin: '800 400', duration: 0.8, ease: 'power2.in' }, 3.5)
     tl.fromTo('.r-flare', { opacity: 0, scale: 0.2, svgOrigin: '800 230' }, { opacity: 1, scale: 1, duration: 0.25, ease: 'power2.out', ...later }, 4.15)
@@ -1089,7 +1089,7 @@ export function Ch7World({ cueIndex, playing, onAnimDone, reportState, setHints 
     tw(cam, 'cy', 600, b5 + 0.2, 2.2, 'sine.inOut', applyCam)
     tw(cam, 'z', Math.log(1.3), b5 + 0.2, 2.2, 'sine.inOut', applyCam)
     tl.fromTo('.t-trunk', { scaleY: 0, svgOrigin: '800 806' }, { scaleY: 1, duration: 1.4, ease: 'power2.out' }, b5 + 0.5)
-    tl.fromTo('.t-branchA', { strokeDashoffset: 1.02 }, { strokeDashoffset: 0, duration: 0.7, ease: 'power2.out', ...later }, b5 + 1.1)
+    tl.fromTo('.t-branchA', { attr: { 'stroke-dashoffset': 1.02 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.7, ease: 'power2.out', ...later }, b5 + 1.1)
     tl.fromTo('.t-leaf', { scale: 0, transformOrigin: '0% 50%' }, { scale: 1, duration: 0.4, stagger: 0.05, ease: 'back.out(2.5)' }, b5 + 1.4)
     tl.fromTo('.t-lantern', { opacity: 0, scale: 0.4, svgOrigin: '0 0' }, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)' }, b5 + 1.6)
     tl.fromTo('.t-lantern-lit', { opacity: 0 }, { opacity: 1, duration: 0.4 }, b5 + 2.05)
@@ -1102,7 +1102,7 @@ export function Ch7World({ cueIndex, playing, onAnimDone, reportState, setHints 
     tw(cam, 'z', Math.log(0.94), b5 + 2.6, 7.4, 'sine.inOut', applyCam)
     SHOOTS.forEach((_, i) => {
       const at = b5 + 2.9 + i * 0.35
-      tl.fromTo(`.t-new${i}`, { strokeDashoffset: 1.02 }, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.out', ...later }, at)
+      tl.fromTo(`.t-new${i}`, { attr: { 'stroke-dashoffset': 1.02 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 1.1, ease: 'power2.out', ...later }, at)
       tl.fromTo(`.t-ticks${i}`, { opacity: 0 }, { opacity: 0.85, duration: 0.6 }, at + 0.7)
       tl.fromTo(`.t-sleaf${i}`, { scale: 0, transformOrigin: '0% 50%' }, { scale: 1, duration: 0.45, stagger: 0.15, ease: 'back.out(2.5)' }, at + 0.5)
       tl.fromTo(`.t-bud${i}`, { scale: 0, opacity: 0, svgOrigin: '0 0' }, { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2.5)' }, at + 0.9)
@@ -1132,8 +1132,8 @@ export function Ch7World({ cueIndex, playing, onAnimDone, reportState, setHints 
       <rect x={-400} y={-300} width={2400} height={1500} fill="url(#fx-sky-deep)" />
       <g className="w-starcam">
         <g className="w-stardrift">
-          <circle cx={300} cy={180} r={420} fill={N.violet} opacity={0.12} filter="url(#fx-blur-big)" />
-          <circle cx={1300} cy={300} r={380} fill={N.sky} opacity={0.07} filter="url(#fx-blur-big)" />
+          <Bloom x={300} y={180} r={420} color="violet" opacity={0.12} />
+          <Bloom x={1300} y={300} r={380} color="sky" opacity={0.07} />
           <g transform="translate(-250 -120)">
             <Stars w={2100} h={1000} count={190} seed={57} />
           </g>

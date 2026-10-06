@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { Person, type PersonProps } from '../../art2/characters'
-import { Glow, Stars } from '../../art2/fx'
+import { Bloom, Glow, Stars } from '../../art2/fx'
 import { FONT2, N } from '../../art2/palette'
 import { Moon } from '../../art2/scenery'
 import './frameworks.css'
@@ -197,7 +197,7 @@ export function Valley({ time = 'day', children }: { time?: 'day' | 'dusk' | 'ni
       </g>
       <g className="vl-night" opacity={time === 'night' ? 1 : 0}>
         <rect x={-400} y={-300} width={2400} height={1500} fill="url(#fx-sky-night)" />
-        <circle cx={260} cy={160} r={420} fill={N.violet} opacity={0.12} filter="url(#fx-blur-big)" />
+        <Bloom x={260} y={160} r={420} color="violet" opacity={0.12} />
         <g className="vl-stars">
           <Stars h={560} count={110} seed={12} />
         </g>
