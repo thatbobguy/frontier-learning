@@ -41,10 +41,10 @@ export function Poster() {
           SIGNED
         </text>
       </g>
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         Build Your Own Hand
       </text>
-      <text x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · FILM 6
       </text>
       <Vignette />

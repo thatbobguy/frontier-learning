@@ -20,10 +20,10 @@ export function WhyPoster() {
       <rect x={600} y={760} width={1200} height={4} fill={C.keyDeep} opacity={0.6} />
       <Egg x={1080} y={714} s={1.6} />
       <Hand3D store={hand} x={1090} y={260} look="robot" arm={360} light={[0.8, -0.5]} />
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         The Hardest Machine
       </text>
-      <text x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · FILM 1
       </text>
       <Vignette />

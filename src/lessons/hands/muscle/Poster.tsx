@@ -32,10 +32,10 @@ export function Poster() {
       {/* the hand, its tendons lit */}
       <Hand3D store={hand} x={980} y={660} look="xray" arm={220} light={[0.7, -0.6]} />
 
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         Muscles of Metal
       </text>
-      <text x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · FILM 3
       </text>
       <Vignette />

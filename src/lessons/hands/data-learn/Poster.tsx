@@ -29,13 +29,13 @@ export function Poster() {
       <Dust x={560} y={40} w={1060} h={860} count={30} seed={7} />
       <rect x={0} y={0} width={760} height={900} fill="url(#cn-fade-up)" opacity={0} />
       <path d="M0 0 H 820 Q 640 450 820 900 H 0 Z" fill={C.ink} opacity={0.78} />
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         How Robots
       </text>
-      <text x={110} y={268} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={268} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         Learn
       </text>
-      <text x={114} y={322} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={322} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · DATA 3
       </text>
       <text x={114} y={760} fill={C.lime} fontFamily={SANS} fontSize={26}>

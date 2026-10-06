@@ -86,3 +86,8 @@
     animation: none;
   }
 }
+
+/* The start screen prints the film's title itself, so the poster's own title would show twice. */
+.flow-stage .poster-title {
+  display: none;
+}

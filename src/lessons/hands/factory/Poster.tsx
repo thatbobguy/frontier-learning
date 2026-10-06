@@ -33,10 +33,10 @@ export function Poster() {
       <MouldBlock x={250} y={640} s={0.95} />
       <Pool x={1240} y={460} r={480} color="key" opacity={0.6} />
       <Hand3D store={hand} x={1220} y={560} look="robot" arm={200} light={[0.7, -0.6]} />
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         A Million Hands
       </text>
-      <text x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · FILM 5
       </text>
       <Vignette />

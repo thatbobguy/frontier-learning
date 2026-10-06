@@ -37,10 +37,10 @@ export function Poster() {
       </g>
       <Dust x={-200} y={0} w={2000} h={800} count={34} seed={31} color={C.rim} size={0.8} />
       <rect x={0} y={0} width={1600} height={300} fill="url(#cn-fade-down)" opacity={0.6} />
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         The Home Robot Frontier
       </text>
-      <text x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · DATA 4
       </text>
       <Vignette />

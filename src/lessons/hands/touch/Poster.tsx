@@ -27,10 +27,10 @@ export function Poster() {
       <Egg x={EGG.x} y={EGG.y + 4} s={2.3} />
       <Hand3D store={hand} x={EGG.x + 40} y={190 + 200 - 60} look="robot" arm={460} light={[0.8, -0.5]} />
       <Dust x={600} y={80} w={1000} h={600} count={18} seed={4} />
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         The Sense of Touch
       </text>
-      <text x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · FILM 4
       </text>
       <Vignette />

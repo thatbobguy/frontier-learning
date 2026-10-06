@@ -60,10 +60,10 @@ export function Poster() {
       <path d="M1176 828 L1130 790" stroke={C.lime} strokeWidth={2} opacity={0.7} />
       <Hand3D store={hand} x={1090} y={300} look="robot" arm={380} light={[0.7, -0.6]} />
       <Dust />
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         The Missing Internet
       </text>
-      <text x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · DATA 1
       </text>
       <Vignette />

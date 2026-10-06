@@ -38,10 +38,10 @@ export function Poster() {
         const r = 80 - i * 14
         return <path key={i} d={arc(p.x, p.y, r, a1 - 30, a1 + F.q[i] + 40)} stroke={C.cyan} strokeWidth={4} fill="none" strokeLinecap="round" markerEnd="url(#cn-arrow)" />
       })}
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         Joints and Freedom
       </text>
-      <text x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · FILM 2
       </text>
       <Vignette />

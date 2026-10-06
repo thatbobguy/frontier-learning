@@ -23,10 +23,10 @@ export function Poster() {
         </g>
       ))}
       <Dust x={0} y={0} w={1600} h={900} count={30} seed={3} color={C.keyLight} size={0.7} />
-      <text x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
+      <text className="poster-title" x={110} y={170} fill={C.paper} fontFamily={SERIF} fontSize={92} fontWeight={600} letterSpacing={-1}>
         Ways to Get Data
       </text>
-      <text x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
+      <text className="poster-title" x={114} y={222} fill={C.mist} fontFamily={SANS} fontSize={26} letterSpacing={6}>
         ROBOT HANDS · DATA 2
       </text>
       <Vignette />
