@@ -1,12 +1,9 @@
 {
-  "at": "2026-10-06T00:23:49.411Z",
-  "wanted": 687,
-  "recorded": 0,
-  "characters": 0,
-  "clips": 100,
-  "failed": 2,
-  "errors": [
-    "ElevenLabs 401 on /v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb/with-timestamps: {\"detail\":{\"type\":\"invalid_request\",\"code\":\"quota_exceeded\",\"message\":\"This request exceeds your quota of 10000. You have 0 credits remaining, while 45 credits are required for this r",
-    "ElevenLabs 401 on /v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb/with-timestamps: {\"detail\":{\"type\":\"invalid_request\",\"code\":\"quota_exceeded\",\"message\":\"This request exceeds your quota of 10000. You have 0 credits remaining, while 51 credits are required for this r"
-  ]
+  "at": "2026-10-06T01:01:37.252Z",
+  "wanted": 421,
+  "recorded": 378,
+  "characters": 13503,
+  "clips": 421,
+  "failed": 0,
+  "errors": []
 }
