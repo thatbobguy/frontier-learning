@@ -325,7 +325,6 @@ export function Ch4Framework({ cueIndex, playing, onAnimDone, onPlayDone, say, e
       })
     })
     gsap.to('.c4-pulse', { opacity: 0.35, duration: 1.1, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-    gsap.fromTo('.c4-flow', { strokeDashoffset: 0 }, { strokeDashoffset: -40, duration: 1.6, repeat: -1, ease: 'none' })
   })
 
   /* ---------------- the play ---------------- */
@@ -541,10 +540,10 @@ export function Ch4Framework({ cueIndex, playing, onAnimDone, onPlayDone, say, e
               <circle cx={DATA.x + 20} cy={-420} r={60} fill={C.lime} opacity={0.2} filter="url(#cn-bloom)" />
               <circle className="c4-pulse" cx={DATA.x + 20} cy={-420} r={30} fill={C.ink1} stroke={C.lime} strokeWidth={5} />
               <circle cx={DATA.x + 20} cy={-420} r={11} fill={C.lime} />
-              <text x={DATA.x + 20} y={-490} fill={C.lime} fontFamily={SERIF} fontSize={58} fontWeight={600} textAnchor="middle">
+              <text x={DATA.x + 20} y={-560} fill={C.lime} fontFamily={SERIF} fontSize={58} fontWeight={600} textAnchor="middle">
                 The data problem
               </text>
-              <text x={DATA.x + 20} y={-340} fill={C.limeLight} opacity={0.8} fontFamily={MONO} fontSize={26} textAnchor="middle">
+              <text x={DATA.x + 20} y={-496} fill={C.limeLight} opacity={0.8} fontFamily={MONO} fontSize={26} textAnchor="middle">
                 where a robot’s brain gets its data
               </text>
             </g>

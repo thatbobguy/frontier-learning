@@ -184,10 +184,12 @@ export function Ch4Open({ cueIndex, playing, onAnimDone, reportState, setHints }
     /* b0: off the map, up into the dark, six unlit lanterns. */
     tl.addLabel('b0', 0)
     tl.set('.c4-map', { opacity: 1 }, 0)
-    cam.to(tl, { x: 1800, y: 470, zoom: 0.47, rot: 0 }, 0.4, 5.2, 'power2.inOut')
-    fade(tl, '.c4-map', 0.12, 1.2, 3)
-    tl.fromTo('.c4-lan', { y: -60 }, { y: 0, duration: 3.2, stagger: 0.25, ease: 'sine.out', immediateRender: false }, 1.6)
-    tl.fromTo('.c4-head', { opacity: 0 }, { opacity: 1, duration: 1, immediateRender: false }, 5.4)
+    // the chart's dots and cluster default to hidden (chapter 2 fades them in), so show them here
+    tl.set('.c4-dot, .c4-cluster, .c4-corner', { opacity: 1 }, 0)
+    cam.to(tl, { x: 1800, y: 470, zoom: 0.47, rot: 0 }, 0.4, 3.0, 'power2.out')
+    fade(tl, '.c4-map', 0.12, 1.6, 2.4)
+    tl.fromTo('.c4-lan', { y: -60 }, { y: 0, duration: 2.4, stagger: 0.18, ease: 'sine.out', immediateRender: false }, 0.5)
+    tl.fromTo('.c4-head', { opacity: 0 }, { opacity: 1, duration: 1, immediateRender: false }, 4.6)
     tl.to({}, { duration: 0.1 }, 8.2)
 
     /* b1: one, the empty corner. */

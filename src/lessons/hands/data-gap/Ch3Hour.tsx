@@ -428,7 +428,7 @@ export function Ch3Hour({ cueIndex, playing, onAnimDone, reportState, setHints }
               <tspan className="c3-clockd">09:00</tspan>
             </text>
           </g>
-          <Label x={560} y={FLOOR - 320} tx={380} ty={FLOOR - 420} text="Kofi, resetting the scene" color={C.cyanLight} hidden={false} size={24} />
+          <Label x={560} y={FLOOR - 320} tx={450} ty={FLOOR - 420} text="Kofi, resetting the scene" color={C.cyanLight} hidden={false} size={24} />
         </g>
         {/* the ribbon of the day (not in the camera, it is a graphic over the picture) */}
       </g>
@@ -487,7 +487,7 @@ export function Ch3Hour({ cueIndex, playing, onAnimDone, reportState, setHints }
           <rect x={MON.x + 260} y={MON.y + 300} width={16} height={86} fill={C.ink2} />
           <rect x={MON.x + 200} y={MON.y + 382} width={140} height={10} rx={3} fill={C.ink2} />
           <AdaAtDesk name="c3-ada" x={600} y={810} s={1.45} pose={POSES.sitForward} />
-          <Label className="c3-adalab" x={660} y={420} tx={380} ty={170} text="Ada" sub="what’s the cheapest data that actually helps?" color={C.limeLight} anchor="start" />
+          <Label className="c3-adalab" x={700} y={472} tx={380} ty={170} text="Ada" sub="what’s the cheapest data that actually helps?" color={C.limeLight} anchor="start" />
         </g>
         <g className="c3-screen">
           <rect x={0} y={0} width={1600} height={900} fill={C.ink1} />

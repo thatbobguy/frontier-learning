@@ -275,7 +275,7 @@ export function Ch1Drift({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
   useAmbient(root, playing, () => {
     gsap.to('.d1-glow', { opacity: 0.55, duration: 2.2, yoyo: true, repeat: -1, ease: 'sine.inOut' })
     gsap.to('.d1-hz', { textContent: 50, duration: 1, repeat: -1, ease: 'none', snap: { textContent: 1 } })
-    gsap.fromTo('.d1-warn', { scale: 1 }, { scale: 1.25, duration: 0.5, yoyo: true, repeat: -1, ease: 'sine.inOut', transformOrigin: '50% 50%' })
+    // .d1-warn is rendered conditionally, so it pulses with the CSS loop hd-pulse instead
   })
 
   /* ---------------- the play ---------------- */
@@ -606,7 +606,7 @@ export function Ch1Drift({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
           </g>
           {run?.status === 'needs-help' && (
             <g transform={`translate(${gp.x} ${gp.y})`}>
-              <circle className="d1-warn" r={48} fill="none" stroke={C.lime} strokeWidth={4} />
+              <circle className="d1-warn hd-pulse" r={48} fill="none" stroke={C.lime} strokeWidth={4} />
               <Tag x={0} y={-66} anchor="middle" color={C.lime} size={20}>
                 tap to step in
               </Tag>

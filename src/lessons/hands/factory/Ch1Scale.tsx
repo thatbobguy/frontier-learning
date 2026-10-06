@@ -183,7 +183,7 @@ export function Ch1Scale({ cueIndex, playing, onAnimDone, reportState, setHints 
       tl.addLabel('b3', b3)
       show('.f1-bomshot', b3)
       fade(tl, '.f1-seven', 1, b3 + 0.1, 1.0)
-      camBom.to(tl, { x: 760, y: 470, zoom: 1.04 }, b3, 6, 'sine.inOut')
+      camBom.to(tl, { x: 830, y: 470, zoom: 1.04 }, b3, 6, 'sine.inOut')
       fade(tl, '.f1-barframe', 1, b3 + 1.0, 0.6)
       PIECES.forEach((p, i) => {
         const [y0, y1] = p.seg === 'act' ? segY(0, 56) : p.seg === 'hand' ? segY(56, 73) : segY(73, 100)
@@ -582,7 +582,7 @@ export function Ch1Scale({ cueIndex, playing, onAnimDone, reportState, setHints 
             <rect x={286} y={py(15000)} width={28} height={py(7000) - py(15000)} rx={6} fill={C.gold} opacity={0.22} />
             <rect x={1286} y={py(5000)} width={28} height={py(3000) - py(5000)} rx={6} fill={C.gold} opacity={0.35} />
           </g>
-          <text className="f1-rmb" x={1360} y={py(5000) - 30} textAnchor="end" fill={C.goldLight} opacity={0} fontFamily={MONO} fontSize={20}>
+          <text className="f1-rmb" x={1250} y={py(5000) - 30} textAnchor="end" fill={C.goldLight} opacity={0} fontFamily={MONO} fontSize={20}>
             RMB 50–100k → RMB 20–35k
           </text>
           <path className="f1-line" d={PRICE_PATH} fill="none" stroke={C.gold} strokeWidth={6} strokeLinecap="round" strokeDasharray={1400} strokeDashoffset={1400} filter="url(#cn-bloom)" />

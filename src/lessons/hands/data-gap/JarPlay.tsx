@@ -87,7 +87,8 @@ export function JarPlay({ active, playing, revealed, onPaint, onReveal }: {
     let raf = 0
     let prev = performance.now()
     const frame = (now: number) => {
-      clock.current += Math.min(0.05, (now - prev) / 1000)
+      // the first rAF timestamp can be slightly earlier than performance.now(): never step backwards
+      clock.current += Math.max(0, Math.min(0.05, (now - prev) / 1000))
       prev = now
       const u = (clock.current % PERIOD) / PERIOD
       const g = grip(u)

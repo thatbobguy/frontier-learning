@@ -172,6 +172,7 @@ export function Ch3Placement({ cueIndex, playing, onAnimDone, onPlayDone, say, e
       /* b2: the forearm-motor arm lifts easily; follow one tendon into the blueprint. */
       const b2 = b1 + 14.5
       tl.addLabel('b2', b2)
+      fade(tl, '.c3-l-mgl, .c3-l-nm, .c3-l-sugar', 0, b2, 0.4, 1)
       cam.to(tl, { zoom: 1.25, x: 1120, y: 440 }, b2, 1.8)
       tl.fromTo('.c3-armR', { rotation: 0 }, { rotation: -9, duration: 1.2, ease: 'power2.out', svgOrigin: `${ARM_R.sx} ${ARM_R.sy}`, immediateRender: false }, b2 + 1.2)
       tl.fromTo('.c3-armR', { rotation: -9 }, { rotation: 0, duration: 1.2, ease: 'power2.inOut', svgOrigin: `${ARM_R.sx} ${ARM_R.sy}`, immediateRender: false }, b2 + 2.6)

@@ -179,6 +179,7 @@ export function Ch4Egg({ cueIndex, playing, onAnimDone, onPlayDone, say, emit, r
       fade(tl, '.e-lab-drift', 1, b4 + 6.4, 0.6)
       // a replaced skin
       wc.to(tl, { x: 1290, y: 470, zoom: 1.15 }, b4 + 9.4, 1.0)
+      fade(tl, '.e-lab-wire', 0, b4 + 9.4, 0.5, 1)
       tl.fromTo('.e-press', { y: -40 }, { y: 0, duration: 0.5, ease: 'power2.in', immediateRender: false }, b4 + 10.2)
       fade(tl, '.e-heat', 1, b4 + 10.7, 0.4)
       fade(tl, '.e-verdict-a', 1, b4 + 11.4, 0.4)
@@ -423,10 +424,10 @@ export function Ch4Egg({ cueIndex, playing, onAnimDone, onPlayDone, say, emit, r
             <g className="e-spark" opacity={0}>
               <path d={`M${KN.x + 16} ${KN.y - 40} l8 -26 l6 22 l22 -12 l-14 22 l26 6 l-26 8 l14 20 l-22 -10 l-6 24 l-8 -24 l-22 12 l12 -22 l-24 -8 l24 -6 l-12 -22 Z`} fill={C.danger} filter="url(#cn-bloom)" />
             </g>
-            <Mono x={KN.x - 150} y={KN.y - 380} size={22} color={C.fog}>
+            <Mono x={KN.x - 300} y={KN.y - 200} size={22} color={C.fog}>
               bends:
             </Mono>
-            <text className="e-wcount" x={KN.x - 60} y={KN.y - 380} fill={C.paper} fontFamily={MONO} fontSize={30} style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <text className="e-wcount" x={KN.x - 210} y={KN.y - 200} fill={C.paper} fontFamily={MONO} fontSize={30} style={{ fontVariantNumeric: 'tabular-nums' }}>
               0
             </text>
             <Label className="e-lab-wire" x={KN.x + 22} y={KN.y - 30} tx={KN.x + 150} ty={KN.y + 190} text="sensor wires snap at the knuckle" sub="ORCA: after 4,500-7,000 cycles" color={C.danger} size={24} />

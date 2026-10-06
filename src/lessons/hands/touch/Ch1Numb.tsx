@@ -246,7 +246,6 @@ export function Ch1Numb({ cueIndex, playing, onAnimDone, reportState, setHints }
   useAmbient(root, playing, () => {
     gsap.to('.n-lamp', { opacity: 0.82, duration: 1.9, yoyo: true, repeat: -1, ease: 'sine.inOut' })
     gsap.to('.n-ringpulse', { opacity: 0.5, duration: 1.3, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-    gsap.to('.n-noise', { x: 6, duration: 0.09, yoyo: true, repeat: -1, ease: 'none' })
   })
 
   useEffect(() => {
@@ -476,6 +475,8 @@ export function Ch1Numb({ cueIndex, playing, onAnimDone, reportState, setHints }
 
       {/* the camera feed inset: what Seven's head camera sees */}
       <g className="n-inset" opacity={0} pointerEvents="none">
+        {/* lowered so the letterbox (96px) never covers the feed's top edge */}
+        <g transform="translate(0 140)">
         <g className="n-insetin">
           <clipPath id="n-inset-clip">
             <rect x={1000} y={150} width={500} height={320} rx={10} />
@@ -511,6 +512,7 @@ export function Ch1Numb({ cueIndex, playing, onAnimDone, reportState, setHints }
           </text>
         </g>
         <Label className="n-lab-hides" x={1250} y={472} tx={1250} ty={506} text="the hand hides the contact from the camera" color={C.paper} anchor="middle" size={24} dot={false} hidden />
+        </g>
       </g>
 
       {/* the stopwatch, in screen space */}

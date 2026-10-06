@@ -456,7 +456,7 @@ export function Ch1Teleop({ cueIndex, playing, onAnimDone, reportState, setHints
                 20 ms
               </text>
             </g>
-            <Label className="c1-lab-overshoot" x={1440} y={640} tx={1290} ty={430} text="late, then too far" color={C.danger} />
+            <Label className="c1-lab-overshoot" x={1440} y={640} tx={1290} ty={360} text="late, then too far" color={C.danger} />
           </g>
           <Arm2D
             cls="c1-lead"
@@ -604,7 +604,7 @@ export function Ch1Teleop({ cueIndex, playing, onAnimDone, reportState, setHints
           <g className="c1-break" opacity={0}>
             <path d="M582 476 l36 36 M618 476 l-36 36" stroke={C.danger} strokeWidth={6} strokeLinecap="round" />
           </g>
-          <Label className="c1-lab-notouch" x={640} y={520} tx={600} ty={640} text="no touch feedback for the operator" color={C.magentaLight} anchor="start" />
+          <Label className="c1-lab-notouch" x={640} y={520} tx={600} ty={640} text="no touch feedback" sub="for the operator" color={C.magentaLight} anchor="start" />
           {/* speed meter and the recorded trace */}
           <g className="c1-speed" opacity={0}>
             <text x={1180} y={140} fill={C.mist} fontFamily={SANS} fontSize={22}>
@@ -660,10 +660,10 @@ export function Ch1Teleop({ cueIndex, playing, onAnimDone, reportState, setHints
           <g className="c1-far-g" opacity={0}>
             <path className="c1-far" d={`M${MAP.top.x} 270 L${MAP.left.x + 40} ${MAP.left.y - 30}`} stroke={C.lime} strokeWidth={2} strokeDasharray="600" strokeDashoffset={600} opacity={0.5} />
             <path className="c1-far" d={`M${MAP.top.x} 270 L${MAP.right.x - 40} ${MAP.right.y - 30}`} stroke={C.lime} strokeWidth={2} strokeDasharray="600" strokeDashoffset={600} opacity={0.5} />
-            <Tag x={540} y={500} anchor="middle" color={C.limeLight} size={22}>
+            <Tag x={538} y={500} anchor="end" color={C.limeLight} size={22}>
               far from cheap
             </Tag>
-            <Tag x={1060} y={500} anchor="middle" color={C.limeLight} size={22}>
+            <Tag x={1062} y={500} anchor="start" color={C.limeLight} size={22}>
               far from diverse
             </Tag>
           </g>

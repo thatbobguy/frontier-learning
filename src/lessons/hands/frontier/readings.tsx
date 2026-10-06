@@ -139,9 +139,9 @@ function IndustryBody() {
           <text x={516} y={60} fill={C.goldLight} fontSize={13} textAnchor="middle">nobody, yet</text>
           {(
             [
-              ['Robotiq gripper', 520, 245, C.gold],
-              ['Inspire · AgiBot', 440, 185, C.gold],
-              ['in-house humanoid hands', 380, 140, C.amber],
+              ['Robotiq gripper', 470, 245, C.gold],
+              ['Inspire · AgiBot', 420, 185, C.gold],
+              ['in-house humanoid hands', 340, 140, C.amber],
               ['Wuji · Sharpa', 270, 70, C.gold],
               ['LEAP · ORCA · Aero', 150, 115, C.danger],
               ['Shadow DEX-EE', 90, 55, C.gold],

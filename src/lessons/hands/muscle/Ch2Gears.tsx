@@ -226,7 +226,6 @@ export function Ch2Gears({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
 
   useAmbient(root, playing, () => {
     gsap.to('.c2-breathe', { opacity: 0.5, duration: 2.4, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-    gsap.to('.c2-tremble', { x: 1.5, duration: 0.09, yoyo: true, repeat: -1, ease: 'none' })
   })
 
   useEffect(() => {
@@ -399,7 +398,7 @@ export function Ch2Gears({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
             </g>
             <Label className="c2-l-cur" x={1175} y={730} tx={1250} ty={640} text="current ≈ force" color={C.lime} />
             <Label className="c2-l-soft" x={740} y={260} tx={820} ty={150} text="yields softly" color={C.cyan} />
-            <Label className="c2-l-qddr" x={440} y={705} tx={300} ty={790} text="strong motor, gentle 8:1" color={C.amber} />
+            <Label className="c2-l-qddr" x={440} y={705} tx={520} ty={800} text="strong motor, gentle 8:1" color={C.amber} />
             <text className="c2-l-neo" x={1150} y={110} textAnchor="middle" fill={C.mist} fontFamily={SANS} fontSize={28} opacity={0}>
               1X NEO: 5:1 to 15:1
             </text>
@@ -462,7 +461,7 @@ export function Ch2Gears({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
               <text x={0} y={-24} fill={C.fog} fontFamily={SANS} fontSize={20}>power in</text>
               <Readout className="c2-watts" x={0} y={30} color={C.lime} size={48}>3.2 W</Readout>
             </g>
-            <Label className="c2-l-lock" x={1210} y={470} tx={1540} ty={190} text="self-locking: holds at 0 W" color={C.amber} anchor="end" />
+            <Label className="c2-l-lock" x={1210} y={470} tx={1470} ty={200} text="self-locking: holds at 0 W" color={C.amber} anchor="end" />
           </g>
         </g>
       </g>

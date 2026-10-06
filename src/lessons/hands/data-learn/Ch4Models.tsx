@@ -278,7 +278,25 @@ export function Ch4Models({ cueIndex, playing, onAnimDone, reportState, setHints
           {[0, 1, 2, 3].map((k) => (
             <path key={k} className="d4-robo" d={`M${NET.x - 300} ${NET.y + 180 + k * 8} c 60 -20 120 20 180 -6 s 80 -40 120 -60`} stroke={C.lime} strokeWidth={4} fill="none" opacity={0} />
           ))}
-          <Label className="d4-lab-what" x={NET.x - 250} y={NET.y - 200} tx={NET.x - 470} ty={NET.y - 300} anchor="start" text="what: the web" sub="what a mug is, what “the sink” means" color={C.cyanLight} size={30} />
+          <Label
+            className="d4-lab-what"
+            x={NET.x - 250}
+            y={NET.y - 200}
+            tx={NET.x - 490}
+            ty={NET.y - 330}
+            anchor="start"
+            text="what: the web"
+            sub={
+              <>
+                <tspan>what a mug is,</tspan>
+                <tspan x={NET.x - 490 + 8} dy="1.15em">
+                  what “the sink” means
+                </tspan>
+              </>
+            }
+            color={C.cyanLight}
+            size={30}
+          />
           <Label className="d4-lab-how" x={NET.x - 200} y={NET.y + 200} tx={NET.x - 470} ty={NET.y + 300} anchor="start" text="how: robot data" sub="how to move this particular body" color={C.lime} size={30} />
 
           {/* the kitchen to the right */}
@@ -423,15 +441,15 @@ export function Ch4Models({ cueIndex, playing, onAnimDone, reportState, setHints
             </g>
           </g>
           <rect x={-200} y={-200} width={2000} height={1300} fill="url(#cn-vignette)" opacity={0.6} />
-          <g transform="translate(110 130)">
+          <g transform="translate(190 140)">
             <text x={0} y={0} fill={C.magentaLight} fontFamily={MONO} fontSize={22} opacity={0.8}>
               imagined frame <tspan className="d4-frame">0</tspan>
             </text>
           </g>
-          <Label className="d4-lab-dream" x={600} y={250} tx={180} ty={210} text="a world model: what will the camera see next?" color={C.paper} size={26} />
-          <Label className="d4-lab-wrong" x={1080} y={340} tx={1180} ty={460} text="water doesn’t do that" color={C.danger} size={28} />
+          <Label className="d4-lab-dream" x={220} y={690} tx={220} ty={690} anchor="start" dot={false} text="a world model: what will the camera see next?" color={C.paper} size={26} />
+          <Label className="d4-lab-wrong" x={1080} y={340} tx={1120} ty={460} text="water doesn’t do that" color={C.danger} size={28} />
           <g className="d4-lab-1x" opacity={0}>
-            <Tag x={1480} y={770} anchor="end" size={24} color={C.paper}>
+            <Tag x={1440} y={790} anchor="end" size={24} color={C.paper}>
               world models: 1X world model scored 0% on pouring
             </Tag>
           </g>
@@ -491,10 +509,10 @@ export function Ch4Models({ cueIndex, playing, onAnimDone, reportState, setHints
           <circle cx={1280} cy={270} r={20} fill={C.lime} />
         </g>
         <g className="d4-homelab" opacity={0}>
-          <text x={1240} y={226} textAnchor="end" fill={C.paper} fontFamily={SERIF} fontSize={44} fontWeight={600}>
+          <text x={1222} y={214} textAnchor="end" fill={C.paper} fontFamily={SERIF} fontSize={44} fontWeight={600}>
             Robots at home
           </text>
-          <Tag x={1320} y={320} anchor="middle" size={18} color={C.lime}>
+          <Tag x={1320} y={334} anchor="middle" size={18} color={C.lime}>
             next on the data branch
           </Tag>
         </g>

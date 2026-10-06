@@ -205,19 +205,19 @@ export function Ch3Skins({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
       /* b2: resistive, capacitive, piezo. */
       const b2 = b1 + 4
       tl.addLabel('b2', b2)
-      sh.to(tl, { x: TIPX[0] + 30, y: 570, zoom: 2.0 }, b2, 1.0)
+      sh.to(tl, { x: TIPX[0] + 30, y: 600, zoom: 2.0 }, b2, 1.0)
       fade(tl, '.k-spot-0', 1, b2 + 0.4, 0.5)
       tl.fromTo('.sk-res-press', { y: 0 }, { y: 30, duration: 0.5, ease: 'power2.in', yoyo: true, repeat: 3, repeatDelay: 0.4, immediateRender: false }, b2 + 1.0)
       tl.fromTo('.sk-res-spot', { opacity: 0 }, { opacity: 1, duration: 0.2, yoyo: true, repeat: 3, repeatDelay: 0.7, immediateRender: false }, b2 + 1.4)
       fade(tl, '.k-lab-0', 1, b2 + 1.2, 0.5)
-      sh.to(tl, { x: TIPX[1] + 30, y: 570, zoom: 2.0 }, b2 + 4.6, 0.9)
+      sh.to(tl, { x: TIPX[1] + 30, y: 600, zoom: 2.0 }, b2 + 4.6, 0.9)
       fade(tl, '.k-spot-1', 1, b2 + 4.9, 0.5)
       tl.fromTo('.sk-cap-top', { y: 0 }, { y: 30, duration: 0.6, ease: 'power2.inOut', yoyo: true, repeat: 3, repeatDelay: 0.3, immediateRender: false }, b2 + 5.4)
       tl.fromTo('.sk-cap-field', { scaleY: 1 }, { scaleY: 0.6, duration: 0.6, ease: 'power2.inOut', yoyo: true, repeat: 3, repeatDelay: 0.3, transformOrigin: '50% 100%', immediateRender: false }, b2 + 5.4)
       fade(tl, '.k-lab-1', 1, b2 + 5.6, 0.5)
       fade(tl, '.sk-cap-noise', 1, b2 + 7.6, 0.2)
       fade(tl, '.sk-cap-noise', 0, b2 + 9.0, 0.4, 1)
-      sh.to(tl, { x: TIPX[2] - 110, y: 500, zoom: 1.6 }, b2 + 9.4, 0.9)
+      sh.to(tl, { x: TIPX[2] - 110, y: 540, zoom: 1.6 }, b2 + 9.4, 0.9)
       fade(tl, '.k-spot-2', 1, b2 + 9.7, 0.5)
       fade(tl, '.k-pz', 1, b2 + 10.0, 0.4)
       draw(tl, '.k-pz-axis', b2 + 10.0, 0.6)
@@ -234,7 +234,7 @@ export function Ch3Skins({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
       /* b3: magnetic. Shear tilts the field; the skin swaps in seconds. */
       const b3 = b2 + 14.6
       tl.addLabel('b3', b3)
-      sh.to(tl, { x: TIPX[3] - 20, y: 540, zoom: 1.8 }, b3, 1.0)
+      sh.to(tl, { x: TIPX[3] - 20, y: 572, zoom: 1.8 }, b3, 1.0)
       fade(tl, '.k-spot-3', 1, b3 + 0.3, 0.5)
       tl.fromTo('.k-pusher', { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: 'power2.out', immediateRender: false }, b3 + 1.0)
       tl.fromTo('.sk-mag-skew', { skewX: 0 }, { skewX: -16, duration: 0.8, ease: 'power2.inOut', transformOrigin: '50% 100%', immediateRender: false }, b3 + 1.5)
@@ -254,7 +254,7 @@ export function Ch3Skins({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
       /* b4: the camera skin. */
       const b4 = b3 + 11.4
       tl.addLabel('b4', b4)
-      sh.to(tl, { x: TIPX[4] + 170, y: 520, zoom: 1.75 }, b4, 1.0)
+      sh.to(tl, { x: TIPX[4] + 170, y: 566, zoom: 1.75 }, b4, 1.0)
       fade(tl, '.k-spot-4', 1, b4 + 0.3, 0.5)
       fade(tl, '.sk-gel-key', 1, b4 + 1.0, 0.4)
       tl.fromTo('.sk-gel-key', { y: -40 }, { y: 16, duration: 1.0, ease: 'power2.in', immediateRender: false }, b4 + 1.0)
