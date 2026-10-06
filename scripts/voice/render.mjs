@@ -6,7 +6,7 @@
 //   node scripts/voice/render.mjs --dry-run      (no key needed: shows what would be recorded)
 //
 // Optional: NARRATOR_VOICE / PIP_VOICE (an ElevenLabs voice id or name), ELEVENLABS_MODEL,
-// HANDS_MODEL (the model for the robot hands course, which is recorded with Flash by default).
+// HANDS_MODEL (the model for the robot hands course; the same best model as the other lessons unless set).
 //
 // Each clip remembers the model that recorded it, so changing a model only affects new lines.
 // Lines are recorded in course order (the first films first, the narrator before Pip), and the
@@ -24,7 +24,7 @@ const MANIFEST = join(OUT, 'manifest.json')
 const API = process.env.ELEVENLABS_API_BASE || 'https://api.elevenlabs.io'
 const KEY = process.env.ELEVENLABS_API_KEY
 const MODEL = process.env.ELEVENLABS_MODEL || 'eleven_multilingual_v2'
-const HANDS_MODEL = process.env.HANDS_MODEL || 'eleven_flash_v2_5'
+const HANDS_MODEL = process.env.HANDS_MODEL || MODEL
 /** Credits per character: Flash and Turbo cost half of the multilingual model. */
 const COST = (model) => (/flash|turbo/.test(model) ? 0.5 : 1)
 /** Credits to leave unspent, so a run never empties the account. */

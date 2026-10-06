@@ -39,7 +39,7 @@ function collectFile(path, { beatVoice, sayVoice, sayCalls }) {
       if (node.name.text === 'say') starts.push([node.initializer, beatVoice])
     }
     if (ts.isCallExpression(node)) {
-      const voice = sayCalls[calleeName(node)]
+      const voice = Object.hasOwn(sayCalls, calleeName(node)) && sayCalls[calleeName(node)]
       if (voice) node.arguments.forEach((a) => starts.push([a, voice]))
     }
     ts.forEachChild(node, index)
@@ -96,7 +96,7 @@ function tsxFiles(dir) {
     .sort()
     .flatMap((f) => {
       const p = join(dir, f)
-      return statSync(p).isDirectory() ? tsxFiles(p) : f.endsWith('.tsx') ? [p] : []
+      return statSync(p).isDirectory() ? tsxFiles(p) : /\.tsx?$/.test(f) ? [p] : []
     })
 }
 

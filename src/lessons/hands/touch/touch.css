@@ -1,0 +1,79 @@
+/* Loops for film 4 (touch). They stop when the film is paused. */
+.tc-flicker {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: tc-flicker 0.23s ease-in-out infinite alternate;
+}
+@keyframes tc-flicker {
+  from { transform: scale(0.94, 1.04); }
+  to { transform: scale(1.06, 0.95); }
+}
+.flow-paused .tc-flicker {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tc-flicker { animation: none; }
+}
+
+/* The choose play: how each job plays out. */
+.tc-pop {
+  animation: tc-pop 0.5s ease-out both;
+}
+@keyframes tc-pop {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.tc-slip-ok {
+  animation: tc-slip-ok 1.6s ease-out both;
+}
+@keyframes tc-slip-ok {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(14px); }
+  45%, 100% { transform: translateY(10px); }
+}
+.tc-slip-fail {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: tc-slip-fail 1.6s ease-in both;
+}
+@keyframes tc-slip-fail {
+  0% { transform: translateY(0); opacity: 1; }
+  45% { transform: translateY(40px) rotate(-4deg); opacity: 1; }
+  100% { transform: translateY(260px) rotate(-40deg); opacity: 0; }
+}
+.tc-squeeze-l {
+  animation: tc-squeeze-l 0.4s 0.45s ease-out both;
+}
+@keyframes tc-squeeze-l {
+  to { transform: translateX(5px); }
+}
+.tc-squeeze-r {
+  animation: tc-squeeze-r 0.4s 0.45s ease-out both;
+}
+@keyframes tc-squeeze-r {
+  to { transform: translateX(-5px); }
+}
+.tc-press {
+  animation: tc-press 0.8s ease-in-out both;
+}
+@keyframes tc-press {
+  0% { transform: translateY(-30px); }
+  60%, 100% { transform: translateY(0); }
+}
+.tc-shake {
+  animation: tc-shake 0.5s linear 2;
+}
+@keyframes tc-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+.flow-paused .tc-pop,
+.flow-paused .tc-slip-ok,
+.flow-paused .tc-slip-fail,
+.flow-paused .tc-squeeze-l,
+.flow-paused .tc-squeeze-r,
+.flow-paused .tc-press,
+.flow-paused .tc-shake {
+  animation-play-state: paused;
+}
