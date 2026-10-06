@@ -45,6 +45,8 @@ const manifestReady =
           manifest = m && m.clips ? m : null
         })
         .catch(() => {})
+// A stalled request for the list must never hold the lesson up: after a few seconds, carry on without it.
+const manifestOrTimeout = typeof window === 'undefined' ? manifestReady : Promise.race([manifestReady, new Promise<void>((r) => window.setTimeout(r, 6000))])
 
 function loadVoices() {
   if (!('speechSynthesis' in window)) return
@@ -121,6 +123,19 @@ export function setLiveVoiceKey(key: string) {
   liveClips.clear()
 }
 
+/** Resolves once the list of recorded lines has loaded (or failed to), so line lengths are known. */
+export function voiceReady() {
+  return manifestOrTimeout
+}
+
+/** How long a line takes to say, in seconds: the recording's length when there is one, else an estimate. */
+export function lineSeconds(text: string, voice: VoiceName = 'narrator') {
+  const sentences = splitSentences(text)
+  const clips = sentences.map((s) => manifest?.clips[voiceKey(voice, s)])
+  if (sentences.length && clips.every(Boolean)) return clips.reduce((t, c) => t + c!.ms, 0) / 1000
+  return estimateSeconds(text)
+}
+
 /** Starts downloading the recordings for lines that are about to be said. */
 export function preloadLines(lines: string[], voice: VoiceName = 'narrator') {
   manifestReady.then(() => {
@@ -152,7 +167,7 @@ interface Part {
 
 async function liveVoiceIds(): Promise<Record<VoiceName, string> | null> {
   if (manifest?.voices?.narrator && manifest.voices.tutor) return manifest.voices
-  liveVoices ??= fetch('https://api.elevenlabs.io/v1/voices', { headers: { 'xi-api-key': liveKey } })
+  liveVoices ??= fetch('https://api.elevenlabs.io/v1/voices', { headers: { 'xi-api-key': liveKey }, signal: AbortSignal.timeout(8000) })
     .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
     .then(({ voices: list }: { voices: { voice_id: string; name: string }[] }) => {
       const find = (role: VoiceName) =>
@@ -177,6 +192,7 @@ function liveClip(voice: VoiceName, text: string) {
         method: 'POST',
         headers: { 'xi-api-key': liveKey, 'content-type': 'application/json' },
         body: JSON.stringify({ text, model_id: LIVE_MODEL }),
+        signal: AbortSignal.timeout(12000),
       })
       if (!res.ok) return null
       const data = (await res.json()) as {
@@ -202,7 +218,7 @@ function liveClip(voice: VoiceName, text: string) {
 
 /** Finds a recording for every sentence of a line, or null if any is missing. */
 async function partsFor(text: string, voice: VoiceName): Promise<Part[] | null> {
-  await manifestReady
+  await manifestOrTimeout
   const sentences = splitSentences(text)
   if (!sentences.length) return null
   let from = 0
@@ -263,7 +279,12 @@ function playParts(parts: Part[], onWord: SpeakOptions['onWord'], isCancelled: (
       audio.onerror = () => finish(i === 1 ? 'failed' : 'done')
       const tick = () => {
         const t = audio.currentTime * 1000
-        while (w < part.words.length && part.words[w][1] <= t + 60) onWord?.(part.offset + part.words[w++][0])
+        // Advance w outside the call: with no onWord, `onWord?.(…)` skips its arguments, w++ included.
+        while (w < part.words.length && part.words[w][1] <= t + 60) {
+          const at = part.offset + part.words[w][0]
+          w++
+          onWord?.(at)
+        }
         raf = requestAnimationFrame(tick)
       }
       cancelAnimationFrame(raf)

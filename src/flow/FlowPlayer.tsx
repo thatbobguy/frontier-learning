@@ -1,16 +1,18 @@
 import gsap from 'gsap'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Component, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import '../art2/art2.css'
 import { Defs } from '../art2/fx'
 import { Grain } from '../art2/Grain'
-import { preloadLines, setMuted as setNarratorMuted, speak, stop as stopSpeech } from '../engine/narrator'
+import { estimateSeconds, lineSeconds, preloadLines, setMuted as setNarratorMuted, speak, stop as stopSpeech, voiceReady } from '../engine/narrator'
 import { snapshotStage } from '../engine/svg'
 import type { LessonEvent } from '../engine/types'
 import { TutorPanel, type LessonApi, type TutorHandle } from '../tutor/TutorPanel'
 import { Captions } from '../ui/Captions'
 import { CourseNext } from '../courses/CourseNext'
+import { courses } from '../courses'
 import { markFinished } from '../courses/types'
 import './flow.css'
+import { layoutTimeline, Timeline } from './Timeline'
 import type { Enter, FlowLesson, Reading } from './types'
 
 interface Pos {
@@ -74,6 +76,9 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
   const [pointer, setPointer] = useState<Pointer | null>(null)
   const [deeperOpen, setDeeperOpen] = useState(false)
   const [reading, setReading] = useState<{ r: Reading; wasPlaying: boolean } | null>(null)
+  const [fullscreen, setFullscreen] = useState(false)
+  const [voiceLoaded, setVoiceLoaded] = useState(false)
+  const [, setTick] = useState(0)
 
   const stageRef = useRef<SVGSVGElement>(null)
   const slotRefs = useRef(new Map<string, SVGGElement>())
@@ -90,7 +95,20 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
   const lastEventAt = useRef(Date.now())
   const lastNudgeAt = useRef(0)
   const memory = useRef<Record<string, unknown>>({})
+  const rootRef = useRef<HTMLDivElement>(null)
+  /** When the current line started being said, and how far it had got if paused. */
+  const lineStartedAt = useRef(0)
+  const lineElapsed = useRef(0)
+  /** Every attempt and step the learner has made in this film, for Pip. */
+  const journal = useRef<string[]>([])
+  /** Bumped by each chapter line, so only the latest one clears the "talking" hold. */
+  const sayToken = useRef(0)
 
+  const posRef = useRef(pos)
+  posRef.current = pos
+  /** Kept in step with pause() and resume() at once, so Pip sees the change before the next render. */
+  const playingRef = useRef(playing)
+  playingRef.current = playing
   const chapter = lesson.chapters[pos.ch]
   const cue = chapter.cues[pos.cue]
   const slotKey = (p: Pos) => `${lesson.chapters[p.ch].id}-${p.take}`
@@ -109,6 +127,8 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
     hints.current = []
     misses.current = 0
     lastEventAt.current = Date.now()
+    lineStartedAt.current = 0
+    lineElapsed.current = 0
     setPos((p) => ({ ch, cue: cueIndex, take: remount || p.ch !== ch ? p.take + 1 : p.take }))
   }, [])
 
@@ -134,12 +154,37 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
     if (!started || !playing || speechDone || ended) return
     const token = ++speakToken.current
     setCaption({ text: cue.say, word: 0 })
+    lineStartedAt.current = Date.now()
+    lineElapsed.current = 0
     narration.current = speak(cue.say, {
       onWord: (i) => token === speakToken.current && setCaption((c) => ({ ...c, word: i })),
-    }).then((ok) => {
-      if (ok && token === speakToken.current) setSpeechDone(true)
+    }).then(() => {
+      // If something else cut the line off (Pip speaking, a browser voice hiccup) rather than a
+      // pause or a jump, count it as said: the film must never sit there waiting forever.
+      if (token === speakToken.current) setSpeechDone(true)
     })
   }, [started, playing, speechDone, ended, cue])
+
+  // A safety net under every line: if neither the voice nor the picture reports back in good time, carry on.
+  useEffect(() => {
+    if (!started || !playing || ended) return
+    if (!speechDone) {
+      const t = window.setTimeout(() => {
+        speakToken.current++
+        stopSpeech()
+        setSpeechDone(true)
+      }, (Math.max(lineSeconds(cue.say), estimateSeconds(cue.say)) * 2 + 8) * 1000)
+      return () => window.clearTimeout(t)
+    }
+    if (talking) {
+      const t = window.setTimeout(() => setTalking(false), 30_000)
+      return () => window.clearTimeout(t)
+    }
+    if (cue.play && !animDone) {
+      const t = window.setTimeout(() => setAnimDone(true), 8000)
+      return () => window.clearTimeout(t)
+    }
+  }, [started, playing, ended, cue, speechDone, talking, animDone])
 
   const next = useCallback(() => {
     if (pos.cue < chapter.cues.length - 1) goTo(pos.ch, pos.cue + 1)
@@ -203,13 +248,17 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
   }, [leaving])
 
   const pause = useCallback(() => {
+    playingRef.current = false
     setPlaying(false)
+    if (lineStartedAt.current) lineElapsed.current = (Date.now() - lineStartedAt.current) / 1000
+    lineStartedAt.current = 0
     speakToken.current++
     stopSpeech()
   }, [])
 
   const resume = useCallback(() => {
     setPointer(null)
+    playingRef.current = true
     setPlaying(true)
     if (!started) setStarted(true)
   }, [started])
@@ -234,15 +283,17 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
 
   // A chapter's own line: said in the narrator's voice once the cue's narration has finished; the flow waits for it.
   const say = useCallback((text: string) => {
-    const cueAt = cueToken.current
+    const cueNow = cueToken.current
+    const mine = ++sayToken.current
     setTalking(true)
     return narration.current.then(() => {
-      if (cueAt !== cueToken.current) return
+      if (cueNow !== cueToken.current) return
       const token = ++speakToken.current
       setSpeechDone(true)
       setCaption({ text, word: 0 })
       return speak(text, { onWord: (i) => token === speakToken.current && setCaption((c) => ({ ...c, word: i })) }).then(() => {
-        if (token === speakToken.current) setTalking(false)
+        // However the line ended (said, paused, or talked over), the flow is free to move on.
+        if (mine === sayToken.current && cueNow === cueToken.current) setTalking(false)
       })
     })
   }, [])
@@ -258,6 +309,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
       lastEventAt.current = Date.now()
       const line = ev.type === 'attempt' ? `${ev.correct ? 'right' : 'missed'}${ev.detail ? `: ${ev.detail}` : ''}` : `progress${ev.detail ? `: ${ev.detail}` : ''}`
       recent.current = [...recent.current.slice(-7), line]
+      journal.current = [...journal.current.slice(-40), `chapter ${posRef.current.ch + 1} line ${posRef.current.cue + 1}: ${line}`]
       if (ev.type === 'attempt' && !ev.correct) {
         if (++misses.current >= 2) {
           misses.current = 0
@@ -289,18 +341,89 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
     return () => window.clearInterval(id)
   }, [playing, cue, playDone, nudge])
 
-  // Space bar pauses and plays, like a video.
+  // The timeline: every line laid end to end, sized by its recording once the list of recordings has loaded.
+  useEffect(() => {
+    let live = true
+    void voiceReady().then(() => live && setVoiceLoaded(true))
+    return () => {
+      live = false
+    }
+  }, [])
+  const timeline = useMemo(() => layoutTimeline(lesson.chapters, (t) => lineSeconds(t)), [lesson, voiceLoaded]) // eslint-disable-line react-hooks/exhaustive-deps
+  const here = timeline.cues.find((c) => c.ch === pos.ch && c.cue === pos.cue) ?? timeline.cues[0]
+  const lineNow = speechDone ? here.dur : Math.min(here.dur, playing && lineStartedAt.current ? (Date.now() - lineStartedAt.current) / 1000 : lineElapsed.current)
+  const time = !started ? 0 : ended ? timeline.total : here.start + lineNow
+
+  // Move the playhead along while a line is being said.
+  useEffect(() => {
+    if (!started || !playing || speechDone || ended) return
+    const id = window.setInterval(() => setTick((n) => n + 1), 250)
+    return () => window.clearInterval(id)
+  }, [started, playing, speechDone, ended])
+
+  /** Jumps to any line of the film, like scrubbing a video. Pausing stays as it was. */
+  const seek = useCallback(
+    (ch: number, cueIndex: number) => {
+      setDeeperOpen(false)
+      if (!started) {
+        setStarted(true)
+        setPlaying(true)
+      }
+      if (ch === pos.ch && cueIndex === pos.cue && started && !ended) goTo(ch, cueIndex, true)
+      else cutTo(ch, cueIndex, { type: 'dissolve' })
+    },
+    [started, ended, pos, goTo, cutTo],
+  )
+
+  const step = useCallback(
+    (dir: 1 | -1) => {
+      const i = timeline.cues.indexOf(here) + dir
+      const c = timeline.cues[Math.min(timeline.cues.length - 1, Math.max(0, i))]
+      seek(c.ch, c.cue)
+    },
+    [timeline, here, seek],
+  )
+
+  // Full screen: the real thing where the browser allows it, else the player simply fills the window.
+  const toggleFullscreen = useCallback(() => {
+    const el = rootRef.current
+    if (document.fullscreenElement) void document.exitFullscreen().catch(() => {})
+    else if (fullscreen) setFullscreen(false)
+    else if (el?.requestFullscreen) el.requestFullscreen().catch(() => setFullscreen(true))
+    else setFullscreen(true)
+  }, [fullscreen])
+  useEffect(() => {
+    const onChange = () => setFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+
+  // Keys, like a video: space plays and pauses, arrows step a line back or on, F is full screen, C is captions.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.code !== 'Space' || (e.target as HTMLElement)?.closest('input, textarea, button, .reading')) return
-      if (document.querySelector('.reading')) return
-      e.preventDefault()
-      if (playing) pause()
-      else resume()
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      const t = e.target as HTMLElement
+      if (t?.closest('input, textarea, .reading') || document.querySelector('.reading')) return
+      if (e.code === 'Space') {
+        if (t?.closest('button')) return
+        e.preventDefault()
+        if (playing) pause()
+        else resume()
+      } else if (e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
+        if (!started) return
+        e.preventDefault()
+        step(e.code === 'ArrowLeft' ? -1 : 1)
+      } else if (e.code === 'KeyF') {
+        toggleFullscreen()
+      } else if (e.code === 'KeyC') {
+        setShowCaptions((v) => !v)
+      } else if (e.code === 'Escape' && fullscreen && !document.fullscreenElement) {
+        setFullscreen(false)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [playing, pause, resume])
+  }, [playing, pause, resume, started, step, toggleFullscreen, fullscreen])
 
   const reportState = useCallback((d: string) => {
     sceneState.current = d
@@ -309,6 +432,11 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
     hints.current = h
   }, [])
   const animDoneCb = useCallback(() => setAnimDone(true), [])
+  // A chapter that crashes is skipped over rather than taking the whole page down with it.
+  const sceneFailed = useCallback(() => {
+    setAnimDone(true)
+    setPlayDone(true)
+  }, [])
 
   const pointAt = useCallback((target: string) => {
     const svg = stageRef.current
@@ -351,6 +479,13 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
           hints: hints.current,
           recentEvents: recent.current,
           targets: [...new Set(targets.filter(Boolean))],
+          paused: !playingRef.current,
+          ended,
+          heardSoFar: chapter.cues.slice(0, pos.cue).map((q) => q.say),
+          reading: readingText(),
+          memory: describeMemory(memory.current),
+          journal: journal.current,
+          course: describeCourse(lesson),
         }
       },
       snapshot: () => (stageRef.current ? snapshotStage(stageRef.current) : Promise.resolve(null)),
@@ -358,17 +493,16 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
       resume,
       replay,
       pointAt,
-      isPlaying: () => playing,
+      isPlaying: () => playingRef.current,
     }),
-    [lesson, script, pos, chapter, cue, playDone, pause, resume, replay, pointAt, playing],
+    [lesson, script, pos, chapter, cue, playDone, pause, resume, replay, pointAt, playing, ended],
   )
 
   const slots = [pos, ...(leaving ? [leaving] : [])]
-  const totalCues = lesson.chapters.reduce((n, c) => n + c.cues.length, 0)
   const Poster = lesson.Poster
 
   return (
-    <div className={`flow${lesson.look === 'cine' ? ' flow-cine' : ''}${playing ? '' : ' flow-paused'}`}>
+    <div ref={rootRef} className={`flow${lesson.look === 'cine' ? ' flow-cine' : ''}${playing ? '' : ' flow-paused'}${fullscreen ? ' flow-full' : ''}`}>
       <header className="flow-top">
         <button className="flow-back" onClick={onExit}>
           ← Lessons
@@ -402,6 +536,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
                       else slotRefs.current.delete(key)
                     }}
                   >
+                    <SceneGuard onError={isLeaving ? noop : sceneFailed}>
                     <S
                       cueIndex={p.cue}
                       playing={isLeaving ? false : playing && !ended}
@@ -413,6 +548,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
                       setHints={isLeaving ? noop : setHints}
                       memory={memory.current}
                     />
+                    </SceneGuard>
                   </g>
                 )
               })}
@@ -521,27 +657,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
               </svg>
             )}
           </button>
-          <div className="flow-progress" role="group" aria-label="Chapters">
-            {lesson.chapters.map((c, i) => {
-              const fill = !started ? 0 : i < pos.ch || ended ? 1 : i > pos.ch ? 0 : (pos.cue + (speechDone ? 1 : 0.5)) / c.cues.length
-              return (
-                <button
-                  key={c.id}
-                  className={i === pos.ch && started ? 'flow-seg on' : 'flow-seg'}
-                  style={{ flexGrow: c.cues.length / totalCues }}
-                  onClick={() => {
-                    if (!started) setStarted(true)
-                    setPlaying(true)
-                    cutTo(i, 0, { type: 'dissolve' })
-                  }}
-                  title={c.title}
-                  aria-label={`Chapter ${i + 1}: ${c.title}`}
-                >
-                  <span className="flow-seg-fill" style={{ transform: `scaleX(${Math.min(1, fill)})` }} />
-                </button>
-              )
-            })}
-          </div>
+          <Timeline layout={timeline} time={time} onSeek={seek} />
           <span className="flow-chapter">{started ? chapter.title : `${lesson.chapters.length} chapters`}</span>
           <button className={showCaptions ? 'flow-toggle on' : 'flow-toggle'} onClick={() => setShowCaptions((v) => !v)} aria-label="Captions">
             CC
@@ -556,6 +672,15 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
             }}
           >
             {muted ? 'Sound off' : 'Sound on'}
+          </button>
+          <button className="flow-toggle flow-fs" onClick={toggleFullscreen} aria-label={fullscreen ? 'Exit full screen' : 'Full screen'} title={fullscreen ? 'Exit full screen (F)' : 'Full screen (F)'}>
+            <svg viewBox="0 0 24 24" aria-hidden>
+              {fullscreen ? (
+                <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+              ) : (
+                <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+              )}
+            </svg>
           </button>
         </div>
       </div>
@@ -604,4 +729,47 @@ function isShown(el: Element, stop: Element) {
     if (op < 0.05 || getComputedStyle(n).display === 'none') return false
   }
   return true
+}
+
+/** Catches a chapter that throws while drawing, so the rest of the film carries on. */
+class SceneGuard extends Component<{ children: ReactNode; onError: () => void }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+  componentDidCatch(err: unknown) {
+    console.error('[flow] a chapter failed to draw and was skipped', err)
+    this.props.onError()
+  }
+  render() {
+    return this.state.failed ? null : this.props.children
+  }
+}
+
+/** The text of the "go deeper" reading the learner has open, if any, for Pip. */
+function readingText() {
+  const el = document.querySelector('.reading-sheet') as HTMLElement | null
+  if (!el) return ''
+  const text = el.innerText.replace(/\n{3,}/g, '\n\n').trim()
+  return text.length > 6000 ? `${text.slice(0, 6000)}…` : text
+}
+
+/** What earlier chapters remembered about the learner (their guesses, choices), as short text. */
+function describeMemory(m: Record<string, unknown>) {
+  try {
+    const text = JSON.stringify(m)
+    if (!text || text === '{}') return ''
+    return text.length > 1500 ? `${text.slice(0, 1500)}…` : text
+  } catch {
+    return ''
+  }
+}
+
+/** Where this film sits in its course: the course, the other films and which come before and after. */
+function describeCourse(lesson: FlowLesson) {
+  const c = lesson.course ? courses[lesson.course] : undefined
+  if (!c) return ''
+  const branch = (id: string) => c.branches.find((b) => b.id === id)?.title ?? id
+  const films = c.nodes.map((n) => `${n.id === lesson.id ? '(this film) ' : ''}"${n.lesson?.title ?? n.title}" on the ${branch(n.branch)} branch${n.parent ? `, after "${c.nodes.find((p) => p.id === n.parent)?.title ?? n.parent}"` : ''}: ${n.blurb ?? ''}`)
+  return `This film is one stop in the course "${c.title}" (${c.tagline}). The films in the course:\n${films.map((f) => `- ${f}`).join('\n')}`
 }

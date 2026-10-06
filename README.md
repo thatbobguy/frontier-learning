@@ -28,7 +28,9 @@ Handy links while testing:
 
 Pip answers using Claude (`claude-opus-5-5` at low effort), called straight from the browser. GitHub Pages has no server, so open Pip's settings (the gear) and paste an Anthropic API key. The key stays in that browser's local storage and is sent only to Anthropic. Without a key, Pip still gives each game's built-in hints.
 
-Before real students use this, put a small server or proxy in front of the API so no key lives in the browser.
+To let every visitor talk to Pip without pasting a key, deploy the small relay in `worker/pip-relay.js` (a Cloudflare Worker that holds the key, only accepts requests from this site and always uses Pip's model), then set the repository variable `VITE_PIP_RELAY` to its address. The next build points Pip at it. Steps are at the top of that file.
+
+Pip is told where the learner is (chapter, line, what they have already heard), what is on screen (a picture plus each scene's own description), everything they have tried in the film, what earlier chapters remembered about them, any "go deeper" reading they have open, and where the film sits in its course.
 
 ## Voices
 

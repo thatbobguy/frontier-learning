@@ -47,6 +47,9 @@ jobs:
           git commit -m "Record narration with ElevenLabs [skip ci]"
           git pull --rebase origin main && git push origin HEAD:main || echo "::warning::Could not save the recordings to main; they will be recorded again next run."
       - run: npm run build
+        env:
+          # Pip's relay (worker/pip-relay.js), if one is set up as a repository variable.
+          VITE_PIP_RELAY: ${{ vars.VITE_PIP_RELAY }}
       - name: Publish dist to gh-pages
         run: |
           touch dist/.nojekyll

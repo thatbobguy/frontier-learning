@@ -1,7 +1,7 @@
 import { useImperativeHandle, useRef, useState, type Ref } from 'react'
 import { Pip2 as Pip, type PipMood } from '../art2/characters'
 import { loadLiveVoiceKey, setLiveVoiceKey, speak, stop as stopSpeech } from '../engine/narrator'
-import { askPip, buildSystemPrompt, describeError, loadKey, saveKey, type TutorReply, type TutorTurn } from './claude'
+import { askPip, buildSystemPrompt, canThink, describeError, loadKey, PIP_RELAY, saveKey, type TutorReply, type TutorTurn } from './claude'
 import { canListen, listen } from './listen'
 
 export interface LessonContext {
@@ -15,6 +15,20 @@ export interface LessonContext {
   hints: string[]
   recentEvents: string[]
   targets: string[]
+  /** True while the film is paused. */
+  paused: boolean
+  /** True on the end screen. */
+  ended: boolean
+  /** The lines of this chapter the learner has already heard, in order. */
+  heardSoFar: string[]
+  /** The "go deeper" reading open on screen, as text, if any. */
+  reading: string
+  /** What earlier chapters remembered about the learner (guesses, choices). */
+  memory: string
+  /** Every attempt and step the learner has made in this film so far. */
+  journal: string[]
+  /** Where this film sits in its course, if it is part of one. */
+  course: string
 }
 
 /** What the tutor can see and do in the lesson. */
@@ -42,11 +56,18 @@ export interface TutorHandle {
 
 function situationText(c: LessonContext, extra?: string) {
   return [
-    `The student is at stop ${c.stopNumber} ("${c.stopTitle}"), step ${c.beatNumber} of ${c.beatCount}.`,
-    `The narrator just said: "${c.narration}"`,
-    c.inChallenge ? 'This step is a "Now you try" challenge the student is working on right now. Do not give away the answer.' : 'This step is part of the explainer video.',
+    c.course,
+    c.ended
+      ? 'The student has finished the whole film and is on the end screen.'
+      : `The student is in chapter ${c.stopNumber} ("${c.stopTitle}"), at line ${c.beatNumber} of ${c.beatCount}. Everything in the script before this line has been heard; nothing after it has, so do not spoil what is coming.`,
+    c.heardSoFar.length ? `Earlier in this chapter they heard:\n${c.heardSoFar.map((l) => `- ${l}`).join('\n')}` : '',
+    `The narrator ${c.paused ? 'was saying when the film paused' : 'is saying now'}: "${c.narration}"`,
+    c.paused ? 'The film is paused while you talk.' : 'The film is still playing.',
+    c.inChallenge ? 'This line is a "your turn" challenge the student is working on right now. Do not give away the answer.' : 'This line is part of the explainer film.',
     c.sceneState ? `What is on screen and what the student has done: ${c.sceneState}` : '',
-    c.recentEvents.length ? `Recent attempts: ${c.recentEvents.join('; ')}.` : '',
+    c.journal.length ? `Everything the student has tried in this film so far, oldest first:\n${c.journal.map((l) => `- ${l}`).join('\n')}` : '',
+    c.memory ? `What the lesson remembered about the student from earlier chapters: ${c.memory}` : '',
+    c.reading ? `The student has a "go deeper" reading open. Its text:\n<reading>\n${c.reading}\n</reading>` : '',
     c.targets.length ? `Things you can point at: ${c.targets.join(', ')}.` : 'There is nothing to point at right now.',
     c.hints.length ? `Hints the lesson designers wrote for this challenge, gentlest first (use them as inspiration, in your own words): ${c.hints.join(' | ')}` : '',
     extra ?? '',
@@ -66,9 +87,19 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
   const [key, setKey] = useState(loadKey)
   const [voiceKey, setVoiceKey] = useState(loadLiveVoiceKey)
   const history = useRef<TutorTurn[]>([])
+  const [log, setLog] = useState<TutorTurn[]>([])
+  const logRef = useRef<HTMLDivElement>(null)
+  const live = canThink(key)
+  const remember = (turn: TutorTurn) => {
+    history.current = [...history.current.slice(-15), turn]
+    setLog(history.current.slice())
+    window.setTimeout(() => logRef.current?.scrollTo({ top: logRef.current.scrollHeight }), 0)
+  }
   const stopListening = useRef<(() => void) | null>(null)
   const hintStep = useRef(0)
   const busy = useRef(false)
+  const pipToken = useRef(0)
+  const pipTalking = useRef(false)
   const explainDone = useRef<(() => void) | null>(null)
   const invited = useRef(0)
 
@@ -81,12 +112,23 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
   }
 
   const pipSays = async (text: string, reply?: TutorReply) => {
+    const mine = ++pipToken.current
+    pipTalking.current = true
     setBubble(text)
     setMood('talking')
-    history.current = [...history.current.slice(-8), { who: 'pip', text }]
+    remember({ who: 'pip', text })
     if (reply?.action === 'point' && reply.target) lesson.pointAt(reply.target)
-    await speak(text, { voice: 'tutor' })
+    // Pip and the narrator share one voice, so hold the film rather than talk over it (a game stays live).
+    if (lesson.isPlaying() && !lesson.context().inChallenge) {
+      lesson.pause()
+      setWaitingToResume(true)
+    }
+    const said = await speak(text, { voice: 'tutor' })
+    // A newer answer (or the learner) cut this one off: leave the rest to that.
+    if (mine !== pipToken.current) return
+    pipTalking.current = false
     setMood('idle')
+    if (!said) return
     if (reply?.action === 'replay') {
       setWaitingToResume(false)
       lesson.replay()
@@ -111,23 +153,24 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
   }
 
   const respond = async (studentSaid: string, extraSituation?: string) => {
+    // Only one question is thought about at a time; a new one may cut Pip off mid-sentence.
     if (busy.current) return
-    busy.current = true
     const c = lesson.context()
-    if (studentSaid) history.current = [...history.current.slice(-8), { who: 'student', text: studentSaid }]
+    if (studentSaid) remember({ who: 'student', text: studentSaid })
     const explaining = !!explainDone.current
     try {
-      if (!key && explaining) {
+      if (!live && explaining) {
         await pipSays('I love how you thought about that. Explaining your thinking makes your brain stronger!', { say: '', action: 'resume', target: '' })
         return
       }
-      if (!key) {
+      if (!live) {
         const r = offlineReply(c)
         await pipSays(r.say, r)
         return
       }
       setMood('thinking')
       setBubble('Hmm, let me think…')
+      busy.current = true
       const reply = await askPip({
         apiKey: key,
         system: buildSystemPrompt(lesson.lessonTitle, lesson.script, lesson.audience),
@@ -141,8 +184,10 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
         studentSaid: studentSaid ? `The student says: "${studentSaid}"` : 'The student has not said anything. Speak up gently on your own.',
         snapshot: await lesson.snapshot(),
       })
+      busy.current = false
       await pipSays(reply.say, reply)
     } catch (err) {
+      busy.current = false
       await pipSays(describeError(err))
     } finally {
       busy.current = false
@@ -158,6 +203,8 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
       void pipSays('You did it! How did you figure that out? Tap the mic and tell me.')
     },
     nudge: (reason: string) => {
+      // Never talk over Pip's own answer or a question being thought about.
+      if (busy.current || pipTalking.current || stopListening.current) return
       setOpen(true)
       void respond('', `${reason} Offer one small, encouraging nudge toward the idea they need, without giving the answer.`)
     },
@@ -210,6 +257,8 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
   }
 
   const listening = mood === 'listening'
+  // The chat so far, minus the line already in Pip's bubble.
+  const earlier = log.at(-1)?.who === 'pip' && log.at(-1)?.text === bubble ? log.slice(0, -1) : log
 
   return (
     <aside className={open ? 'tutor open' : 'tutor'} aria-label="Pip, your tutor">
@@ -217,7 +266,7 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
         <div className="tutor-card">
           <div className="tutor-top">
             <strong>Pip</strong>
-            <span className="tutor-status">{mood === 'thinking' ? 'thinking' : mood === 'listening' ? 'listening' : mood === 'talking' ? 'talking' : key ? 'ready' : 'hints only'}</span>
+            <span className="tutor-status">{mood === 'thinking' ? 'thinking' : mood === 'listening' ? 'listening' : mood === 'talking' ? 'talking' : live ? 'ready' : 'hints only'}</span>
             <button className="icon" onClick={() => setSettings((v) => !v)} aria-label="Pip settings" title="Settings">⚙</button>
             <button className="icon" onClick={() => setOpen(false)} aria-label="Close Pip">✕</button>
           </div>
@@ -235,7 +284,11 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
                   }}
                 />
               </label>
-              <p>The key stays in this browser only and is sent straight to Anthropic. Without it, Pip still gives the lesson's built-in hints.</p>
+              <p>
+                {PIP_RELAY
+                  ? 'Optional: Pip already works without one. A key of your own is used instead of the site’s, stays in this browser only and is sent straight to Anthropic.'
+                  : 'The key stays in this browser only and is sent straight to Anthropic. Without it, Pip still gives the lesson’s built-in hints.'}
+              </p>
               <label>
                 ElevenLabs API key (optional)
                 <input
@@ -253,6 +306,15 @@ export function TutorPanel({ lesson, ref }: { lesson: LessonApi; ref?: Ref<Tutor
             </div>
           ) : (
             <>
+              {earlier.length > 0 && (
+                <div className="tutor-log" ref={logRef} aria-label="Earlier in your chat with Pip">
+                  {earlier.map((t, i) => (
+                    <p key={i} className={t.who === 'pip' ? 'from-pip' : 'from-you'}>
+                      {t.text}
+                    </p>
+                  ))}
+                </div>
+              )}
               <p className="tutor-bubble">{bubble}</p>
               {heard && listening && <p className="tutor-heard">&ldquo;{heard}&rdquo;</p>}
               <div className="tutor-actions">
