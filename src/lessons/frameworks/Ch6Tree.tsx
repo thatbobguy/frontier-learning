@@ -84,7 +84,7 @@ const ORDER: BranchId[] = ['B', 'D', 'A', 'C']
 const EXT: Bez = [[1010, 232], [1062, 80], [984, -150], [1030, -300]]
 const XTIP = EXT[3]
 /** Where the little balance scale stands, just above the Solving for x bud. */
-const XSCALE: P = [XTIP[0] + 4, XTIP[1] - 96]
+const XSCALE: P = [XTIP[0] + 4, XTIP[1] - 120]
 
 /* Lanterns: one for each idea of the lesson. */
 const LR = 54
@@ -108,7 +108,7 @@ const onBranch = (id: BranchId, t: number): P => {
 /** 0 sheep and pebble (matching), 1 the gold 7 (names), 2 a bundle of ten, 3 sticks put together and taken apart. */
 const LANS: Lantern[] = [
   { anchor: [FORK[0], FORK[1] - LR], s: 0, sky: [850, 382], branch: null, tutor: 'the sheep and pebble lantern (matching)' },
-  { anchor: onBranch('A', 0.45), s: 34, sky: [612, 405], branch: 'A', tutor: 'the gold 7 lantern (names for amounts)' },
+  { anchor: onBranch('A', 0.45), s: 22, sky: [612, 405], branch: 'A', tutor: 'the gold 7 lantern (names for amounts)' },
   { anchor: onBranch('A', 0.86), s: 26, sky: [376, 446], branch: 'A', tutor: 'the bundle of ten lantern' },
   { anchor: onBranch('C', 0.68), s: 30, sky: [1100, 414], branch: 'C', tutor: 'the adding sticks lantern' },
 ]
@@ -142,9 +142,27 @@ function leavesOn(b: Bez, ts: number[], avoid: number[], seed: number, size = 1)
   })
 }
 
+/** Side twigs on the lit branches, so the tree looks full. */
+const twig = (id: BranchId, t: number, dx: number, dy: number): Bez => {
+  const [x, y] = bez(BR[id].b, t)
+  return [[x, y], [x + dx * 0.2, y + dy * 0.45], [x + dx * 0.6, y + dy * 0.85], [x + dx, y + dy]]
+}
+const TWIGS: { id: 'A' | 'C'; b: Bez }[] = [
+  { id: 'A', b: twig('A', 0.3, -30, -74) },
+  { id: 'A', b: twig('A', 0.64, -64, -70) },
+  { id: 'C', b: twig('C', 0.4, -50, -76) },
+]
+
 const LEAVES: Record<'A' | 'C' | 'E', LeafSpot[]> = {
-  A: leavesOn(BR.A.b, [0.2, 0.3, 0.38, 0.55, 0.62, 0.7, 0.78, 0.93, 0.99], [0.45, 0.86], 5),
-  C: leavesOn(BR.C.b, [0.22, 0.32, 0.42, 0.5, 0.58, 0.78, 0.86, 0.94, 1], [0.68], 9),
+  A: [
+    ...leavesOn(BR.A.b, [0.16, 0.24, 0.34, 0.4, 0.52, 0.58, 0.7, 0.76, 0.82, 0.92, 0.97, 1], [0.45, 0.86], 5),
+    ...leavesOn(TWIGS[0].b, [0.55, 0.85, 1], [], 6, 1.05),
+    ...leavesOn(TWIGS[1].b, [0.45, 0.75, 1], [], 7, 1.05),
+  ],
+  C: [
+    ...leavesOn(BR.C.b, [0.2, 0.28, 0.48, 0.54, 0.6, 0.76, 0.82, 0.88, 0.95, 1], [0.68], 9),
+    ...leavesOn(TWIGS[2].b, [0.5, 0.8, 1], [], 10, 1.05),
+  ],
   E: leavesOn(EXT, [0.3, 0.38, 0.47, 0.55, 0.63, 0.71, 0.79, 0.87], [], 13, 0.9),
 }
 /** The tree keeps on growing: fresh leaves at the tips and up the trunk. */
@@ -547,7 +565,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
     /* 1. The tree grows out of the pebble, and the lanterns settle on it. */
     const b1 = 9.8
     tl.addLabel('b1', b1)
-    fly(800, 466, 1, b1, 2.8)
+    fly(800, 470, 1.06, b1, 2.8)
     tl.to('.c6-peb-cool', { opacity: 1, duration: 0.4 }, b1 + 0.2)
     tl.to('.c6-roots', { scale: 1, duration: 0.8, ease: 'back.out(1.6)' }, b1 + 0.3)
     tl.to('.c6-trunk', { scaleY: 1, duration: 1.4, ease: 'power2.out' }, b1 + 0.4)
@@ -556,6 +574,8 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
     tl.to('.c6-pulse', { opacity: 0, duration: 0.4 }, b1 + 1.6)
     const growAt: Record<BranchId, number> = { A: 1.45, D: 1.55, B: 1.7, C: 1.8 }
     ORDER.forEach((id) => tl.to(`.c6-br-${id}`, { strokeDashoffset: 0, duration: 1.0, ease: 'power2.out' }, b1 + growAt[id]))
+    tl.to('.c6-br-tA', { strokeDashoffset: 0, duration: 0.6, ease: 'power2.out' }, b1 + growAt.A + 0.5)
+    tl.to('.c6-br-tC', { strokeDashoffset: 0, duration: 0.6, ease: 'power2.out' }, b1 + growAt.C + 0.5)
     tl.to('.c6-leaf-A', { scale: 1, duration: 0.4, ease: 'back.out(2.5)', stagger: 0.06 }, b1 + 2.1)
     tl.to('.c6-leaf-C', { scale: 1, duration: 0.4, ease: 'back.out(2.5)', stagger: 0.06 }, b1 + 2.3)
     tl.to('.c6-bud-D', { scale: 1, duration: 0.5, ease: 'back.out(2.5)' }, b1 + 2.45)
@@ -627,7 +647,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
       tl.to(`.c6-leaf-E${k}`, { scale: 1, duration: 0.4, ease: 'back.out(2.5)' }, grow.at + grow.dur * p - 0.05)
     })
     camTo('cx', 960, grow.at, 3.2, 'sine.inOut')
-    camTo('cy', -318, grow.at + 0.1, 3.3, 'sine.inOut')
+    camTo('cy', -334, grow.at + 0.1, 3.3, 'sine.inOut')
     camTo('z', Math.log(1.55), grow.at, 3.3, 'sine.inOut')
     tl.to('.c6-bud-X', { scale: 1, duration: 0.55, ease: 'back.out(2.5)' }, b4 + 5.0)
     tl.to('.c6-xglow', { opacity: 1, duration: 0.9 }, b4 + 5.2)
@@ -647,9 +667,9 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
     const b5 = b4 + 9.1
     tl.addLabel('b5', b5)
     camTo('cx', 800, b5, 1.9, 'sine.inOut')
-    camTo('cy', 728, b5, 3.6, 'power2.inOut')
+    camTo('cy', 774, b5, 3.6, 'power2.inOut')
     camTo('z', Math.log(1.15), b5, 1.3, 'sine.inOut')
-    camTo('z', Math.log(2.3), b5 + 1.3, 2.4, 'power2.inOut')
+    camTo('z', Math.log(3), b5 + 1.3, 2.4, 'power2.inOut')
     tl.to('.c6-lbl', { opacity: 0, duration: 1.0 }, b5 + 1.4)
     tl.to('.c6-hush', { opacity: 1, duration: 2.2, ease: 'sine.inOut' }, b5 + 1.8)
     tl.to('.c6-peb-cool', { opacity: 0, duration: 0.9 }, b5 + 3.1)
@@ -736,7 +756,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
             <Sheep s={0.62} flip tutor="a sleeping sheep" />
           </g>
         </g>
-        <g transform="translate(1236 842)">
+        <g transform="translate(1300 878)">
           <g className="breathe" style={{ animationDelay: '-1.4s' }}>
             <Sheep s={0.55} />
           </g>
@@ -751,6 +771,9 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
             <g key={id} data-tutor={br.tutor}>
               <g className={lit(id) ? 'c6-sway' : 'c6-sway-b'} style={pivot(bx, by, br.sway)}>
                 <BranchStroke b={br.b} w={br.w} cls={`c6-br c6-br-${id}`} />
+                {TWIGS.filter((t) => t.id === id).map((t, k) => (
+                  <BranchStroke key={k} b={t.b} w={9} cls={`c6-br c6-br-t${id}`} />
+                ))}
                 {id === 'C' && (
                   <g data-tutor="the branch growing up to Solving for x">
                     <BranchStroke b={EXT} w={16} cls="c6-br c6-br-E" />
@@ -763,13 +786,15 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
                         <Glow x={XTIP[0]} y={XTIP[1] - 30} r={110} color="warm" opacity={0.35} />
                       </g>
                     </g>
-                    <g transform={`translate(${XTIP[0]} ${XTIP[1]}) rotate(${(bezAngle(EXT, 1) + 90).toFixed(1)}) scale(1.35)`}>
+                    <g transform={`translate(${XTIP[0]} ${XTIP[1]}) rotate(${((bezAngle(EXT, 1) + 90) * 0.3).toFixed(1)}) scale(1.5)`}>
                       <g className="c6-bud c6-bud-X" data-tutor="the Solving for x bud">
                         <BudShape big />
                       </g>
                     </g>
                     <g transform={`translate(${XSCALE[0]} ${XSCALE[1]}) scale(0.85)`}>
                       <g className="c6-xscale">
+                        <circle cy={-80} r={136} fill={N.night0} opacity={0.4} />
+                        <circle cy={-80} r={136} fill="none" stroke={N.cream} strokeWidth={4} opacity={0.65} />
                         <XScale />
                       </g>
                     </g>
@@ -781,7 +806,8 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
                   <g transform={`translate(${tip[0]} ${tip[1]})`}>
                     <g className={`c6-budglow c6-budglow-${id}`}>
                       <g className="c6-throb">
-                        <Glow r={130} color="cool" />
+                        <Glow r={160} color="cool" />
+                        <Glow r={70} color="cool" />
                       </g>
                     </g>
                     <g transform={`rotate(${((bezAngle(br.b, 1) + 90) * 0.55).toFixed(1)})`}>
@@ -814,16 +840,16 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
         {/* The trunk: matching. It grows from the pebble. */}
         <g className="c6-roots">
           {/* tapered roots that hug the hilltop */}
-          <path d="M770 784 Q736 790 690 806 Q676 811 664 810 Q690 798 724 794 Q752 791 770 796 Z" fill={N.woodDark} />
-          <path d="M830 784 Q866 790 912 806 Q926 811 938 810 Q912 798 878 794 Q848 791 830 796 Z" fill={N.woodDark} />
-          <path d="M782 792 Q770 806 742 818 Q734 821 728 820 Q750 806 766 798 Z" fill={N.woodDark} />
-          <path d="M818 792 Q832 806 858 818 Q866 821 872 820 Q850 806 834 798 Z" fill={N.woodDark} />
-          <path d="M700 803 Q736 794 766 790" stroke={N.woodLight} strokeWidth={3} fill="none" opacity={0.4} strokeLinecap="round" />
+          <path d="M772 780 C738 786 698 796 646 813 C698 808 736 808 768 808 Z" fill={N.woodDark} />
+          <path d="M828 780 C862 786 902 796 954 813 C902 808 864 808 832 808 Z" fill={N.woodDark} />
+          <path d="M788 790 C778 804 760 818 738 830 C764 826 784 816 800 804 Z" fill={N.woodDark} />
+          <path d="M812 790 C822 804 840 818 862 830 C836 826 816 816 800 804 Z" fill={N.woodDark} />
+          <path d="M690 801 C722 792 748 786 770 784" stroke={N.woodLight} strokeWidth={4} fill="none" opacity={0.45} strokeLinecap="round" />
         </g>
         <g className="c6-trunk" data-tutor="the trunk (matching)">
-          <path d="M744 800 Q770 788 772 744 C775 680 778 590 781 470 L819 470 C822 590 825 680 828 744 Q830 788 856 800 Z" fill={N.woodDark} />
-          <path d="M806 800 Q812 770 812 744 C813 680 814 590 813 470 L819 470 C822 590 825 680 828 744 Q830 788 856 800 Z" fill={N.shadow} opacity={0.22} />
-          <path d="M764 790 Q776 772 778 744 C780 680 783 590 786 478" stroke={N.woodLight} strokeWidth={5} fill="none" opacity={0.55} strokeLinecap="round" />
+          <path d="M732 802 Q764 788 766 744 C770 680 774 590 778 470 L822 470 C826 590 830 680 834 744 Q836 788 868 802 Z" fill={N.woodDark} />
+          <path d="M808 802 Q815 770 815 744 C816 680 817 590 815 470 L822 470 C826 590 830 680 834 744 Q836 788 868 802 Z" fill={N.shadow} opacity={0.22} />
+          <path d="M756 790 Q770 772 773 744 C776 680 780 590 784 478" stroke={N.woodLight} strokeWidth={6} fill="none" opacity={0.55} strokeLinecap="round" />
           <path d="M795 770 C796 710 798 650 797 590 M805 720 C806 690 807 650 806 620" stroke={N.wood} strokeWidth={3} fill="none" opacity={0.6} strokeLinecap="round" />
         </g>
         <g className="c6-pulse">
@@ -844,12 +870,12 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
           </Title>
         </Label>
         <Label cls="c6-lbl-A" tutor="How many? label">
-          <Title x={414} y={446} size={42} anchor="end">
+          <Title x={394} y={448} size={42} anchor="end">
             How many?
           </Title>
         </Label>
         <Label cls="c6-lbl-B" tutor="What comes next? label">
-          <Title x={590} y={204} size={40} color={N.mist}>
+          <Title x={548} y={186} size={40} color={N.mist}>
             What comes next?
           </Title>
         </Label>
@@ -920,9 +946,9 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
           </g>
           <g className="c6-peb-warm">
             <g className="c6-throb">
-              <Glow x={PEB[0]} y={PEB[1] - 4} r={240} color="warm" opacity={0.8} />
+              <Glow x={PEB[0]} y={PEB[1] - 4} r={150} color="warm" opacity={0.75} />
             </g>
-            <Glow x={PEB[0]} y={PEB[1]} r={90} color="warm" />
+            <Glow x={PEB[0]} y={PEB[1]} r={64} color="warm" />
           </g>
           <Pebble x={PEB[0]} y={PEB[1]} s={1.5} seed={0} />
           <g className="c6-peb-gold" transform={`translate(${PEB[0]} ${PEB[1]}) scale(1.5) rotate(-15)`}>

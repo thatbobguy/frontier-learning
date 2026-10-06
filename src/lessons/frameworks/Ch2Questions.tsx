@@ -118,7 +118,7 @@ const MED = { y: -56, r: 66 }
 /** How far the camera rises from the valley into the sky. */
 const RISE = 900
 /** The valley's gentle push-in during the time-lapse. */
-const DRIFT = { s: 1.06, x: 900, y: 760 }
+const DRIFT = { s: 1.15, x: 900, y: 800 }
 const drifted = (x: number, y: number) => ({ x: DRIFT.x + DRIFT.s * (x - DRIFT.x), y: DRIFT.y + DRIFT.s * (y - DRIFT.y) })
 
 /** Camera on the sky: matrix(scale, 0, 0, scale, x, y). */
@@ -190,11 +190,11 @@ interface Villager {
 }
 
 const VILLAGERS: Villager[] = [
-  { tutor: 'the builder', x: 500, y: 880, s: 0.48, flip: true, robe: [N.sand, N.sandLight, N.sandDark], skin: [N.skin2, N.skin2Dark], head: 'cap', headColor: N.white, headDark: N.mist, pose: 'hold', face: 'think', q: 'shape' },
-  { tutor: 'a shopper at the bread stall', x: 748, y: 892, s: 0.45, flip: true, robe: [N.leaf, N.leafLight, N.leafDark], skin: [N.skin1, N.skin1Dark], head: 'hijab', headColor: N.sky, headDark: N.skyDark, pose: 'point', face: 'think', q: 'howMany' },
-  { tutor: 'a child looking at the sky', x: 868, y: 888, s: 0.36, robe: [N.sky, N.skyLight, N.skyDark], skin: [N.skin3, N.skin3Dark], head: 'hair', headColor: N.night0, headDark: N.space, pose: 'wave', face: 'wow', q: 'next' },
-  { tutor: 'a shopper at the apple stall', x: 1098, y: 892, s: 0.45, flip: true, robe: [N.stone, N.stoneLight, N.stoneDark], skin: [N.skin2, N.skin2Dark], head: 'hair', headColor: N.woodDark, headDark: N.night0, pose: 'hold', face: 'think', q: 'change' },
-  { tutor: 'a shopper at the pot stall', x: 1452, y: 892, s: 0.45, flip: true, robe: [N.wood, N.woodLight, N.woodDark], skin: [N.skin3, N.skin3Dark], head: 'hijab', headColor: N.sandLight, headDark: N.sand, pose: 'point', face: 'think', q: 'howMany' },
+  { tutor: 'the builder', x: 500, y: 872, s: 0.48, flip: true, robe: [N.sand, N.sandLight, N.sandDark], skin: [N.skin2, N.skin2Dark], head: 'cap', headColor: N.white, headDark: N.mist, pose: 'hold', face: 'think', q: 'shape' },
+  { tutor: 'a shopper at the bread stall', x: 748, y: 878, s: 0.45, flip: true, robe: [N.leaf, N.leafLight, N.leafDark], skin: [N.skin1, N.skin1Dark], head: 'hijab', headColor: N.sky, headDark: N.skyDark, pose: 'point', face: 'think', q: 'howMany' },
+  { tutor: 'a child looking at the sky', x: 868, y: 876, s: 0.36, robe: [N.sky, N.skyLight, N.skyDark], skin: [N.skin3, N.skin3Dark], head: 'hair', headColor: N.night0, headDark: N.space, pose: 'wave', face: 'wow', q: 'next' },
+  { tutor: 'a shopper at the apple stall', x: 1098, y: 878, s: 0.45, flip: true, robe: [N.stone, N.stoneLight, N.stoneDark], skin: [N.skin2, N.skin2Dark], head: 'hair', headColor: N.woodDark, headDark: N.night0, pose: 'hold', face: 'think', q: 'change' },
+  { tutor: 'a shopper at the pot stall', x: 1452, y: 878, s: 0.45, flip: true, robe: [N.wood, N.woodLight, N.woodDark], skin: [N.skin3, N.skin3Dark], head: 'hijab', headColor: N.sandLight, headDark: N.sand, pose: 'point', face: 'think', q: 'howMany' },
 ]
 
 /** Where each villager's question mark floats, in stage coordinates (the valley is pushed in by then). */
@@ -205,7 +205,7 @@ const QM_AT = VILLAGERS.map((v) => drifted(v.x, v.y - (206 + 40) * v.s - 46))
 /* ------------------------------------------------------------------ */
 
 type JobKind = 'baker' | 'builder' | 'astronaut' | 'gamer'
-const JOB_R = 92
+const JOB_R = 108
 const JOBS: { kind: JobKind; x: number; y: number; links: QId[]; uses: string }[] = [
   { kind: 'baker', x: 800, y: 118, links: ['howMany', 'change'], uses: 'counts cookies, and bakes more' },
   { kind: 'builder', x: 800, y: 790, links: ['next', 'shape'], uses: 'lays bricks in a pattern and measures walls' },
@@ -314,6 +314,7 @@ export function Ch2Questions(props: ChapterProps) {
     FAR_HOMES.forEach((h, i) => tl.set(`.q2-farhouse-${i}`, { scale: 0, svgOrigin: `${h.x} ${h.y}` }, 0))
     STALLS.forEach((st, i) => tl.set(`.q2-stall-${i}`, { scale: 0, svgOrigin: `${st.x} ${st.y + 64}` }, 0))
     tl.set('.q2-win', { opacity: 0 }, 0)
+    tl.set('.q2-town', { opacity: 1 }, 0)
     tl.set('.q2-pp', { opacity: 0, y: 26 }, 0)
     tl.set('.q2-seller', { y: 70 }, 0)
     tl.set(['.q2-loaf', '.q2-pay'], { opacity: 0, x: 0, y: 0 }, 0)
@@ -325,6 +326,7 @@ export function Ch2Questions(props: ChapterProps) {
     tl.set('.q2-map', { opacity: 0 }, 0)
     IDS.forEach((id) => {
       tl.set(`.q2-isl-${id}`, { scale: 0.3, opacity: 0, svgOrigin: '0 0' }, 0)
+      tl.set(`.q2-ring-${id}`, { scale: 0.7, opacity: 0, svgOrigin: '0 0' }, 0)
       tl.set(`.q2-dim-${id}`, { opacity: 1 }, 0)
       tl.set(`.q2-glow-${id}`, { opacity: 0.5 }, 0)
       tl.set(`.q2-words-${id}`, { opacity: 0, scale: 0.8, svgOrigin: '0 60' }, 0)
@@ -357,7 +359,7 @@ export function Ch2Questions(props: ChapterProps) {
 
     /* ---------- 0. The time-lapse: huts, a village, a market town, and questions ---------- */
     tl.addLabel('b0', 0)
-    tl.to('.q2-drift', { scale: DRIFT.s, duration: 6.8, ease: 'sine.inOut' }, 0)
+    tl.to('.q2-drift', { scale: DRIFT.s, duration: 5.2, ease: 'sine.inOut' }, 0.3)
     tl.to('.vl-clouds', { x: -200, duration: 6.8, ease: 'none' }, 0)
     tl.to('.vl-dusk', { opacity: 0, duration: 1.8, ease: 'sine.inOut' }, 1.1)
     tl.to('.vl-land-night', { opacity: 0, duration: 1.6, ease: 'sine.inOut' }, 1.1)
@@ -386,12 +388,15 @@ export function Ch2Questions(props: ChapterProps) {
     /* ---------- 1. Up into the sky: the questions gather into four big ones ---------- */
     tl.addLabel('b1', 6.8)
     const b1 = 6.8
-    tl.to('.q2-win', { opacity: 1, duration: 0.6, stagger: 0.05 }, b1 + 0.1)
+    tl.to('.q2-town', { opacity: 0.5, duration: 1.0, ease: 'sine.inOut' }, b1 + 0.1)
+    tl.to('.q2-win', { opacity: 1, duration: 0.5, stagger: 0.04 }, b1 + 0.3)
     tl.to('.vl-night', { opacity: 1, duration: 1.1, ease: 'sine.inOut' }, b1 + 0.1)
     tl.to('.vl-land-night', { opacity: 1, duration: 1.1, ease: 'sine.inOut' }, b1 + 0.1)
     tl.to('.q2-hi', { opacity: 1, duration: 1.2 }, b1 + 0.4)
     tl.to('.q2-world', { y: RISE, duration: 2.6, ease: 'power2.inOut' }, b1 + 0.15)
     tl.to('.q2-sky', { y: 0, duration: 2.6, ease: 'power2.inOut' }, b1 + 0.15)
+    // four constellation rings take shape in the sky as we arrive
+    IDS.forEach((id, i) => tl.to(`.q2-ring-${id}`, { scale: 1, opacity: 1, duration: 0.9, ease: 'power2.out' }, b1 + 1.4 + i * 0.15))
     // the question marks drift up as the town sinks away, then fly to their big question
     QM_AT.forEach((p, i) => tl.to(`.q2-qm-${i}`, { y: p.y - 120 - i * 14, duration: 2.2, ease: 'sine.inOut' }, b1 + 0.1))
     const born = new Set<QId>()
@@ -412,7 +417,7 @@ export function Ch2Questions(props: ChapterProps) {
     /* ---------- 2-5. Each question lights up, with a little example beside it ---------- */
     const visit = (id: QId, prev: QId | null, at: number) => {
       tl.to('.q2-skycam', { ...focusOn(Q[id]), duration: 1.3, ease: 'power2.inOut' }, at)
-      IDS.forEach((o) => tl.to(`.q2-dim-${o}`, { opacity: o === id ? 1 : 0.14, duration: 0.7 }, at + 0.1))
+      IDS.forEach((o) => tl.to(`.q2-dim-${o}`, { opacity: o === id ? 1 : 0.08, duration: 0.7 }, at + 0.1))
       tl.to(`.q2-glow-${id}`, { opacity: 1, duration: 0.8 }, at + 0.3)
       tl.to(`.q2-words-${id}`, { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(2)' }, at + 0.2)
       if (prev) {
@@ -924,6 +929,21 @@ function Island({ q, tutor }: { q: Question; tutor: boolean }) {
   return (
     <g transform={`translate(${q.x} ${q.y})`} data-tutor={tutor ? `the "${q.name}" question` : undefined}>
       <g className={`q2-dim-${q.id}`}>
+        {/* the constellation ring that forms first */}
+        <g className={`q2-ring-${q.id}`}>
+          <g className="tw2">
+            <ellipse rx={RX + 30} ry={RY + 30} fill="none" stroke={N.mist} strokeOpacity={0.5} strokeWidth={4} strokeDasharray="1 22" strokeLinecap="round" />
+          </g>
+          {[200, 250, 300, 20, 70, 120].map((a, i) => {
+            const r = (a * Math.PI) / 180
+            return (
+              <g key={a} transform={`translate(${((RX + 30) * Math.cos(r)).toFixed(1)} ${((RY + 30) * Math.sin(r)).toFixed(1)})`}>
+                <circle r={10} fill={N.skyLight} opacity={0.25} />
+                <path d="M0 -9 L2 -2 L9 0 L2 2 L0 9 L-2 2 L-9 0 L-2 -2 Z" fill={N.white} className={i % 2 ? 'tw2 tw2-1' : 'tw2 tw2-2'} />
+              </g>
+            )
+          })}
+        </g>
         <g className={`q2-isl-${q.id}`}>
           <g className={`q2-tpulse-${q.id}`}>
             <g className={`q2-pulse-${q.id}`}>
@@ -937,9 +957,6 @@ function Island({ q, tutor }: { q: Question; tutor: boolean }) {
               <ellipse rx={RX} ry={RY} fill="url(#q2-plate)" />
               <ellipse rx={RX - 16} ry={RY - 16} fill="none" stroke={N.skyLight} strokeOpacity={0.14} strokeWidth={10} />
               <ellipse rx={RX} ry={RY} fill="none" stroke={N.skyLight} strokeOpacity={0.6} strokeWidth={4} />
-              <g className="tw2">
-                <ellipse rx={RX + 30} ry={RY + 30} fill="none" stroke={N.mist} strokeOpacity={0.45} strokeWidth={4} strokeDasharray="1 22" strokeLinecap="round" />
-              </g>
               {/* the icon */}
               <g transform={`translate(0 ${MED.y})`}>
                 <circle r={MED.r + 10} fill={N.skyLight} opacity={0.12} />
@@ -1102,10 +1119,6 @@ function House({ wall, roof, i }: { wall: string; roof: string; i: number }) {
       <path d="M-14 2 V-34 Q0 -48 14 -34 V2 Z" fill={N.woodDark} />
       <rect x={-38} y={-66} width={20} height={20} rx={4} fill={N.night1} />
       <rect x={20} y={-66} width={20} height={20} rx={4} fill={N.night1} />
-      <g className="q2-win">
-        <rect x={-38} y={-66} width={20} height={20} rx={4} fill={N.cream} />
-        <rect x={20} y={-66} width={20} height={20} rx={4} fill={N.cream} />
-      </g>
     </g>
   )
 }
@@ -1142,7 +1155,7 @@ function StallFront({ goods }: { goods: 'bread' | 'apples' | 'pots' }) {
     <g>
       {goods === 'bread' && [-70, -20, 30].map((x) => <Loaf key={x} x={x} y={-12} />)}
       {goods === 'apples' &&
-        [-80, -50, -20, 10, 40, -65, -35, -5, 25].map((x, i) => <Apple key={i} x={x + 20} y={i < 5 ? -12 : -34} r={14} />)}
+        [-96, -68, -40, 40, 68, 96, -82, -54, 54, 82].map((x, i) => <Apple key={i} x={x} y={i < 6 ? -12 : -36} r={14} />)}
       {goods === 'pots' &&
         [-70, -10, 50].map((x, i) => (
           <g key={x} transform={`translate(${x} 0)`}>
@@ -1168,6 +1181,26 @@ const SELLERS = [
 
 function Town({ tutor }: { tutor: boolean }) {
   const t = (name: string) => (tutor ? name : undefined)
+  const lit = [...HOMES.map((h) => ({ x: h.x, y: h.y, s: 0.78 })), ...FAR_HOMES.map((h) => ({ x: h.x, y: h.y, s: 0.55 }))]
+  return (
+    <g>
+      <g className="q2-town">
+        <TownBody t={t} />
+      </g>
+      {/* windows light up as night falls */}
+      {lit.map((h, i) =>
+        [-38, 20].map((wx) => (
+          <g key={`${i}-${wx}`} className="q2-win">
+            <rect x={h.x + wx * h.s - 4} y={h.y - 66 * h.s - 4} width={20 * h.s + 8} height={20 * h.s + 8} rx={6} fill={N.cream} opacity={0.25} />
+            <rect x={h.x + wx * h.s} y={h.y - 66 * h.s} width={20 * h.s} height={20 * h.s} rx={3} fill={N.cream} />
+          </g>
+        )),
+      )}
+    </g>
+  )
+}
+
+function TownBody({ t }: { t: (name: string) => string | undefined }) {
   return (
     <g>
       <clipPath id="q2-sclip">
@@ -1489,7 +1522,9 @@ function JobWindow({ kind, x, y }: { kind: JobKind; x: number; y: number }) {
         <circle r={JOB_R} />
       </clipPath>
       <g clipPath={`url(#${id})`}>
-        <JobScene kind={kind} />
+        <g transform={`scale(${JOB_R / 92})`}>
+          <JobScene kind={kind} />
+        </g>
       </g>
       <circle r={JOB_R} fill="none" stroke={N.mist} strokeWidth={6} />
     </g>
