@@ -424,6 +424,7 @@ function HopArc({ cls, a, b, h, color }: { cls: string; a: number; b: number; h:
       d={`M${x1} ${HOP_Y} Q${(x1 + x2) / 2} ${HOP_Y - 2 * h} ${x2} ${HOP_Y}`}
       pathLength={1}
       strokeDasharray="1 1"
+      strokeDashoffset={1}
       stroke={color}
       strokeWidth={7}
       strokeLinecap="round"
@@ -1357,7 +1358,7 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     place('.s5-hopper', { x: nlx(25), y: HOP_Y })
     at0('.s5-hopper', { opacity: 0 })
     at0('.s5-face', { scaleX: 1 })
-    at0('.s5-arc', { strokeDashoffset: 1, opacity: 1 })
+    at0('.s5-arc', { attr: { 'stroke-dashoffset': 1 }, opacity: 1 })
     at0(['.s5-eq1', '.s5-eq2', '.s5-hl', '.s5-icon'], { opacity: 0 })
 
     /* ---------- 0. Two amounts arrive and slide together: adding. */
@@ -1500,13 +1501,13 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     tl.to('.s5-hopper', { opacity: 1, duration: 0.2 }, b5 + 2.0)
     tl.fromTo('.s5-hopper', { y: HOP_Y - 220 }, { y: HOP_Y, duration: 0.8, ease: 'bounce.out', ...later }, b5 + 2.0)
     ;[0, 1, 2].forEach((i) => pop(`.s5-eq1-${i}`, b5 + 5.6 + i * 0.2))
-    tl.fromTo('.s5-arc-big', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.0, ease: 'none', ...later }, b5 + 6.6)
+    tl.fromTo('.s5-arc-big', { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 1.0, ease: 'none', ...later }, b5 + 6.6)
     hop('.s5-hopper', { x: nlx(35), y: HOP_Y }, b5 + 6.6, 1.0, 165, HOP_Y)
     pop('.s5-icon-big', b5 + 7.0)
     pulse('.nl-label-35', b5 + 7.6, 1.35)
     range(3).forEach((k) => {
       const t = b5 + 8.3 + k * 0.55
-      tl.fromTo(`.s5-arc-f${k}`, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.45, ease: 'none', ...later }, t)
+      tl.fromTo(`.s5-arc-f${k}`, { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.45, ease: 'none', ...later }, t)
       hop('.s5-hopper', { x: nlx(36 + k), y: HOP_Y }, t, 0.45, 55, HOP_Y)
       pop(`.s5-icon-f${k}`, t + 0.2, 0.3)
     })
@@ -1521,7 +1522,7 @@ export function Ch5Change({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     ;[0, 1, 2].forEach((i) => pop(`.s5-eq2-${i}`, b5 + 11.8 + i * 0.2))
     range(7).forEach((k) => {
       const t = b5 + 12.4 + k * 0.36
-      tl.fromTo(`.s5-arc-b${k}`, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.32, ease: 'none', ...later }, t)
+      tl.fromTo(`.s5-arc-b${k}`, { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.32, ease: 'none', ...later }, t)
       hop('.s5-hopper', { x: nlx(31 - k), y: HOP_Y }, t, 0.32, 45, HOP_Y)
       pop(`.s5-icon-b${k}`, t + 0.15, 0.25)
     })

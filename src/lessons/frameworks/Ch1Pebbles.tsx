@@ -126,7 +126,7 @@ const F = {
   drift: cam(830, 462, 1.05),
   ama: cam(1160, 690, 1.75),
   meadow: cam(590, 668, 1.6),
-  threads: cam(745, 605, 1.3),
+  threads: cam(735, 605, 1.3),
   gate: cam(1150, 738, 2.1),
   play: cam(1125, 640, 1.45),
   watch: cam(1150, 716, 1.9),
@@ -700,7 +700,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     const hop = (i: number, at: number, h = 16) => tl.fromTo(`.shh-${i}`, { y: 0 }, { y: -h, duration: 0.16, yoyo: true, repeat: 1, ease: 'power1.out', ...later }, at)
     const bagBounce = (at: number) => tl.fromTo('.c1-bagb', { scaleY: 0.88, scaleX: 1.08 }, { scaleY: 1, scaleX: 1, duration: 0.45, ease: 'elastic.out(1, 0.4)', ...later }, at)
     const flash = (sel: string, at: number) => {
-      tl.fromTo(`${sel} .c1-fl-path`, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.28, ease: 'power2.out', ...later }, at)
+      tl.fromTo(`${sel} .c1-fl-path`, { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.28, ease: 'power2.out', ...later }, at)
       tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.08, ...later }, at)
       tl.to(sel, { opacity: 0, duration: 0.45, ease: 'power1.in' }, at + 0.35)
     }
@@ -762,14 +762,14 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.set('.c1-qs', { scale: 0, svgOrigin: '0 0' })
     tl.set('.c1-q', { x: 1100, y: 612 })
     tl.set(['.c1-tgb-0', '.c1-tgb-1'], { scale: 0.3, svgOrigin: '0 0' })
-    tl.set('.c1-fl-path', { strokeDashoffset: 1 })
-    tl.set('.c1-th path', { strokeDashoffset: 1 })
-    tl.set('.c1-coral path', { strokeDashoffset: 1 })
+    tl.set('.c1-fl-path', { attr: { 'stroke-dashoffset': 1 } })
+    tl.set('.c1-th path', { attr: { 'stroke-dashoffset': 1 } })
+    tl.set('.c1-coral path', { attr: { 'stroke-dashoffset': 1 } })
     tl.set(['.c1-ms', '.c1-mp', '.c1-mm'], { opacity: 0, y: 24 })
-    tl.set(['.c1-mla path', '.c1-mlb path'], { strokeDashoffset: 1 })
+    tl.set(['.c1-mla path', '.c1-mlb path'], { attr: { 'stroke-dashoffset': 1 } })
     tl.set(['.c1-mpanel', '.c1-mtitle'], { opacity: 0 })
     tl.set('.c1-mtitle', { scale: 0.6, svgOrigin: '800 160' })
-    tl.set('.c1-harrow', { strokeDashoffset: 1 })
+    tl.set('.c1-harrow', { attr: { 'stroke-dashoffset': 1 } })
     tl.set('.c1-hhead', { opacity: 0 })
     tl.set('.c1-hst', { opacity: 0 })
     tl.set('.c1-hpic', { scale: 0.4, svgOrigin: '0 0' })
@@ -867,7 +867,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     mood('idle', b5 + 4.5)
     tl.to('.c1-th', { opacity: 1, duration: 0.1 }, b5 + 5.4)
     GRAZE.forEach((_, i) => {
-      tl.fromTo(`.c1-th-${i} path`, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.55, ease: 'power2.out', ...later }, b5 + 5.4 + i * 0.1)
+      tl.fromTo(`.c1-th-${i} path`, { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.55, ease: 'power2.out', ...later }, b5 + 5.4 + i * 0.1)
     })
     tl.fromTo('.c1-bagglow', { opacity: 0 }, { opacity: 1, duration: 0.5, ...later }, b5 + 5.9)
 
@@ -910,7 +910,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.to('.c1-spcoral', { opacity: 1, duration: 0.4 }, b7 + 1.0)
     mood('point', b7 + 2.6)
     tl.to('.c1-coral', { opacity: 1, duration: 0.1 }, b7 + 2.7)
-    tl.to('.c1-coral path', { strokeDashoffset: 0, duration: 2.0, ease: 'power1.inOut' }, b7 + 2.7)
+    tl.to('.c1-coral path', { attr: { 'stroke-dashoffset': 0 }, duration: 2.0, ease: 'power1.inOut' }, b7 + 2.7)
     move(b7 + 2.6, 2.6, F.lost, 'power2.inOut')
     tl.to('.c1-lostglow', { opacity: 1, duration: 0.8 }, b7 + 4.2)
     hop(LOST_SHEEP, b7 + 4.8, 10)
@@ -930,9 +930,9 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.to('.c1-mpanel', { opacity: 1, duration: 0.8 }, b8 + 1.3)
     MATCH_COLS.forEach((_, k) => {
       tl.to(`.c1-ms-${k}`, { opacity: 1, y: 0, duration: 0.45, ease: 'back.out(2.2)' }, b8 + 1.6 + k * 0.12)
-      tl.to(`.c1-mla-${k} path`, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out' }, b8 + 3.6 + k * 0.22)
+      tl.to(`.c1-mla-${k} path`, { attr: { 'stroke-dashoffset': 0 }, duration: 0.3, ease: 'power2.out' }, b8 + 3.6 + k * 0.22)
       tl.to(`.c1-mp-${k}`, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(2.5)' }, b8 + 3.75 + k * 0.22)
-      tl.to(`.c1-mlb-${k} path`, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out' }, b8 + 5.3 + k * 0.16)
+      tl.to(`.c1-mlb-${k} path`, { attr: { 'stroke-dashoffset': 0 }, duration: 0.3, ease: 'power2.out' }, b8 + 5.3 + k * 0.16)
       tl.to(`.c1-mm-${k}`, { opacity: 1, y: 0, duration: 0.4, ease: 'back.out(2.5)' }, b8 + 5.45 + k * 0.16)
       tl.fromTo(`.c1-mcol-${k}`, { opacity: 0 }, { opacity: 1, duration: 0.3, yoyo: true, repeat: 1, ease: 'sine.inOut', ...later }, b8 + 7.0 + k * 0.16)
     })
@@ -943,7 +943,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     const b9 = tl.labels.b9
     tl.to('.c1-match', { opacity: 0, duration: 0.7, ease: 'power1.in' }, b9)
     tl.set('.c1-hist', { opacity: 1 }, b9)
-    tl.to('.c1-harrow', { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }, b9 + 0.2)
+    tl.to('.c1-harrow', { attr: { 'stroke-dashoffset': 0 }, duration: 1.4, ease: 'power2.inOut' }, b9 + 0.2)
     tl.to('.c1-hhead', { opacity: 0.85, duration: 0.3 }, b9 + 1.5)
     const station = (i: number, at: number) => {
       tl.to(`.c1-hst-${i}`, { opacity: 1, duration: 0.4 }, at)
@@ -1112,7 +1112,7 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       mood('cheer', 6.7)
       walk([{ x: GATE_OUT.x, y: GATE_OUT.y, s: SHEEP_S }, { ...GATE_IN, s: SHEEP_S }, { ...HOME[s], s: SHEEP_S }], 7.0, 330)
       amaWalk(0, 7.5, 2.4)
-      et.fromTo('.c1-endflash .c1-fl-path', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out', immediateRender: false }, 8.05)
+      et.fromTo('.c1-endflash .c1-fl-path', { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.3, ease: 'power2.out', immediateRender: false }, 8.05)
       et.fromTo('.c1-endflash', { opacity: 0 }, { opacity: 1, duration: 0.08, immediateRender: false }, 8.05)
       et.to('.c1-endflash', { opacity: 0, duration: 0.8 }, 8.7)
       et.to('.c1-left-coral', { opacity: 0, duration: 0.3 }, 8.3)

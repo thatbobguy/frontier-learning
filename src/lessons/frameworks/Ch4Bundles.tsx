@@ -496,8 +496,8 @@ export function Ch4Bundles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.set(['.c4-b43', '.c4-s43'], { y: -420, opacity: 0 }, 0)
     tl.set(['.c4-links43 > g', '.c4-x43'], { opacity: 0 }, 0)
     tl.set('.c4-board', { y: 560 }, 0)
-    tl.set(['.c4-arc', '.c4-step'], { opacity: 0, strokeDashoffset: 1 }, 0)
-    tl.set('.c4-dline', { opacity: 0, strokeDashoffset: 1 }, 0)
+    tl.set(['.c4-arc', '.c4-step'], { opacity: 0, attr: { 'stroke-dashoffset': 1 } }, 0)
+    tl.set('.c4-dline', { opacity: 0, attr: { 'stroke-dashoffset': 1 } }, 0)
     tl.set('.c4-ball', { x: nx(0), y: NL.y - 16, opacity: 0 }, 0)
     tl.set('.c4-mark', { opacity: 0, scale: 0.3, svgOrigin: `${nx(34)} ${NL.y}` }, 0)
     tl.set('.c4-board .nl-tick-34', { attr: { fill: N.cream } }, 0)
@@ -622,7 +622,7 @@ export function Ch4Bundles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.to('.c4-t3g', { opacity: 1, duration: 0.4 }, B4 + 6.1)
     tl.to('.c4-t3', { scale: 1.16, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.out' }, B4 + 6.1)
     tl.to(['.c4-l34-t', '.c4-o34-t'], { opacity: 1, duration: 0.4 }, B4 + 6.2)
-    tl.fromTo('.c4-l34-t path', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power1.inOut', ...later }, B4 + 6.2)
+    tl.fromTo('.c4-l34-t path', { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.5, ease: 'power1.inOut', ...later }, B4 + 6.2)
     B_HOME.forEach((_, k) => tl.to(`.c4-bglow-${k}`, { opacity: 1, duration: 0.3 }, B4 + 6.7 + k * 0.4))
     // the 4 counts loose ones
     tl.to('.c4-t3g', { opacity: 0, duration: 0.4 }, B4 + 8.8)
@@ -630,7 +630,7 @@ export function Ch4Bundles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.to('.c4-t4g', { opacity: 1, duration: 0.4 }, B4 + 8.9)
     tl.to('.c4-t4', { scale: 1.16, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.out' }, B4 + 8.9)
     tl.to(['.c4-l34-o', '.c4-o34-o'], { opacity: 1, duration: 0.4 }, B4 + 9.0)
-    tl.fromTo('.c4-l34-o path', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power1.inOut', ...later }, B4 + 9.0)
+    tl.fromTo('.c4-l34-o path', { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.5, ease: 'power1.inOut', ...later }, B4 + 9.0)
     L_HOME.forEach((_, j) => tl.to(`.c4-lglow-${j}`, { opacity: 1, duration: 0.25 }, B4 + 9.4 + j * 0.3))
 
     /* ---------------- 5. 34 and 43 ---------------- */
@@ -666,9 +666,9 @@ export function Ch4Bundles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     B43.forEach((_, k) => tl.to(`.c4-b43-${k}`, { y: 0, opacity: 1, duration: 0.6, ease: 'bounce.out' }, B5 + 4.9 + k * 0.3))
     S43.forEach((_, j) => tl.to(`.c4-s43-${j}`, { y: 0, opacity: 1, duration: 0.5, ease: 'bounce.out' }, B5 + 6.1 + j * 0.15))
     tl.to(['.c4-l43-t', '.c4-o43-t'], { opacity: 1, duration: 0.4 }, B5 + 5.9)
-    tl.fromTo('.c4-l43-t path', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ...later }, B5 + 5.9)
+    tl.fromTo('.c4-l43-t path', { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.5, ...later }, B5 + 5.9)
     tl.to(['.c4-l43-o', '.c4-o43-o'], { opacity: 1, duration: 0.4 }, B5 + 6.5)
-    tl.fromTo('.c4-l43-o path', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ...later }, B5 + 6.5)
+    tl.fromTo('.c4-l43-o path', { attr: { 'stroke-dashoffset': 1 } }, { attr: { 'stroke-dashoffset': 0 }, duration: 0.5, ...later }, B5 + 6.5)
     // that is more: the extra bundle lights up
     tl.to('.c4-x43', { opacity: 1, duration: 0.4 }, B5 + 7.0)
     bounce('.c4-b43-3', B5 + 7.1, 26)
@@ -692,7 +692,7 @@ export function Ch4Bundles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       tl.to(`.c4-rib-${k}`, { x: b.x, y: b.y, duration: 0.55, ease: 'power2.inOut' }, t - 0.2)
       tl.to(`.c4-bsh-${k}`, { opacity: 0, duration: 0.2 }, t - 0.2)
       tl.set(`.c4-arc-${k}`, { opacity: 1 }, t)
-      tl.to(`.c4-arc-${k}`, { strokeDashoffset: 0, duration: 0.55, ease: 'none' }, t)
+      tl.to(`.c4-arc-${k}`, { attr: { 'stroke-dashoffset': 0 }, duration: 0.55, ease: 'none' }, t)
       tl.to('.c4-ball', { x: nx(10 * k + 10), duration: 0.55, ease: 'none' }, t)
       tl.to('.c4-ball', { y: NL.y - 16 - 150, duration: 0.275, ease: 'sine.out' }, t)
       tl.to('.c4-ball', { y: NL.y - 16, duration: 0.275, ease: 'sine.in' }, t + 0.275)
@@ -701,7 +701,7 @@ export function Ch4Bundles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       const t = B6 + 3.75 + j * 0.34
       tl.to(st(30 + j), { x: p.x, y: p.y - HALF * LS, scale: LS, duration: 0.4, ease: 'power2.inOut' }, t - 0.15)
       tl.set(`.c4-step-${j}`, { opacity: 1 }, t)
-      tl.to(`.c4-step-${j}`, { strokeDashoffset: 0, duration: 0.3, ease: 'none' }, t)
+      tl.to(`.c4-step-${j}`, { attr: { 'stroke-dashoffset': 0 }, duration: 0.3, ease: 'none' }, t)
       tl.to('.c4-ball', { x: nx(31 + j), duration: 0.3, ease: 'none' }, t)
       tl.to('.c4-ball', { y: NL.y - 16 - 40, duration: 0.15, ease: 'sine.out' }, t)
       tl.to('.c4-ball', { y: NL.y - 16, duration: 0.15, ease: 'sine.in' }, t + 0.15)
@@ -710,7 +710,7 @@ export function Ch4Bundles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
     tl.to('.c4-mark', { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(2.5)' }, B6 + 5.15)
     tl.to('.c4-board .nl-tick-34', { attr: { fill: N.gold }, duration: 0.2 }, B6 + 5.15)
     tl.set('.c4-dline', { opacity: 1 }, B6 + 5.3)
-    tl.to('.c4-dline', { strokeDashoffset: 0, duration: 0.4, ease: 'power1.inOut' }, B6 + 5.3)
+    tl.to('.c4-dline', { attr: { 'stroke-dashoffset': 0 }, duration: 0.4, ease: 'power1.inOut' }, B6 + 5.3)
     tl.to(['.c4-t3', '.c4-t4'], { scale: PN_BOARD.s * 1.15, duration: 0.2, yoyo: true, repeat: 1, ease: 'power2.out' }, B6 + 5.5)
 
     /* ---------------- 7. The shop: pay the shopkeeper ---------------- */
