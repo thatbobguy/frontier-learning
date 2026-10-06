@@ -350,3 +350,412 @@ a.flow-next-card:hover {
     border-radius: 14px;
   }
 }
+
+/* ------------------------------------------------------------ the film look (robot hands course) */
+.flow.flow-cine {
+  --f-bg: #05070d;
+  --f-panel: rgba(16, 24, 39, 0.86);
+  --f-line: rgba(159, 176, 204, 0.18);
+  --f-text: #eef2f8;
+  --f-soft: #9fb0cc;
+  --f-gold: #ffb35c;
+  background: radial-gradient(1200px 600px at 50% -10%, #142036 0%, var(--f-bg) 62%);
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+}
+.flow-cine .flow-stage {
+  background: #05070d;
+  border-radius: 14px;
+}
+.flow-cine .flow-poster h1 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.flow-cine .flow-poster {
+  background: linear-gradient(90deg, rgba(5, 7, 13, 0.86) 0%, rgba(5, 7, 13, 0.5) 45%, rgba(5, 7, 13, 0) 72%);
+}
+.flow-cine .flow-play-big {
+  box-shadow: 0 0 0 10px rgba(255, 179, 92, 0.16), 0 12px 40px rgba(255, 179, 92, 0.4);
+}
+.flow-cine .captions p {
+  font-weight: 500;
+}
+.flow-cine .captions .word.on {
+  color: #05070d;
+}
+.flow-cine .flow-pp,
+.flow-cine .flow-paused-overlay span,
+.flow-cine .flow-end-actions button.primary {
+  color: #05070d;
+}
+.flow-cine .flow-end {
+  background: rgba(5, 7, 13, 0.84);
+}
+.flow-cine .flow-end h2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+}
+
+/* "Go deeper": a quiet chip on the picture, and the reading beside it */
+.flow-deeper {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--f-text);
+  background: rgba(5, 7, 13, 0.55);
+  border: 1px solid var(--f-line);
+  border-radius: 999px;
+  padding: 6px 14px 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.2s, border-color 0.2s;
+}
+.flow-deeper:hover {
+  background: rgba(5, 7, 13, 0.8);
+  border-color: var(--f-soft);
+}
+.flow-deeper i {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-style: normal;
+  font-size: 12px;
+  background: var(--f-gold);
+  color: #05070d;
+}
+.flow-deeper-menu {
+  position: absolute;
+  top: 54px;
+  right: 14px;
+  width: min(360px, calc(100% - 28px));
+  background: var(--f-panel);
+  border: 1px solid var(--f-line);
+  border-radius: 14px;
+  padding: 8px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 3;
+}
+.flow-deeper-menu button {
+  text-align: left;
+  font: inherit;
+  color: var(--f-text);
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.flow-deeper-menu button:hover {
+  background: rgba(159, 176, 204, 0.12);
+}
+.flow-deeper-menu strong {
+  font-size: 15px;
+}
+.flow-deeper-menu span {
+  font-size: 13px;
+  color: var(--f-soft);
+}
+
+.reading {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(3, 5, 10, 0.55);
+  backdrop-filter: blur(3px);
+  animation: rd-in 0.25s ease-out;
+}
+@keyframes rd-in {
+  from { opacity: 0; }
+}
+.reading-sheet {
+  width: min(720px, 100%);
+  height: 100%;
+  overflow-y: auto;
+  background: #0b111d;
+  border-left: 1px solid rgba(159, 176, 204, 0.18);
+  color: #e6ebf3;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  padding: 28px clamp(18px, 4vw, 48px) 80px;
+  animation: rd-slide 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes rd-slide {
+  from { transform: translateX(60px); opacity: 0; }
+}
+.reading-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.reading-top span {
+  color: #ffb35c;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.reading-top button {
+  font: inherit;
+  font-weight: 700;
+  color: #05070d;
+  background: #eef2f8;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.reading-sheet h2 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.08;
+  margin: 0 0 6px;
+}
+.reading-meta {
+  color: #9fb0cc;
+  margin: 0 0 22px;
+}
+.rd-lede {
+  font-size: 20px;
+  line-height: 1.5;
+  color: #f4f6fa;
+  margin: 0 0 18px;
+}
+.rd-p {
+  font-size: 17px;
+  line-height: 1.68;
+  color: #cdd6e4;
+  margin: 0 0 16px;
+}
+.rd-h {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 23px;
+  margin: 30px 0 10px;
+  color: #f4f6fa;
+}
+.rd-list {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #cdd6e4;
+  padding-left: 22px;
+  margin: 0 0 16px;
+}
+.rd-list li {
+  margin-bottom: 6px;
+}
+.rd-note {
+  border-left: 3px solid #ffb35c;
+  background: rgba(255, 179, 92, 0.07);
+  padding: 12px 16px;
+  border-radius: 0 10px 10px 0;
+  margin: 18px 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #dfe5ee;
+}
+.rd-note strong {
+  display: block;
+  color: #ffc98f;
+  margin-bottom: 4px;
+}
+.rd-formula {
+  margin: 18px 0;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(63, 216, 255, 0.07);
+  border: 1px solid rgba(63, 216, 255, 0.25);
+}
+.rd-formula code {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 20px;
+  color: #a6efff;
+}
+.rd-formula-key {
+  margin-top: 8px;
+  font-size: 15px;
+  color: #9fb0cc;
+  line-height: 1.55;
+}
+.rd-fig {
+  margin: 20px 0;
+}
+.rd-fig svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  background: #070b14;
+}
+.rd-fig figcaption {
+  font-size: 14px;
+  color: #9fb0cc;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.rd-nums {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+.rd-nums div {
+  background: rgba(159, 176, 204, 0.07);
+  border: 1px solid rgba(159, 176, 204, 0.16);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.rd-nums b {
+  display: block;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 26px;
+  color: #ffd24a;
+}
+.rd-nums span {
+  font-size: 14px;
+  color: #b8c4d8;
+  line-height: 1.45;
+}
+.rd-table-wrap {
+  overflow-x: auto;
+  margin: 18px 0;
+}
+.rd-table {
+  border-collapse: collapse;
+  font-size: 14.5px;
+  width: 100%;
+}
+.rd-table th,
+.rd-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(159, 176, 204, 0.16);
+  vertical-align: top;
+  color: #cdd6e4;
+}
+.rd-table th {
+  color: #f4f6fa;
+  font-weight: 700;
+}
+.rd-sources {
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(159, 176, 204, 0.18);
+}
+.rd-sources h4 {
+  margin: 0 0 8px;
+  color: #9fb0cc;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.rd-sources ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.rd-sources li {
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+.rd-sources a {
+  color: #7fe7ff;
+}
+.rd-think {
+  margin: 16px 0;
+  border: 1px solid rgba(182, 240, 60, 0.3);
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: rgba(182, 240, 60, 0.05);
+}
+.rd-think summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #dcff95;
+}
+.rd-think div {
+  margin-top: 10px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #cdd6e4;
+}
+
+/* The course's next stops, at the end of a film */
+.course-next {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(820px, 100%);
+}
+.course-next-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.course-next-card {
+  width: 250px;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  background: var(--f-panel);
+  border: 1px solid var(--f-line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.course-next-card.main {
+  border-color: var(--f-gold);
+}
+.course-next-card small {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.course-next-card strong {
+  font-size: 18px;
+}
+.course-next-card span {
+  color: var(--f-soft);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.course-next-card .bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--f-gold);
+}
+.course-next-card.soon {
+  opacity: 0.6;
+}
+.course-next p {
+  margin: 0;
+}
+.course-map-link {
+  color: var(--f-soft);
+  font-weight: 700;
+}

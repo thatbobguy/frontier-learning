@@ -49,7 +49,7 @@ function collectFile(path, { beatVoice, sayVoice, sayCalls }) {
   const found = []
   const keep = (voice, text) => {
     const t = normalizeLine(text)
-    if (isSentence(t)) found.push({ voice, text: t })
+    if (isSentence(t)) found.push({ voice, text: t, file: path })
   }
   const seen = { narrator: new Set(), tutor: new Set() }
   const follow = (node, voice) => {
@@ -100,7 +100,7 @@ function tsxFiles(dir) {
     })
 }
 
-/** Every line to record: `{ voice: 'narrator' | 'tutor', text }`, de-duplicated. */
+/** Every line to record: `{ voice: 'narrator' | 'tutor', text, file }`, de-duplicated. */
 export function collectLines() {
   const lines = []
   // Every chapter of every lesson.

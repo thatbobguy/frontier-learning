@@ -49,6 +49,20 @@ export interface ChapterProps {
   memory: Record<string, unknown>
 }
 
+/**
+ * A "go deeper" reading: optional, for a learner who wants the full story behind a chapter.
+ * Opening one pauses the film; closing it carries on where it stopped.
+ */
+export interface Reading {
+  id: string
+  title: string
+  /** One line on what the reading adds. */
+  blurb: string
+  minutes: number
+  /** The reading itself: prose, diagrams and links, as plain JSX (see src/flow/Reading.tsx for the building blocks). */
+  Body: ComponentType
+}
+
 export interface Chapter {
   id: string
   /** Short title, shown on the progress bar. */
@@ -57,6 +71,8 @@ export interface Chapter {
   Scene: ComponentType<ChapterProps>
   /** How this chapter arrives from the previous one. Defaults to a dissolve. */
   enter?: Enter
+  /** Optional readings for going deeper on this chapter. */
+  deeper?: Reading[]
 }
 
 export interface FlowLesson {
@@ -70,6 +86,14 @@ export interface FlowLesson {
   chapters: Chapter[]
   /** A still picture for the start screen and the library card (stage coordinates, 1600 x 900). */
   Poster: ComponentType
+  /** Extra SVG defs (gradients, filters) this lesson's art uses, rendered once in the stage. */
+  Defs?: ComponentType
+  /** The player's look: the original night look, or the darker film look of the robot hands course. */
+  look?: 'night' | 'cine'
+  /** Who the learner is, in a few words, so Pip pitches its answers right. Defaults to a young child. */
+  audience?: string
+  /** The course (knowledge tree) this lesson is a stop on. The end screen then shows the tree and carries on to the next stop. */
+  course?: string
   /** Where the learner could go next, shown at the end. */
   next?: { title: string; blurb: string; /** A lesson that already exists, e.g. '#/lesson/algebra'. */ href?: string }[]
 }

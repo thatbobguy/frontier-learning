@@ -1,0 +1,88 @@
+/* Ambient loops for the robot hands films. They stop when the film is paused. */
+
+.hd-rain {
+  animation: hd-rain 0.9s linear infinite;
+}
+@keyframes hd-rain {
+  from { transform: translate(0, -140px); }
+  to { transform: translate(-30px, 140px); }
+}
+
+.hd-drip {
+  animation: hd-drip 7s ease-in infinite;
+}
+@keyframes hd-drip {
+  0%, 60% { transform: translate(0, 0); opacity: 0; }
+  62% { opacity: 0.8; }
+  100% { transform: translate(-6px, 260px); opacity: 0; }
+}
+
+.hd-flicker {
+  animation: hd-flicker 5.3s steps(1) infinite;
+}
+@keyframes hd-flicker {
+  0%, 100% { opacity: 1; }
+  43% { opacity: 0.86; }
+  44% { opacity: 1; }
+  71% { opacity: 0.92; }
+  72% { opacity: 1; }
+}
+
+.hd-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hd-pulse 2.4s ease-in-out infinite;
+}
+@keyframes hd-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+.hd-blink {
+  animation: hd-blink 1.6s steps(1) infinite;
+}
+@keyframes hd-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.hd-scan {
+  animation: hd-scan 3.2s linear infinite;
+}
+@keyframes hd-scan {
+  from { transform: translate(0, -40px); }
+  to { transform: translate(0, 40px); }
+}
+
+.hd-drift {
+  animation: hd-drift 9s ease-in-out infinite alternate;
+}
+@keyframes hd-drift {
+  from { transform: translate(-10px, 0); }
+  to { transform: translate(10px, -6px); }
+}
+
+.hd-bokeh {
+  animation: hd-bokeh 6s ease-in-out infinite;
+}
+@keyframes hd-bokeh {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.8; }
+}
+
+.flow-paused .hd-rain,
+.flow-paused .hd-drip,
+.flow-paused .hd-flicker,
+.flow-paused .hd-pulse,
+.flow-paused .hd-blink,
+.flow-paused .hd-scan,
+.flow-paused .hd-drift,
+.flow-paused .hd-bokeh {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hd-rain, .hd-drip, .hd-flicker, .hd-pulse, .hd-blink, .hd-scan, .hd-drift, .hd-bokeh {
+    animation: none;
+  }
+}
