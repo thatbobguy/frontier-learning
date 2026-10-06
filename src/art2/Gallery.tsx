@@ -1,5 +1,6 @@
 import './art2.css'
 import { Person, Pip2 } from './characters'
+import { Grain } from './Grain'
 import { Backdrop, Defs, Glow, Motes, Stars, Vignette } from './fx'
 import { N } from './palette'
 import { Book, Equation, NumberMachine, Sack, Scale, Title, Weight, terms, weightSpots } from './props'
@@ -11,7 +12,8 @@ import { Ama, Bag, Bundle, GROUND_Y, Hand, NumberLine, Pebble, Pen, PlaceNumber,
 export function Gallery({ page = 0 }: { page?: number }) {
   return (
     <div style={{ background: N.space, minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
-      <svg viewBox="0 0 1600 900" style={{ width: 'min(100vw, 1600px)' }}>
+      <div style={{ position: 'relative', width: 'min(100vw, 1600px)' }}>
+      <svg viewBox="0 0 1600 900" style={{ width: '100%', display: 'block' }}>
         <Defs />
         {page === 0 && (
           <g>
@@ -26,6 +28,26 @@ export function Gallery({ page = 0 }: { page?: number }) {
             <Palm x={1480} y={790} s={0.9} lean={-6} />
             <Motes />
             <Vignette />
+          </g>
+        )}
+        {page === 8 && (
+          <g>
+            <Backdrop kind="dusk" />
+            <Glow x={420} y={300} r={700} color="warm" opacity={0.35} />
+            <Person x={150} y={840} s={2} head="hijab" headColor={N.sky} headDark={N.skyDark} robe={N.coral} robeLight={N.coralLight} robeDark={N.coralDark} skin={N.skin2} skinDark={N.skin2Dark} pose="wave" />
+            <Ama x={420} y={840} s={2} />
+            <Person x={690} y={840} s={2} flip head="turban" headColor={N.cream} headDark={N.sandLight} robe={N.violet} robeLight={N.violetLight} robeDark={N.violetDark} beard={N.night0} skin={N.skin3} skinDark={N.skin3Dark} pose="think" face="think" />
+            <Person x={940} y={840} s={2} head="cap" headColor={N.sand} headDark={N.sandDark} robe={N.leaf} robeLight={N.leafLight} robeDark={N.leafDark} beard={N.night1} skin={N.skin1} skinDark={N.skin1Dark} pose="point" face="wow" />
+            <Person x={1180} y={840} s={2} head="hair" headColor={N.woodDark} headDark={N.shadow} robe={N.leaf} robeLight={N.leafLight} robeDark={N.leafDark} skin={N.skin3} skinDark={N.skin3Dark} pose="cheer" face="calm" />
+            <Person x={1420} y={840} s={2} flip head="none" robe={N.sand} robeLight={N.sandLight} robeDark={N.sandDark} skin={N.skin1} skinDark={N.skin1Dark} pose="hold" />
+            <Vignette />
+          </g>
+        )}
+        {page === 9 && (
+          <g>
+            <Backdrop kind="dusk" />
+            <Ama x={400} y={2050} s={8} />
+            <Person x={1200} y={2050} s={8} head="hijab" headColor={N.sky} headDark={N.skyDark} robe={N.coral} robeLight={N.coralLight} robeDark={N.coralDark} skin={N.skin2} skinDark={N.skin2Dark} face="wow" />
           </g>
         )}
         {page === 1 && (
@@ -124,6 +146,8 @@ export function Gallery({ page = 0 }: { page?: number }) {
           </g>
         )}
       </svg>
+      <Grain />
+      </div>
     </div>
   )
 }

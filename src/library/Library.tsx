@@ -2,6 +2,7 @@ import type { ComponentType } from 'react'
 import '../art2/art2.css'
 import { Pip2 } from '../art2/characters'
 import { Defs } from '../art2/fx'
+import { Grain } from '../art2/Grain'
 import { algebra } from '../lessons/algebra'
 import { frameworks } from '../lessons/frameworks'
 import './library.css'
@@ -62,6 +63,7 @@ export function Library() {
                     <Defs />
                     <c.Poster />
                   </svg>
+                  <Grain />
                   <span className="lib-play" aria-hidden>
                     <svg viewBox="0 0 40 40">
                       <path d="M14 10 L31 20 L14 30 Z" fill="currentColor" />

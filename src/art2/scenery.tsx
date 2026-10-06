@@ -95,6 +95,17 @@ export function Skyline({ y = 700, seed = 11, color = N.night1, windowColor = N.
         }
         return <rect key={i} x={b.x} y={top} width={b.w} height={b.h + 40} fill={color} />
       })}
+      {/* moonlight on the left faces, shade on the right, painted loosely */}
+      <g filter="url(#fx-wet)">
+        {parts.map((b, i) =>
+          b.kind === 'minaret' ? null : (
+            <g key={i}>
+              <rect x={b.x + b.w * 0.64} y={y - b.h} width={b.w * 0.36} height={b.h + 40} fill={N.shadow} opacity={0.22} />
+              <rect x={b.x} y={y - b.h} width={Math.min(6, b.w * 0.08)} height={b.h + 40} fill={N.mist} opacity={0.1} />
+            </g>
+          ),
+        )}
+      </g>
       <g>
         {lights.map((l, i) => (
           <g key={i}>

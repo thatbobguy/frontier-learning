@@ -2,6 +2,7 @@ import gsap from 'gsap'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import '../art2/art2.css'
 import { Defs } from '../art2/fx'
+import { Grain } from '../art2/Grain'
 import { preloadLines, setMuted as setNarratorMuted, speak, stop as stopSpeech } from '../engine/narrator'
 import { snapshotStage } from '../engine/svg'
 import type { LessonEvent } from '../engine/types'
@@ -407,6 +408,7 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
               })}
             {pointer && <rect x={pointer.x - 14} y={pointer.y - 14} width={pointer.w + 28} height={pointer.h + 28} rx={24} fill="none" stroke="#FFC23D" strokeWidth={8} className="tutor-pointer" />}
           </svg>
+          <Grain />
 
           {!started && (
             <div className="flow-poster">

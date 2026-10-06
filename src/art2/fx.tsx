@@ -87,6 +87,20 @@ export function Defs() {
         <stop offset="0" stopColor={N.night3} />
         <stop offset="1" stopColor={N.night0} />
       </linearGradient>
+      <linearGradient id="fx-cloth-ao" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor={N.shadow} stopOpacity="0" />
+        <stop offset="1" stopColor={N.shadow} stopOpacity="0.28" />
+      </linearGradient>
+      <radialGradient id="fx-blush">
+        <stop offset="0" stopColor={N.coral} stopOpacity="0.32" />
+        <stop offset="1" stopColor={N.coral} stopOpacity="0" />
+      </radialGradient>
+      {/* watercolour: wobble the edges of a wash a little and soften them, like wet paint */}
+      <filter id="fx-wet" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="2" seed="4" result="n" />
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d" />
+        <feGaussianBlur in="d" stdDeviation="0.9" />
+      </filter>
       <filter id="fx-soft" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="6" />
       </filter>
