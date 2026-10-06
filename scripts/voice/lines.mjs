@@ -103,8 +103,12 @@ function tsxFiles(dir) {
 /** Every line to record: `{ voice: 'narrator' | 'tutor', text }`, de-duplicated. */
 export function collectLines() {
   const lines = []
-  // The first lesson's scenes, and every chapter of the newer lessons.
-  for (const file of ['src/scenes', 'src/lessons'].flatMap((d) => tsxFiles(join(ROOT, d)))) {
+  // The first lesson's old scenes are being replaced, so only their narration is recorded
+  // (the new chapters reuse it word for word); their feedback lines and hints are not.
+  for (const file of tsxFiles(join(ROOT, 'src/scenes'))) {
+    lines.push(...collectFile(file, { beatVoice: 'narrator', sayCalls: {} }))
+  }
+  for (const file of tsxFiles(join(ROOT, 'src/lessons'))) {
     lines.push(...collectFile(file, { beatVoice: 'narrator', sayCalls: { say: 'narrator', setHints: 'tutor' } }))
   }
   lines.push(...collectFile(join(ROOT, 'src/tutor/TutorPanel.tsx'), { beatVoice: 'tutor', sayCalls: { pipSays: 'tutor' } }))
