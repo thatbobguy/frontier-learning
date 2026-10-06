@@ -1,0 +1,48 @@
+/* Ambient loops for the data-gap film. They pause with the film. */
+
+.dg-bob {
+  animation: dg-bob 2.2s ease-in-out infinite alternate;
+}
+@keyframes dg-bob {
+  from { transform: translate(-6px, 2px); }
+  to { transform: translate(8px, -5px); }
+}
+
+.dg-scroll {
+  animation: dg-scroll 9s linear infinite;
+}
+@keyframes dg-scroll {
+  from { transform: translate(0, 0); }
+  to { transform: translate(0, -192px); }
+}
+
+.dg-flow {
+  animation: dg-flow 1.2s linear infinite;
+}
+@keyframes dg-flow {
+  from { stroke-dashoffset: 24; }
+  to { stroke-dashoffset: 0; }
+}
+
+.dg-spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dg-spin 14s linear infinite;
+}
+@keyframes dg-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.flow-paused .dg-bob,
+.flow-paused .dg-scroll,
+.flow-paused .dg-flow,
+.flow-paused .dg-spin {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dg-bob, .dg-scroll, .dg-flow, .dg-spin {
+    animation: none;
+  }
+}
