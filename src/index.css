@@ -367,6 +367,7 @@ button {
 }
 
 .tutor-card {
+  color: var(--text);
   width: 320px;
   max-width: 100%;
   background: var(--surface);
@@ -684,4 +685,32 @@ button {
   from { transform: translate(0, 0); }
   50% { transform: translate(calc(var(--dx) * 0.5), -6px); }
   to { transform: translate(var(--dx), 4px); }
+}
+
+.tutor-log {
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding-right: 4px;
+}
+.tutor-log p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.35;
+  padding: 6px 10px;
+  border-radius: 14px;
+  max-width: 88%;
+}
+.tutor-log .from-pip {
+  align-self: flex-start;
+  background: var(--bg);
+  color: var(--text-soft);
+}
+.tutor-log .from-you {
+  align-self: flex-end;
+  background: #7b61ff;
+  color: #fff;
 }

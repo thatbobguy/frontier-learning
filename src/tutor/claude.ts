@@ -2,6 +2,16 @@ import Anthropic from '@anthropic-ai/sdk'
 
 export const TUTOR_MODEL = 'claude-opus-5-5'
 const KEY_STORAGE = 'frontier-learning.anthropic-key'
+/**
+ * A small relay that holds the site's own Anthropic key (see worker/pip-relay.js), set at build
+ * time with VITE_PIP_RELAY. With it, Pip talks for every visitor and nobody has to paste a key.
+ */
+export const PIP_RELAY: string = import.meta.env.VITE_PIP_RELAY ?? ''
+
+/** True when Pip can really think: the learner pasted a key, or the site has a relay. */
+export function canThink(key: string) {
+  return !!key || !!PIP_RELAY
+}
 
 export function loadKey(): string {
   try {
@@ -31,7 +41,7 @@ export interface TutorReply {
 const REPLY_SCHEMA = {
   type: 'object',
   properties: {
-    say: { type: 'string', description: 'What Pip says out loud. One to three short sentences, pitched for the learner described in the instructions.' },
+    say: { type: 'string', description: 'What Pip says out loud. Usually two or three short sentences, up to five when the learner asked for a real explanation, pitched for the learner described in the instructions.' },
     action: {
       type: 'string',
       enum: ['none', 'replay', 'point', 'resume'],
@@ -49,7 +59,8 @@ export function buildSystemPrompt(lessonTitle: string, script: string, audience?
   return `You are Pip, a warm, curious owl who tutors one young student (about 7 years old) through an interactive lesson called "${lessonTitle}". You float beside the lesson. You can see a picture of the lesson screen and know exactly where the student is.
 
 How you teach:
-- Talk like a kind, playful grown-up talking to a 7-year-old: short sentences, everyday words, one idea at a time. Never more than three sentences.
+- Talk like a kind, playful grown-up talking to a 7-year-old: short sentences, everyday words, one idea at a time. Usually two or three sentences; up to five if they ask you to explain something properly.
+- Answer what they actually asked first. You know exactly where they are in the lesson, what they have heard, what is on screen and everything they have tried, so use it: refer to the things they can see and the guesses they made.
 - Go back to first principles. Explain WHY something works using the things on screen (sheep, pebbles, sticks, bundles), not rules to memorize.
 - In a "Now you try" challenge, never give the answer or tell them exactly what to click. Ask one small question that points at the idea they are missing, or suggest one thing to try. If they are close, say what they got right first.
 - If the student is confused about something from the video part, explain it a different way than the narration did, often with a tiny example. Use "replay" only if hearing it again would really help.
@@ -68,7 +79,8 @@ function buildGrownUpPrompt(lessonTitle: string, script: string, audience: strin
   return `You are Pip, a sharp, warm owl who tutors one learner through an interactive lesson called "${lessonTitle}". The learner is: ${audience}. You float beside the lesson. You can see a picture of the lesson screen and know exactly where the learner is.
 
 How you teach:
-- Talk like an expert friend: plain words, precise, never condescending. Never more than three sentences, because you are heard, not read.
+- Talk like an expert friend: plain words, precise, never condescending. Usually two or three sentences, up to five when they ask for a real explanation, because you are heard, not read.
+- Answer what they actually asked first. You know exactly where they are in the film, what they have heard, what is on screen, any reading they have open and everything they have tried, so use it: refer to what they can see and the choices they made. If a question goes beyond this film, answer it well, and mention which film in the course goes deeper when there is one.
 - Go back to first principles and the physical intuition: explain WHY (forces, tradeoffs, costs, what breaks), using what is on screen, not jargon to memorize. Define any term you use.
 - When asked about the industry, be concrete: real companies, real numbers, real open problems, and say plainly when something is uncertain or contested.
 - In a challenge, never give the answer or say exactly what to click. Ask one small question that points at the idea they are missing, or suggest one thing to try. If they are close, say what they got right first.
@@ -101,7 +113,10 @@ export async function askPip({
   studentSaid: string
   snapshot: string | null
 }): Promise<TutorReply> {
-  const client = new Anthropic({ apiKey, dangerouslyAllowBrowser: true })
+  const client = apiKey
+    ? new Anthropic({ apiKey, dangerouslyAllowBrowser: true, maxRetries: 1, timeout: 45_000 })
+    : // The relay adds the real key; the SDK still wants something in this field.
+      new Anthropic({ baseURL: PIP_RELAY, apiKey: 'relay', dangerouslyAllowBrowser: true, maxRetries: 1, timeout: 45_000 })
   const transcript = history.length
     ? `Recent conversation:\n${history.map((t) => `${t.who === 'pip' ? 'Pip' : 'Student'}: ${t.text}`).join('\n')}\n\n`
     : ''
@@ -136,7 +151,9 @@ export async function askPip({
 
 export function describeError(err: unknown): string {
   if (err instanceof Anthropic.AuthenticationError) return "My key doesn't seem to work. A grown-up can check it in my settings."
+  if (err instanceof Anthropic.PermissionDeniedError) return "That key isn't allowed to use me. A grown-up can check it in my settings."
   if (err instanceof Anthropic.RateLimitError) return "I'm getting lots of questions right now. Try again in a moment!"
+  if (err instanceof Anthropic.APIConnectionTimeoutError) return "I took too long thinking. Can you ask me again?"
   if (err instanceof Anthropic.APIConnectionError) return "I can't reach the internet right now. Let's keep going and try again soon."
   if (err instanceof Anthropic.APIError) return "Something went wrong when I was thinking. Can you ask me again?"
   return "Something went wrong when I was thinking. Can you ask me again?"

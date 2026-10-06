@@ -285,36 +285,132 @@ a.flow-next-card:hover {
   width: 26px;
   height: 26px;
 }
-.flow-progress {
+/* The timeline: one track split into chapters, scrubbable like a video */
+.flow-timeline {
   flex: 1;
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 12px;
   min-width: 120px;
 }
-.flow-seg {
+.flow-track {
   position: relative;
-  height: 10px;
+  flex: 1;
+  height: 28px;
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+}
+.flow-track-seg {
+  position: absolute;
+  top: 10px;
+  height: 8px;
   border-radius: 999px;
-  border: none;
-  padding: 0;
   overflow: hidden;
   background: rgba(201, 211, 255, 0.16);
-  cursor: pointer;
-  flex-basis: 0;
+  transition: height 0.15s ease, top 0.15s ease;
 }
-.flow-seg:hover {
-  background: rgba(201, 211, 255, 0.3);
+.flow-track:hover .flow-track-seg,
+.flow-track.dragging .flow-track-seg {
+  top: 8px;
+  height: 12px;
 }
-.flow-seg.on {
-  box-shadow: 0 0 0 2px rgba(255, 194, 61, 0.35);
-}
-.flow-seg-fill {
+.flow-track-fill {
   position: absolute;
   inset: 0;
   background: var(--f-gold);
   transform-origin: 0 50%;
-  transition: transform 0.6s ease;
+  transition: transform 0.25s linear;
 }
+.flow-track.dragging .flow-track-fill {
+  transition: none;
+}
+.flow-track-hover {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.14);
+}
+.flow-knob {
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: var(--f-gold);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.25);
+  transition: left 0.25s linear, transform 0.15s ease;
+  pointer-events: none;
+}
+.flow-track.dragging .flow-knob {
+  transition: none;
+  transform: scale(1.25);
+}
+.flow-preview {
+  position: absolute;
+  bottom: 34px;
+  width: 220px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--f-panel);
+  border: 1px solid var(--f-line);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  z-index: 5;
+}
+.flow-preview strong {
+  font-size: 14px;
+  color: var(--f-text);
+}
+.flow-preview span {
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--f-soft);
+}
+.flow-time {
+  flex: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--f-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.flow-fs {
+  display: grid;
+  place-items: center;
+  padding: 5px 9px;
+}
+.flow-fs svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Full screen: the film fills the screen, chrome stays out of the way */
+.flow.flow-full {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  min-height: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  justify-content: center;
+}
+.flow-full .flow-top {
+  display: none;
+}
+.flow-full .flow-stage-wrap {
+  width: min(calc(100% - 32px), calc((100vh - 170px) * 16 / 9));
+  width: min(calc(100% - 32px), calc((100dvh - 170px) * 16 / 9));
+}
+.flow-full .flow-stage {
+  border-radius: 12px;
+}
+
 .flow-chapter {
   flex: none;
   max-width: 220px;
@@ -343,7 +439,8 @@ a.flow-next-card:hover {
 }
 
 @media (max-width: 720px) {
-  .flow-chapter {
+  .flow-chapter,
+  .flow-time {
     display: none;
   }
   .flow-stage {
