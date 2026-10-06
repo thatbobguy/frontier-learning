@@ -44,18 +44,27 @@ export function useBeatTimeline(
     if (!tl) return
     const start = tl.labels[`b${beatIndex}`] ?? 0
     const end = tl.labels[`b${beatIndex + 1}`] ?? tl.duration()
+    const prev = tl.labels[`b${beatIndex - 1}`]
     tweenRef.current?.kill()
     tl.pause()
-    tl.seek(start, false)
-    if (end - start < 0.01) {
+    // Moving on to the next beat before the last one finished animating (the line was
+    // already said): glide through the rest of it quickly instead of jumping.
+    const now = tl.time()
+    const catchUp = prev !== undefined && now >= prev && now < start - 0.01
+    if (!catchUp) tl.seek(start, false)
+    if (end - start < 0.01 && !catchUp) {
       tweenRef.current = null
       doneRef.current()
       return
     }
-    const tween = tl.tweenFromTo(start, end, {
-      ease: 'none',
-      onComplete: () => doneRef.current(),
-    })
+    const play = () =>
+      (tweenRef.current = tl.tweenFromTo(start, end, {
+        ease: 'none',
+        onComplete: () => doneRef.current(),
+      }))
+    const tween = catchUp
+      ? tl.tweenFromTo(now, start, { duration: Math.min(0.5, start - now), ease: 'power1.inOut', onComplete: () => void play() })
+      : play()
     tweenRef.current = tween
     if (!playing) tween.pause()
     // `playing` is applied by the effect below; only the beat restarts the tween.

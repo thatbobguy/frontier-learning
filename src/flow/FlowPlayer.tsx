@@ -145,9 +145,17 @@ export function FlowPlayer({ lesson, onExit }: { lesson: FlowLesson; onExit: () 
   // Move on the moment the line is said and the picture has played (or the learner has done their part).
   useEffect(() => {
     if (!started || !playing || ended) return
-    const ready = (cue.play ? playDone : speechDone) && animDone && !talking
-    if (!ready) return
-    const t = window.setTimeout(next, cue.play ? 300 : 120)
+    if (talking) return
+    // A play cue waits for the learner and the picture. A watched cue moves on as soon as its
+    // line is said: if the picture is still animating, it gets a moment, then glides on
+    // into the next beat rather than leaving a silent gap.
+    if (cue.play) {
+      if (!playDone || !animDone) return
+      const t = window.setTimeout(next, 250)
+      return () => window.clearTimeout(t)
+    }
+    if (!speechDone) return
+    const t = window.setTimeout(next, animDone ? 0 : 450)
     return () => window.clearTimeout(t)
   }, [started, playing, ended, cue, speechDone, animDone, playDone, talking, next])
 
