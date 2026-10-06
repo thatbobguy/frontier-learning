@@ -681,6 +681,50 @@ function ZorpChart() {
   )
 }
 
+/** A drawstring, a patch and a growing heap of pebbles, so Ama's bag reads as a big sack. */
+const HEAP: Pt[][] = [
+  [
+    { x: -14, y: -92 },
+    { x: 13, y: -91 },
+  ],
+  [
+    { x: -28, y: -94 },
+    { x: 0, y: -97 },
+    { x: 28, y: -93 },
+  ],
+  [
+    { x: -14, y: -104 },
+    { x: 15, y: -105 },
+  ],
+  [
+    { x: 1, y: -115 },
+    { x: -26, y: -103 },
+    { x: 29, y: -104 },
+  ],
+]
+
+function SackDetails() {
+  return (
+    <g transform={`translate(${AMA.x} ${BAG_Y}) scale(${AMA.s})`} pointerEvents="none">
+      {HEAP.map((row, k) => (
+        <g key={k} className={`c3-heap c3-heap-${k}`}>
+          {row.map((q, j) => (
+            <Pebble key={j} x={q.x} y={q.y} s={0.62} seed={k * 3 + j} />
+          ))}
+        </g>
+      ))}
+      <path d="M-44 -78 Q0 -66 44 -78" stroke={N.sandDark} strokeWidth={6} fill="none" strokeLinecap="round" />
+      <path d="M26 -73 Q44 -62 40 -42" stroke={N.sandDark} strokeWidth={5} fill="none" strokeLinecap="round" />
+      <path d="M26 -73 Q32 -58 25 -46" stroke={N.sandDark} strokeWidth={5} fill="none" strokeLinecap="round" />
+      <circle cx={26} cy={-73} r={6} fill={N.sandDark} />
+      <g transform="rotate(-8 -24 -40)">
+        <rect x={-38} y={-54} width={28} height={26} rx={5} fill={N.woodLight} />
+        <rect x={-34} y={-50} width={20} height={18} rx={3} fill="none" stroke={N.woodDark} strokeWidth={2} strokeDasharray="4 3" />
+      </g>
+    </g>
+  )
+}
+
 /* ------------------------------------------------------------------ */
 /* Cue 5: tap the pile that has seven                                    */
 /* ------------------------------------------------------------------ */
@@ -1033,6 +1077,7 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     tl.set('.c3-bag', { y: 0 }, 0)
     tl.set('.c3-bag-grow', { scale: 0.6, svgOrigin: bagOrigin }, 0)
     tl.set('.c3-bag-squish', { scaleX: 1, scaleY: 1, svgOrigin: bagOrigin }, 0)
+    tl.set('.c3-heap', { opacity: 0 }, 0)
     tl.set('.c3-ama-hop', { y: 0 }, 0)
     tl.set('.c3-ama-sway', { rotation: 0, x: 0, svgOrigin: amaOrigin }, 0)
     tl.set('.c3-ama-squash', { scaleX: 1, scaleY: 1, svgOrigin: amaOrigin }, 0)
@@ -1129,6 +1174,8 @@ export function Ch3Names({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
       tl.to(`.c3-fly-${k}`, { y: ty, duration: 0.35, ease: 'power2.in' }, at + 0.35)
       tl.set(`.c3-fly-${k}`, { opacity: 0 }, at + 0.7)
     })
+    // The heap in the sack's mouth grows as the pebbles land.
+    ;[3.75, 4.5, 5.75, 6.75].forEach((at, k) => tl.to(`.c3-heap-${k}`, { opacity: 1, duration: 0.15 }, at))
     ;[4.38, 5.6, 6.6].forEach((at, g) => {
       tl.to('.c3-bag-grow', { scale: BAG_G[g + 1], duration: 0.35, ease: 'back.out(3)' }, at)
       tl.to('.c3-ama-squash', { scaleY: sq(g + 1), scaleX: 1 + 0.015 * (g + 1), duration: 0.3, ease: 'power2.out' }, at)
@@ -1478,6 +1525,7 @@ function Cue1World() {
             <g className="c3-bag-grow">
               <g className="c3-bag-squish">
                 <Bag x={AMA.x} y={BAG_Y} s={AMA.s} open tutor="Ama's huge sack of pebbles" />
+                <SackDetails />
               </g>
             </g>
           </g>

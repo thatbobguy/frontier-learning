@@ -1120,8 +1120,8 @@ export function Ch1Pebbles({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
       et.to('.pen-gate', { scaleX: 1, duration: 0.55, ease: 'back.out(2)' }, 9.6)
       mood('cheer', 9.9)
       camTo(7.4, 3.0, F.wide)
-      // The last frame: wide on the valley under the dawn sky, ready for chapter 2.
-      et.to(['.c1-vig', '.c1-dawnglow'], { opacity: 0, duration: 1.6 }, 9.4)
+      // The last frame: wide on the valley under the dawn sky, vignette kept so the edges match chapter 2.
+      et.to('.c1-dawnglow', { opacity: 0, duration: 1.6 }, 9.4)
       et.to({}, { duration: 0.4 }, 11.0)
     }, el)
     // The ending starts once; it is cleaned up on unmount.
