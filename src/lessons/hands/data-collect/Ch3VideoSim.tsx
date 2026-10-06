@@ -754,7 +754,7 @@ export function Ch3VideoSim({ cueIndex, playing, onAnimDone, reportState, setHin
           <Tag x={316} y={152} color={C.paper} size={18}>
             frame 1,204
           </Tag>
-          <Label className="c3-lab-pose" x={600} y={360} tx={880} ty={240} text="estimated: every finger joint" color={C.lime} />
+          <Label className="c3-lab-pose" x={600} y={360} tx={770} ty={230} text="estimated: every finger joint" color={C.lime} />
           {/* the robot hand: a different body */}
           <Pool x={1180} y={460} r={360} color="rim" opacity={0.45} />
           <Hand3D
@@ -782,12 +782,12 @@ export function Ch3VideoSim({ cueIndex, playing, onAnimDone, reportState, setHin
             <path d="M-8 -8 L8 8 M8 -8 L-8 8" stroke={C.danger} strokeWidth={3} />
           </g>
           <Label className="c3-lab-body" x={1240} y={640} tx={1300} ty={200} text="body different" sub="finger lengths, thumb" color={C.bone} />
-          <Label className="c3-lab-looks" x={470} y={700} tx={330} ty={850} text="looks different" sub="a human hand in the picture" color={C.keyLight} />
+          <Label className="c3-lab-looks" x={470} y={700} tx={280} ty={800} text="looks different" sub="a human hand in the picture" color={C.keyLight} />
           <g className="c3-noforce" opacity={0}>
             <circle className="c3-nf-thumb" r={22} fill="none" stroke={C.magenta} strokeWidth={3} strokeDasharray="4 4" />
             <circle className="c3-nf-index" r={22} fill="none" stroke={C.magenta} strokeWidth={3} strokeDasharray="4 4" />
           </g>
-          <Label className="c3-lab-force" x={1110} y={720} tx={940} ty={850} text="no forces" sub="video can’t record a squeeze" color={C.magenta} />
+          <Label className="c3-lab-force" x={1110} y={720} tx={1286} ty={800} text="no forces" sub="video can’t record a squeeze" color={C.magenta} />
         </g>
       </g>
 
@@ -839,7 +839,10 @@ export function Ch3VideoSim({ cueIndex, playing, onAnimDone, reportState, setHin
               Physical Intelligence, Dec 2025
             </text>
             <text x={290} y={214} fill={C.mist} fontFamily={MONO} fontSize={18}>
-              human→robot transfer emerged with scale · curve shape illustrative
+              human→robot transfer emerged with scale
+            </text>
+            <text x={290} y={240} fill={C.mist} fontFamily={MONO} fontSize={18}>
+              curve shape illustrative
             </text>
           </g>
         </g>
@@ -968,7 +971,8 @@ export function Ch3VideoSim({ cueIndex, playing, onAnimDone, reportState, setHin
           <Pool x={1200} y={480} r={420} color="key" opacity={0.85} />
         </g>
         <g data-depth="1">
-          <line x1={800} y1={-200} x2={800} y2={1100} stroke={C.paper} strokeWidth={2} opacity={0.35} />
+          {/* the divider breaks where "the reality gap" is written over it */}
+          <path d="M800 -200 V150 M800 222 V1100" stroke={C.paper} strokeWidth={2} opacity={0.35} />
           <text x={80} y={170} fill={C.cyanLight} fontFamily={SANS} fontSize={30} fontWeight={600}>
             simulation
           </text>

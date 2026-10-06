@@ -306,7 +306,6 @@ export function Ch4Thumb({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
 
   useAmbient(root, playing, () => {
     gsap.fromTo(phase.state, { t: 0 }, { t: 1, duration: 2.6, yoyo: true, repeat: -1, ease: 'sine.inOut', onUpdate: phase.notify })
-    gsap.to('.t-zonepulse', { opacity: 0.35, duration: 1, yoyo: true, repeat: -1, ease: 'sine.inOut' })
     gsap.to('.t-heat', { opacity: 0.5, duration: 1.4, yoyo: true, repeat: -1, ease: 'sine.inOut' })
   })
 
@@ -449,7 +448,10 @@ export function Ch4Thumb({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
                     </tspan>
                   </text>
                   <text x={110} y={290} fill={C.mist} fontFamily={SANS} fontSize={22}>
-                    magenta = everywhere the thumb tip can go
+                    <tspan x={110}>magenta = everywhere</tspan>
+                    <tspan x={110} dy={28}>
+                      the thumb tip can go
+                    </tspan>
                   </text>
                   {/* palm and fingers, top view */}
                   {FINGERS.map((f) => (
@@ -476,8 +478,11 @@ export function Ch4Thumb({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
                       </g>
                     )
                   })}
-                  <Mono x={PALM.x1 + 20} y={ZONES.ring.y + 6} color={C.cyanLight} size={16}>
-                    curled fingertips land here
+                  <Mono x={PALM.x1 + 20} y={ZONES.ring.y - 4} color={C.cyanLight} size={16}>
+                    <tspan x={PALM.x1 + 20}>curled fingertips</tspan>
+                    <tspan x={PALM.x1 + 20} dy={20}>
+                      land here
+                    </tspan>
                   </Mono>
                   {/* the reachable sweep */}
                   <g style={{ mixBlendMode: 'screen' }}>

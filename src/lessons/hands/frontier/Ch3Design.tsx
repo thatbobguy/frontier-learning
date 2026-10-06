@@ -56,7 +56,7 @@ const ROW = (i: number) => 132 + i * 80
 const OUT_X = 1085
 const OUT_W = 450
 const OUT_ROW = (i: number) => 148 + i * 66
-const CARD = { y: 640, w: 318, h: 236, x: (i: number) => 572 + i * 330 }
+const CARD = { y: 640, w: 318, h: 236, x: (i: number) => 500 + i * 330 }
 const PITCH = { x: 1310, y: 585 }
 
 interface Row<K extends keyof Design> {

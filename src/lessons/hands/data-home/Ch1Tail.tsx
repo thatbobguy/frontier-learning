@@ -252,7 +252,7 @@ export function Ch1Tail({ cueIndex, playing, onAnimDone, onPlayDone, say, emit, 
     gsap.to('.c1-moon', { opacity: 0.55, duration: 3.3, yoyo: true, repeat: -1, ease: 'sine.inOut' })
     gsap.to('.c1-steam', { y: -14, opacity: 0.4, duration: 1.8, yoyo: true, repeat: -1, ease: 'sine.inOut' })
     gsap.to('.c1-tailglow', { opacity: 0.25, duration: 2.2, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-    gsap.to('.c1-pulse', { opacity: 0.35, duration: 1.1, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+    // .c1-pulse is rendered conditionally, so it pulses with the CSS loop hd-pulse instead
   })
 
   /* ---------------- Pip ---------------- */
@@ -620,7 +620,7 @@ export function Ch1Tail({ cueIndex, playing, onAnimDone, onPlayDone, say, emit, 
             {pct(whole)}%
           </text>
           <PowerText x={800} y={540} base={`${(p * 100).toFixed(2)}%`} exp={`${n}`} rest="  → the whole chore works" size={30} color={C.mist} />
-          {won && <circle className="c1-pulse" cx={800} cy={420} r={260} fill="url(#cn-pool-lime)" />}
+          {won && <circle className="c1-pulse hd-pulse" cx={800} cy={420} r={260} fill="url(#cn-pool-lime)" />}
         </g>
         <g className="c1-ctrl">
           {Array.from({ length: HOUSES }, (_, i) => {

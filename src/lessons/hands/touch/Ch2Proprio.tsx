@@ -139,7 +139,7 @@ export function Ch2Proprio({ cueIndex, playing, onAnimDone, reportState, setHint
       tl.addLabel('b3', b3)
       fade(tl, '.p-current', 0, b3, 0.6, 1)
       fade(tl, '.p-blind', 1, b3, 0.6)
-      tl.fromTo('.p-pointer', { y: -260, x: -60 }, { y: 0, x: 0, duration: 3.2, ease: 'power2.out', immediateRender: false }, b3 + 0.2)
+      tl.fromTo('.p-pointer', { y: -170, x: 60 }, { y: 90, x: 120, duration: 3.2, ease: 'power2.out', immediateRender: false }, b3 + 0.2)
       pointer.to(tl, { pose: { ...GRASPS.point, index: [12, 10, 6, 2] } }, b3 + 0.4, 2.8)
       pointer.to(tl, { pose: { ...GRASPS.point, index: [12.1, 10.1, 6, 2] }, touch: { index: 0 } }, b3 + 3.4, 0.4)
       fade(tl, '.p-ghost-p', 1, b3 + 0.6, 0.8)
@@ -379,7 +379,7 @@ export function Ch2Proprio({ cueIndex, playing, onAnimDone, reportState, setHint
             </text>
           </g>
         </g>
-        <Label className="p-lab-barely" x={EGG.x - 80} y={EGG.y - 250} tx={EGG.x - 330} ty={EGG.y - 330} text="joint angles barely change" sub="+0.1° at contact" color={C.magentaLight} hidden />
+        <Label className="p-lab-barely" x={EGG.x + 40} y={EGG.y - 160} tx={EGG.x - 330} ty={EGG.y - 330} text="joint angles barely change" sub="+0.1° at contact" color={C.magentaLight} hidden />
         <g className="p-asks" opacity={0}>
           {['where does it touch?', 'is it slipping?', 'how soft is it?'].map((t, i) => (
             <g key={t} className="p-ask">

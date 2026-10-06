@@ -121,7 +121,7 @@ export function Ch3Diversity({ cueIndex, playing, onAnimDone, onPlayDone, say, e
 
   useAmbient(root, playing, () => {
     gsap.to('.d3-glow', { opacity: 0.6, duration: 2.6, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-    gsap.fromTo('.d3-pulse', { opacity: 0.45 }, { opacity: 1, duration: 0.7, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+    // .d3-pulse is rendered conditionally, so it pulses with the CSS loop hd-pulse instead
   })
 
   /* ---------------- the play ---------------- */
@@ -360,7 +360,7 @@ export function Ch3Diversity({ cueIndex, playing, onAnimDone, onPlayDone, say, e
             </g>
           )}
           {pred === null && !testing && inPlay && !won && (
-            <g className="d3-pulse">
+            <g className="d3-pulse hd-pulse">
               <Tag x={lx(n) + (n > 20 ? -14 : 14)} y={ly(0.55)} anchor={n > 20 ? 'end' : 'start'} color={C.paper} size={18}>
                 drag here: your prediction
               </Tag>

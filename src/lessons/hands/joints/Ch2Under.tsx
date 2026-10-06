@@ -682,9 +682,9 @@ export function Ch2Under({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
               <Forearm />
             </g>
             <Label className="u-lab-l" x={LEFT.x} y={LEFT.y - 100} tx={LEFT.x} ty={LEFT.y + 90} text="6 motors, 12 joints" sub="motors in the palm, linkages to the fingers" color={C.amber} anchor="middle" size={32} />
-            <Label className="u-lab-r" x={RIGHT.x - 40} y={RIGHT.y + 240} tx={RIGHT.x - 150} ty={RIGHT.y + 240} text="≈ one per joint" sub="in the forearm, pulling tendons" color={C.amber} size={32} />
+            <Label className="u-lab-r" x={RIGHT.x - 40} y={RIGHT.y + 240} tx={RIGHT.x - 150} ty={RIGHT.y + 150} text="≈ one per joint" sub="in the forearm, pulling tendons" color={C.amber} size={32} />
             <g className="u-foot" opacity={0}>
-              <text x={RIGHT.x - 150} y={RIGHT.y + 330} textAnchor="end" fill={C.mist} fontFamily={MONO} fontSize={18}>
+              <text x={RIGHT.x - 150} y={RIGHT.y + 232} textAnchor="end" fill={C.mist} fontFamily={MONO} fontSize={18}>
                 patent design; Tesla says it has since changed
               </text>
             </g>

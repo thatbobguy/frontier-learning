@@ -360,7 +360,7 @@ export function Ch3Privacy({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
           <rect x={OP.x - 80} y={OP.y - 270} width={16} height={160} rx={6} fill={C.ink2} />
           <Person name="operator" x={OP.x} y={OP.y} s={1.1} pose={POSES.sitForward} headset outfit="tee" top="#141a26" topDark="#0c1018" pants="#0c1018" shoes="#06080c" skin="#2a1a12" skinDark="#1a0f0a" hair="buzz" light="screen" />
           <path d={`M${OP.x + 28} ${OP.y - 330} q12 30 4 60`} stroke={C.key} strokeWidth={3} fill="none" opacity={0.6} filter="url(#cn-bloom)" />
-          <Label className="c3-lab-op" x={OP.x + 30} y={OP.y - 330} tx={OP.x - 60} ty={150} text="a remote operator, miles away" sub="sees through the robot’s cameras" color={C.keyLight} />
+          <Label className="c3-lab-op" x={OP.x + 30} y={OP.y - 330} tx={OP.x + 80} ty={140} anchor="end" text="a remote operator, miles away" sub="sees through the robot’s cameras" color={C.keyLight} />
           <Dust x={300} y={100} w={1000} h={600} count={18} seed={62} color={C.keyLight} />
         </g>
       </g>
@@ -498,14 +498,14 @@ export function Ch3Privacy({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
             </g>
             <g className="c3-blur-guest" opacity={0}>
               {Array.from({ length: 9 }, (_, k) => (
-                <rect key={k} x={694 + (k % 3) * 18} y={418 + Math.floor(k / 3) * 18} width={18} height={18} fill={['#e8b48f', '#5a3a22', '#c89a78'][k % 3]} />
+                <rect key={k} x={676 + (k % 3) * 18} y={486 + Math.floor(k / 3) * 18} width={18} height={18} fill={['#e8b48f', '#5a3a22', '#c89a78'][k % 3]} />
               ))}
             </g>
             {SEEN.map((s) => (
               <g key={s.cls} className={`c3-out-${s.cls}`} opacity={0}>
                 <rect x={s.x} y={s.y} width={s.w} height={s.h} rx={6} fill="none" stroke={C.lime} strokeWidth={2.5} strokeDasharray="10 6" strokeDashoffset={600} />
                 <g className={`c3-tag-${s.cls}`}>
-                  <rect x={s.x} y={s.y - 26} width={s.tag.length * 9.6 + 56} height={22} fill={C.lime} opacity={0.9} />
+                  <rect x={s.x} y={s.y - 26} width={(s.tag.length + 6) * 9.2 + 34} height={22} fill={C.lime} opacity={0.9} />
                   <circle cx={s.x + 12} cy={s.y - 15} r={4} fill={C.danger} />
                   <text x={s.x + 22} y={s.y - 9} fill={C.ink} fontFamily={MONO} fontSize={15}>
                     REC · {s.tag}

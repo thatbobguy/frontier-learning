@@ -389,7 +389,7 @@ export function Ch3Synergy({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
                   </Mono>
                 </g>
                 <Slider x={130} y={420} w={480} value={s1} onChange={setS1} color={C.lime} label="pattern 1: close everything" valueText={`${Math.round(s1 * 100)}%`} tutor="slider-pattern-1" ticks={[{ at: 0, text: 'open' }, { at: 1, text: 'closed' }]} disabled={done} />
-                <Slider x={130} y={590} w={480} value={v2} onChange={setV2} color={C.lime} label="pattern 2: spread ↔ thumb across" valueText={s2 > 0.05 ? 'thumb across' : s2 < -0.05 ? 'spread' : 'neutral'} tutor="slider-pattern-2" ticks={[{ at: 0, text: 'spread' }, { at: 0.5, text: '·' }, { at: 1, text: 'thumb across' }]} disabled={done} />
+                <Slider x={130} y={590} w={480} value={v2} onChange={setV2} color={C.lime} label="pattern 2: spread ↔ thumb across" valueText={s2 > 0.05 ? 'across' : s2 < -0.05 ? 'spread' : 'neutral'} tutor="slider-pattern-2" ticks={[{ at: 0, text: 'spread' }, { at: 0.5, text: '·' }, { at: 1, text: 'thumb across' }]} disabled={done} />
                 <text x={130} y={700} fill={C.fog} fontFamily={SANS} fontSize={20}>
                   match
                 </text>

@@ -230,7 +230,7 @@ export function Ch1Dof({ cueIndex, playing, onAnimDone, onPlayDone, say, emit, r
       cam.to(tl, { x: 900, y: 540, zoom: 1.16 }, b5 + 3.6, 2.4, 'power2.out')
       fade(tl, '.d-def-a', 1, b5 + 6.4, 0.6)
       fade(tl, '.d-def-b', 1, b5 + 7.4, 0.6)
-      cam.to(tl, { x: 800, y: 480, zoom: 0.98 }, b5 + 6.2, 1.8)
+      cam.to(tl, { x: 800, y: 480, zoom: 0.98 }, b5 + 5.4, 1.6)
       tl.to({}, { duration: 0.4 }, b5 + 10.8)
     },
     [mapHand, bigHand, f],
@@ -240,7 +240,6 @@ export function Ch1Dof({ cueIndex, playing, onAnimDone, onPlayDone, say, emit, r
   useAmbient(root, playing, () => {
     gsap.to('.d-hover', { y: -10, duration: 2.6, yoyo: true, repeat: -1, ease: 'sine.inOut' })
     gsap.to('.d-heatpulse', { opacity: 0.55, duration: 0.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-    gsap.to('.d-ghostpulse', { opacity: 0.55, duration: 1.1, yoyo: true, repeat: -1, ease: 'sine.inOut' })
     gsap.to('.d-motor-in', { opacity: 0.4, duration: 0.35, yoyo: true, repeat: -1, ease: 'sine.inOut', stagger: { each: 0.07, repeat: -1, yoyo: true } })
   })
 

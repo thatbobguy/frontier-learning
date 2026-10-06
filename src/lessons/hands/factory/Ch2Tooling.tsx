@@ -504,7 +504,7 @@ export function Ch2Tooling({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
               <circle cx={CX(x.V)} cy={CY(x.c)} r={8} fill={C.gold} filter="url(#cn-bloom)" />
             </g>
           ))}
-          <Label className="f2-lab-cross" x={CX(CROSS[1].V)} y={CY(20) + 10} tx={CX(CROSS[1].V) + 40} ty={CY(20) + 120} text="crossover: switch process here" color={C.gold} />
+          <Label className="f2-lab-cross" x={CX(CROSS[1].V)} y={CY(20) + 10} tx={CX(CROSS[1].V) + 20} ty={CY(20) + 225} text="crossover: switch process here" color={C.gold} />
           <SourceNote className="f2-illus" x={1392} y={128} anchor="end">
             illustrative numbers
           </SourceNote>

@@ -579,9 +579,10 @@ export function Ch2World({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
       fade(tl, '.c2-lab-stock', 0, b5, 0.5, 1)
       seven.to(tl, HERO_LOOK, b5 + 0.3, 2.2, 'power2.inOut')
       camS.to(tl, { x: 900, y: 480, zoom: 2.0 }, b5, 3.6, 'power2.inOut')
+      camS.to(tl, { x: 905, y: 470, zoom: 2.12 }, b5 + 3.6, 1.9, 'sine.out')
       letterbox(tl, '.c2-lb', true, b5 + 0.4)
-      fade(tl, '.c2-black', 1, b5 + 4.4, 0.25)
-      tl.to({}, { duration: 0.6 }, b5 + 4.7)
+      fade(tl, '.c2-black', 1, b5 + 5.4, 0.25)
+      tl.to({}, { duration: 0.6 }, b5 + 5.7)
 
       // keep the masks and wires on the hero's moving arms
       const heroEls = { mN: q('.c2-maskN'), mF: q('.c2-maskF'), wN: q('.c2-wiresN'), wF: q('.c2-wiresF') }
@@ -603,7 +604,7 @@ export function Ch2World({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
         heroEls.wF?.setAttribute('transform', `translate(${wf.x} ${wf.y})`)
       }
       place()
-      tl.fromTo({ v: 0 }, { v: 0 }, { v: 1, duration: 5.3, ease: 'none', onUpdate: place, immediateRender: false }, b5)
+      tl.fromTo({ v: 0 }, { v: 0 }, { v: 1, duration: 6.3, ease: 'none', onUpdate: place, immediateRender: false }, b5)
       tl.fromTo({ v: 0 }, { v: 0 }, { v: 1, duration: 0.2, ease: 'none', onUpdate: place, immediateRender: false }, b4)
     },
     [spray, pen, jar],
@@ -614,7 +615,6 @@ export function Ch2World({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
     gsap.to('.c2-fridgehum', { opacity: 0.6, duration: 2.2, yoyo: true, repeat: -1, ease: 'sine.inOut' })
     gsap.to('.c2-wire', { rotation: 6, duration: 1.8, yoyo: true, repeat: -1, ease: 'sine.inOut', stagger: 0.3, transformOrigin: '0 0' })
     gsap.to('.c2-spotflick', { opacity: 0.75, duration: 0.08, yoyo: true, repeat: -1, repeatDelay: 3.4, ease: 'none' })
-    gsap.to('.c2-visor', { opacity: 0.35, duration: 1.6, yoyo: true, repeat: -1, ease: 'sine.inOut' })
   })
 
   /* ---------------- the sort play ---------------- */

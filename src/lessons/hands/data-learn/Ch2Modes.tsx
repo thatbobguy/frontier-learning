@@ -177,7 +177,7 @@ export function Ch2Modes({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
   useAmbient(root, playing, () => {
     gsap.to('.d2-flowers', { rotation: 4, duration: 3.4, yoyo: true, repeat: -1, ease: 'sine.inOut', svgOrigin: `${VASE.x} ${VASE.y}` })
     gsap.to('.d2-shand', { y: -6, duration: 1.8, yoyo: true, repeat: -1, ease: 'sine.inOut' })
-    gsap.fromTo('.d2-pulse', { opacity: 0.4 }, { opacity: 1, duration: 0.7, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+    // .d2-pulse is rendered conditionally, so it pulses with the CSS loop hd-pulse instead
   })
 
   /* ---------------- the play ---------------- */
@@ -340,7 +340,7 @@ export function Ch2Modes({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
           <Label className="d2-lab-left" x={VASE.x - 210} y={VASE.y} tx={VASE.x - 330} ty={VASE.y - 90} text="five go left" color={C.lime} size={26} />
           <Label className="d2-lab-right" x={VASE.x + 215} y={VASE.y} tx={VASE.x + 330} ty={VASE.y - 90} text="five go right" color={C.lime} size={26} />
           <g className="d2-lab-fine" opacity={0}>
-            <Tag x={800} y={860} anchor="middle" color={C.lime} size={22}>
+            <Tag x={850} y={860} anchor="start" color={C.lime} size={22}>
               both are fine
             </Tag>
           </g>
@@ -363,12 +363,12 @@ export function Ch2Modes({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
           <Label className="d2-lab-commitL" x={VASE.x - 200} y={VASE.y + 30} tx={VASE.x - 330} ty={VASE.y + 170} text="commits: left" color={C.lime} size={26} />
           <Label className="d2-lab-commitR" x={VASE.x + 200} y={VASE.y + 30} tx={VASE.x + 330} ty={VASE.y + 170} text="new seed: right" color={C.lime} size={26} />
           <g className="d2-lab-method" opacity={0}>
-            <text x={1220} y={770} textAnchor="end" fill={C.lime} fontFamily={SANS} fontSize={30} fontWeight={600} style={{ paintOrder: 'stroke' }} stroke={C.ink} strokeWidth={6} strokeOpacity={0.6}>
+            <text x={850} y={815} textAnchor="start" fill={C.lime} fontFamily={SANS} fontSize={30} fontWeight={600} style={{ paintOrder: 'stroke' }} stroke={C.ink} strokeWidth={6} strokeOpacity={0.6}>
               diffusion policy / flow matching
             </text>
           </g>
           <g className="d2-lab-image" opacity={0}>
-            <Tag x={1220} y={806} anchor="end" size={20}>
+            <Tag x={852} y={850} anchor="start" size={20}>
               the same idea as AI image generators
             </Tag>
           </g>
@@ -399,7 +399,7 @@ export function Ch2Modes({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
             </g>
           )}
           {!demos.length && !stroke && inPlay && (
-            <g className="d2-pulse">
+            <g className="d2-pulse hd-pulse">
               <path d={`M${START.x} ${START.y - 40} q -200 -150 -190 -330 q 10 -170 180 -250`} stroke={C.lime} strokeDasharray="4 10" strokeWidth={3} fill="none" />
               <Tag x={START.x - 230} y={START.y - 40} anchor="end" color={C.lime} size={22}>
                 drag from the gripper to the mug
@@ -456,9 +456,12 @@ export function Ch2Modes({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
             </Tag>
           </g>
           {showPrompt && (
-            <g className="d2-pulse">
-              <Tag x={400} y={196} color={C.limeLight} size={22}>
-                now add a third way: over the top
+            <g className="d2-pulse hd-pulse">
+              <Tag x={40} y={336} color={C.limeLight} size={22}>
+                now add a third way:
+              </Tag>
+              <Tag x={40} y={366} color={C.limeLight} size={22}>
+                over the top
               </Tag>
             </g>
           )}
@@ -509,7 +512,7 @@ export function Ch2Modes({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
           </g>
           {/* the averaged path, side on: dead level, at vase height */}
           <line x1={-200} x2={1800} y1={SIDE.table - 120} y2={SIDE.table - 120} stroke={C.paper} strokeWidth={3} strokeDasharray="12 8" opacity={0.5} />
-          <Tag x={200} y={SIDE.table - 136} color={C.paper} size={22}>
+          <Tag x={420} y={SIDE.table - 136} color={C.paper} size={22}>
             following the average
           </Tag>
           <g ref={sweepRef}>
@@ -518,7 +521,7 @@ export function Ch2Modes({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
             </g>
           </g>
           <g className="d2-slowmo" opacity={0}>
-            <Tag x={120} y={170} color={C.mist} size={24}>
+            <Tag x={300} y={200} color={C.mist} size={24}>
               slow motion · ¼ speed
             </Tag>
           </g>

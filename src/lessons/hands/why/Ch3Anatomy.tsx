@@ -341,7 +341,7 @@ export function Ch3Anatomy({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
             </text>
           </g>
 
-          <Label className="c3-lab-muscle" x={musclePt.x} y={musclePt.y} tx={musclePt.x - 210} ty={musclePt.y - 60} text="finger muscles, in the forearm" color={C.amberLight} />
+          <Label className="c3-lab-muscle" x={musclePt.x} y={musclePt.y} tx={musclePt.x - 170} ty={musclePt.y - 60} text="finger muscles" sub="in the forearm" color={C.amberLight} />
           <Label className="c3-lab-tendon" x={palmTendon.x} y={palmTendon.y} tx={palmTendon.x - 280} ty={palmTendon.y + 60} text="tendons: the strings" color={C.cyanLight} />
           <Label className="c3-lab-pulley" x={pulleyPt.x} y={pulleyPt.y} tx={pulleyPt.x - 250} ty={pulleyPt.y - 170} text="pulleys stop the tendon bowstringing" color={C.cyanLight} size={22} />
 

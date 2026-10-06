@@ -21,7 +21,7 @@ export const CUES: Cue[] = [
 ]
 
 const STATE = [
-  'A new lime map glows in the dark: a triangle whose corners read "cheap" (bottom left), "true to the robot" (top) and "diverse" (bottom right). Five round icons orbit inside it, one per way of making robot data. Point: every data source trades cost, fidelity to the robot’s body, and diversity of places, like the hardware iron triangle (dexterity, robustness, cost).',
+  'A new lime map glows in the dark: a triangle whose corners read "cheap" (bottom left), "true to the robot" (top) and "diverse" (bottom right). Five round icons bob in a row under it, one per way of making robot data, each waiting to be placed. Point: every data source trades cost, fidelity to the robot’s body, and diversity of places, like the hardware iron triangle (dexterity, robustness, cost).',
   'Icon 1 (Kofi in a VR headset driving Seven: teleoperation) slides up to the "true to the robot" corner. Caption: about $90–150 per collected hour in the US, zero body gap, but only a few staged rooms.',
   'Icon 2 (a sensor glove and a handheld gripper with a camera, like UMI) slides down between "cheap" and "diverse". Caption: a ~$200 glove versus a ~$20,000 teleop rig; record people doing the task themselves in any home. The device must match the robot’s hand.',
   'Icon 3 (a head camera and a few video tiles: human video) settles on the bottom edge, cheap and diverse, far from "true to the robot". Caption: nearly free (internet) to $25–60 per hour (egocentric rigs); no forces, wrong body.',
@@ -34,7 +34,8 @@ const STATE = [
 const TRUE = { x: 800, y: 160 }
 const CHEAP = { x: 290, y: 770 }
 const DIVERSE = { x: 1310, y: 770 }
-const ORBIT = { x: 800, y: 590, rx: 250, ry: 96 }
+/* where the five sources wait, in a row under the triangle, until each is called */
+const DECK = { x: 800, y: 836, gap: 130, s: 0.5 }
 const R = 72
 const ICONS = [
   { x: 800, y: 310, name: '1 · puppet the robot', sub: 'teleoperation · $90–150 per hour · a few staged rooms', lx: -84, anchor: 'end' as const },
@@ -72,8 +73,8 @@ export function Ch4Map({ cueIndex, playing, onAnimDone, reportState, setHints }:
     const nodes = el ? ICONS.map((_, i) => el.querySelector(`.c4-icon-${i}`)) : []
     const apply = () =>
       st.forEach((o, i) => {
-        const ox = ORBIT.x + Math.cos(o.a) * ORBIT.rx
-        const oy = ORBIT.y + Math.sin(o.a) * ORBIT.ry
+        const ox = DECK.x + (i - 2) * DECK.gap
+        const oy = DECK.y + Math.sin(o.a * 3 + i * 1.3) * 5
         const x = ox + (ICONS[i].x - ox) * o.k
         const y = oy + (ICONS[i].y - oy) * o.k
         nodes[i]?.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${o.s.toFixed(3)})`)
@@ -98,7 +99,7 @@ export function Ch4Map({ cueIndex, playing, onAnimDone, reportState, setHints }:
     tl.fromTo('.c4-corner', { opacity: 0 }, { opacity: 1, duration: 0.6, stagger: 1.4, immediateRender: false }, 5.0)
     ICONS.forEach((_, i) => {
       // the whole orbit, start to finish, as one slow turn
-      iconTo(i, { s: 0.8 }, 1.6 + i * 0.4, 0.8, 'back.out(2)')
+      iconTo(i, { s: DECK.s }, 1.6 + i * 0.4, 0.8, 'back.out(2)')
     })
     ICONS.forEach((_, i) => iconTo(i, { a: plan[i].a + Math.PI * 2.2 }, 0.2, END, 'none'))
     mapCam.to(tl, { x: 800, y: 480, zoom: 1 }, 0, 12, 'sine.inOut')
@@ -110,7 +111,7 @@ export function Ch4Map({ cueIndex, playing, onAnimDone, reportState, setHints }:
       iconTo(i, { k: 1, s: 1.25 }, b + 0.3, 1.4, 'power3.inOut')
       iconTo(i, { s: 1 }, b + 2.2, 0.8, 'power2.out')
       fade(tl, `.c4-lab-${i}`, 1, b + 1.4, 0.6)
-      mapCam.to(tl, { x: (ICONS[i].x + 1600) / 3, y: Math.min(468, (ICONS[i].y + 960) / 3), zoom: 1.12 }, b + 0.2, 2.4, 'power2.inOut')
+      mapCam.to(tl, { x: (ICONS[i].x + 1600) / 3, y: 470, zoom: 1.06 }, b + 0.2, 2.4, 'power2.inOut')
       fade(tl, `.c4-glow-${i}`, 1, b + 1.4, 0.6)
       fade(tl, `.c4-glow-${i}`, 0, b + 5.4, 1, 1)
     })
@@ -180,7 +181,7 @@ export function Ch4Map({ cueIndex, playing, onAnimDone, reportState, setHints }:
             </g>
 
             {/* 1: Kofi in a headset, driving Seven */}
-            <g className="c4-icon-0" transform={`translate(${ORBIT.x} ${ORBIT.y}) scale(0)`}>
+            <g className="c4-icon-0" transform={`translate(${DECK.x} ${DECK.y}) scale(0)`}>
               <g className="c4-glow-0" opacity={0}>
                 <circle r={R + 30} fill="url(#cn-pool-lime)" />
               </g>
@@ -192,7 +193,7 @@ export function Ch4Map({ cueIndex, playing, onAnimDone, reportState, setHints }:
               </Medallion>
             </g>
             {/* 2: a glove and a handheld gripper with a camera */}
-            <g className="c4-icon-1" transform={`translate(${ORBIT.x} ${ORBIT.y}) scale(0)`}>
+            <g className="c4-icon-1" transform={`translate(${DECK.x} ${DECK.y}) scale(0)`}>
               <g className="c4-glow-1" opacity={0}>
                 <circle r={R + 30} fill="url(#cn-pool-lime)" />
               </g>
@@ -214,7 +215,7 @@ export function Ch4Map({ cueIndex, playing, onAnimDone, reportState, setHints }:
               </Medallion>
             </g>
             {/* 3: a head camera and video of people */}
-            <g className="c4-icon-2" transform={`translate(${ORBIT.x} ${ORBIT.y}) scale(0)`}>
+            <g className="c4-icon-2" transform={`translate(${DECK.x} ${DECK.y}) scale(0)`}>
               <g className="c4-glow-2" opacity={0}>
                 <circle r={R + 30} fill="url(#cn-pool-lime)" />
               </g>
@@ -229,7 +230,7 @@ export function Ch4Map({ cueIndex, playing, onAnimDone, reportState, setHints }:
               </Medallion>
             </g>
             {/* 4: a wireframe hand in a glowing grid */}
-            <g className="c4-icon-3" transform={`translate(${ORBIT.x} ${ORBIT.y}) scale(0)`}>
+            <g className="c4-icon-3" transform={`translate(${DECK.x} ${DECK.y}) scale(0)`}>
               <g className="c4-glow-3" opacity={0}>
                 <circle r={R + 30} fill="url(#cn-pool-lime)" />
               </g>
@@ -246,7 +247,7 @@ export function Ch4Map({ cueIndex, playing, onAnimDone, reportState, setHints }:
               </g>
             </g>
             {/* 5: a fleet, its data flowing home */}
-            <g className="c4-icon-4" transform={`translate(${ORBIT.x} ${ORBIT.y}) scale(0)`}>
+            <g className="c4-icon-4" transform={`translate(${DECK.x} ${DECK.y}) scale(0)`}>
               <g className="c4-glow-4" opacity={0}>
                 <circle r={R + 30} fill="url(#cn-pool-lime)" />
               </g>
@@ -273,16 +274,16 @@ export function Ch4Map({ cueIndex, playing, onAnimDone, reportState, setHints }:
             {/* the labels, once each source lands */}
             {ICONS.map((ic, i) => (
               <g key={i} className={`c4-lab-${i}`} opacity={0} pointerEvents="none">
-                <text x={ic.x + ic.lx} y={ic.y - 4} textAnchor={ic.anchor} fill={C.paper} fontFamily={SANS} fontSize={24} fontWeight={600} stroke={C.ink} strokeWidth={6} strokeOpacity={0.7} style={{ paintOrder: 'stroke' }}>
+                <text x={ic.x + ic.lx} y={ic.y - 4} textAnchor={ic.anchor} fill={C.paper} fontFamily={SANS} fontSize={24} fontWeight={600} stroke={C.ink} strokeWidth={8} strokeLinejoin="round" style={{ paintOrder: 'stroke' }}>
                   {ic.name}
                 </text>
-                <text x={ic.x + ic.lx} y={ic.y + 22} textAnchor={ic.anchor} fill={C.lime} opacity={0.85} fontFamily={MONO} fontSize={16} stroke={C.ink} strokeWidth={5} strokeOpacity={0.7} style={{ paintOrder: 'stroke' }}>
+                <text x={ic.x + ic.lx} y={ic.y + 22} textAnchor={ic.anchor} fill={C.lime} opacity={0.85} fontFamily={MONO} fontSize={16} stroke={C.ink} strokeWidth={7} strokeLinejoin="round" style={{ paintOrder: 'stroke' }}>
                   {ic.sub}
                 </text>
               </g>
             ))}
             <g className="c4-lab-4" opacity={0} pointerEvents="none">
-              <text x={ICONS[4].x + 84} y={ICONS[4].y + 46} fill={C.gold} fontFamily={MONO} fontSize={16}>
+              <text x={ICONS[4].x + 84} y={ICONS[4].y + 46} fill={C.gold} fontFamily={MONO} fontSize={16} stroke={C.ink} strokeWidth={7} strokeLinejoin="round" style={{ paintOrder: 'stroke' }}>
                 locked until it works well enough to deploy
               </text>
             </g>

@@ -174,10 +174,10 @@ export function AdaAtDesk({ name = 'ada', x, y, s = 1, pose, light = 'screen' }:
     <g>
       {/* the chair */}
       <g transform={`translate(${x} ${y}) scale(${s})`}>
-        <rect x={-46} y={-96} width={70} height={12} rx={4} fill={C.ink2} />
-        <rect x={-58} y={-210} width={14} height={124} rx={6} fill={C.ink2} />
-        <rect x={-14} y={-84} width={8} height={70} fill={C.ink2} />
-        <path d="M-50 -10 L36 -10" stroke={C.ink2} strokeWidth={8} strokeLinecap="round" />
+        <rect x={-46} y={-96} width={70} height={12} rx={4} fill={C.ink3} stroke={C.slate} strokeWidth={2} />
+        <rect x={-58} y={-210} width={14} height={124} rx={6} fill={C.ink3} stroke={C.slate} strokeWidth={2} />
+        <rect x={-14} y={-84} width={8} height={70} fill={C.ink3} stroke={C.slate} strokeWidth={1.5} />
+        <path d="M-50 -10 L36 -10" stroke={C.slate} strokeWidth={8} strokeLinecap="round" />
       </g>
       <Person name={name} x={x} y={y} s={s} pose={pose} light={light} {...ADA} />
     </g>

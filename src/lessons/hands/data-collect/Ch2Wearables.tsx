@@ -845,7 +845,7 @@ export function Ch2Wearables({ cueIndex, playing, onAnimDone, onPlayDone, say, e
           </g>
           <Robot name="c2-sunbot" x={1290} y={820} s={0.95} pose={POSES.stand} light="key-right" />
           <g className="c2-count" opacity={0}>
-            <text className="c2-count-n" x={120} y={150} fill={C.lime} fontFamily={MONO} fontSize={34}>
+            <text className="c2-count-n" x={260} y={150} fill={C.lime} fontFamily={MONO} fontSize={34}>
               0 gloves · 0 homes
             </text>
           </g>

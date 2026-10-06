@@ -368,7 +368,7 @@ export function Ch3Durability({ cueIndex, playing, onAnimDone, onPlayDone, say, 
             ))}
           </g>
           <Label className="f3-lab-cost" x={300} y={640} tx={180} ty={810} text="each one: a cost, a supplier, a step, a failure" color={C.mist} anchor="start" />
-          <Label className="f3-lab-palm" x={HC.x + 60} y={HC.y + 100} tx={1180} ty={760} text="brackets → one moulded palm" color={C.paper} />
+          <Label className="f3-lab-palm" x={HC.x + 60} y={HC.y + 100} tx={1090} ty={760} text="brackets → one moulded palm" color={C.paper} />
           <Label className="f3-lab-snap" x={HC.x - 70 * HC.s} y={HC.y + 30 * HC.s} tx={360} ty={760} text="screws → snap fits" color={C.cyanLight} />
         </g>
         <g className="f3-count" opacity={0}>
@@ -497,7 +497,7 @@ export function Ch3Durability({ cueIndex, playing, onAnimDone, onPlayDone, say, 
           </g>
           <rect className="f3-redflash" x={-600} y={-500} width={2800} height={1900} fill={C.danger} opacity={0} />
           <g className="f3-lab-arith" opacity={0}>
-            <text x={760} y={900} textAnchor="middle" fill={C.paper} fontFamily={MONO} fontSize={34} stroke={C.ink} strokeWidth={6} style={{ paintOrder: 'stroke' }}>
+            <text x={760} y={858} textAnchor="middle" fill={C.paper} fontFamily={MONO} fontSize={34} stroke={C.ink} strokeWidth={6} style={{ paintOrder: 'stroke' }}>
               500,000 cycles ÷ 9,000 a day ≈ 55 days
             </text>
           </g>

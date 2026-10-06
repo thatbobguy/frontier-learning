@@ -54,7 +54,7 @@ export function CourseNext({ courseId, lessonId }: { courseId: string; lessonId:
                 playStop(s.id)
               }}
             >
-              <small style={{ color: b?.color }}>{s.branch === here?.branch ? 'Next on the ' : 'Branch off: '}{b?.title}</small>
+              <small style={{ color: b?.color }}>{s.branch === here?.branch ? 'Next: ' : 'Branch off to '}{b?.title}</small>
               <strong>{title}</strong>
               <span>{blurb}</span>
               {done.has(s.id) && <span>Watched ✓</span>}

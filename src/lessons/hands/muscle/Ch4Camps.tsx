@@ -44,7 +44,7 @@ const CARDS: { id: string; text: string; camp: Camp; why: string }[] = [
   { id: 'repair', text: 'Hard to repair: cables run through everything', camp: 'tendon', why: 'fixing one cable means opening the whole hand' },
 ]
 const COIL_D = 'M0 -30 ' + 'q 14 30 0 60 q -6 -30 16 -60 '.repeat(14)
-const CARD_W = 470
+const CARD_W = 484
 const CARD_H = 52
 const HOME = [
   { x: 290, y: 772 },
@@ -66,7 +66,7 @@ export function Ch4Camps({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
   const h0 = useHandStore({ pose: GRASPS.relaxed, view: VIEWS[0], xray: 1 })
   const h1 = useHandStore({ pose: GRASPS.relaxed, view: VIEWS[1], xray: 1 })
   const h2 = useHandStore({ pose: GRASPS.relaxed, view: VIEWS[2], xray: 1 })
-  const mapHand = useHandStore({ pose: GRASPS.relaxed, view: { yaw: -20, pitch: 8, roll: 0, s: 1.9 }, xray: 1 })
+  const mapHand = useHandStore({ pose: GRASPS.relaxed, view: { yaw: -20, pitch: 8, roll: 0, s: 1.35 }, xray: 1 })
 
   /* ---------------- the play ---------------- */
   const [placed, setPlaced] = useState<Record<string, Camp>>({})
@@ -399,7 +399,7 @@ export function Ch4Camps({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
             <rect x={-800} y={-600} width={3200} height={2100} fill={C.ink} />
             <Pool x={800} y={470} r={700} color="rim" opacity={0.25} />
             <FiveMap cx={800} cy={470} prefix="m4" />
-            <Hand3D store={mapHand} x={800} y={600} look="xray" arm={110} />
+            <Hand3D store={mapHand} x={800} y={640} look="xray" arm={110} />
             <text className="c4-trio" x={800} y={850} textAnchor="middle" fill={C.amberLight} fontFamily={MONO} fontSize={34} opacity={0}>
               force · speed · weight
             </text>
@@ -424,7 +424,7 @@ export function Ch4Camps({ cueIndex, playing, onAnimDone, onPlayDone, say, emit,
               {here.map((c, k) => (
                 <g key={c.id} transform={`translate(${x} ${TOP + 100 + k * 44}) scale(0.6)`}>
                   <rect x={-CARD_W / 2} y={-CARD_H / 2} width={CARD_W} height={CARD_H} rx={10} fill={C.ink1} stroke={C.lime} strokeWidth={3} />
-                  <text x={0} y={7} textAnchor="middle" fill={C.limeLight} fontFamily={SANS} fontSize={21}>
+                  <text x={0} y={7} textAnchor="middle" fill={C.limeLight} fontFamily={SANS} fontSize={19}>
                     {c.text}
                   </text>
                 </g>
@@ -466,7 +466,7 @@ function Card({ id, bad, text, home, at, active, onMove, onDrop }: { id: string;
       <g transform={`translate(${pos.x} ${pos.y})`}>
         <g key={bad} className={bad ? 'mu-shake' : undefined}>
         <rect x={-CARD_W / 2} y={-CARD_H / 2} width={CARD_W} height={CARD_H} rx={10} fill={C.ink1} fillOpacity={0.92} stroke={bad ? C.danger : at ? C.paper : C.mist} strokeOpacity={at || bad ? 0.9 : 0.5} strokeWidth={2} />
-        <text x={0} y={7} textAnchor="middle" fill={C.paper} fontFamily={SANS} fontSize={21} pointerEvents="none">
+        <text x={0} y={7} textAnchor="middle" fill={C.paper} fontFamily={SANS} fontSize={19} pointerEvents="none">
           {text}
         </text>
         </g>

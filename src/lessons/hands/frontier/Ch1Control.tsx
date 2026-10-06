@@ -662,12 +662,12 @@ export function Ch1Control({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
           </g>
           <Label className="c1-lab-fse" x={fingerTip(TOUCH).x - 10} y={BLOCK.y - 200} tx={1010} ty={250} text="force = stiffness × error" sub="stiffness ≈ infinite, so force ≈ huge" color={C.amber} size={34} />
           <g className="c1-mode-pos" opacity={0}>
-            <text x={110} y={110} fill={C.paper} fontFamily={SERIF} fontSize={40} fontWeight={600}>
+            <text x={200} y={170} fill={C.paper} fontFamily={SERIF} fontSize={40} fontWeight={600}>
               position control
             </text>
           </g>
           <g className="c1-mode-imp" opacity={0}>
-            <text x={110} y={110} fill={C.paper} fontFamily={SERIF} fontSize={40} fontWeight={600}>
+            <text x={200} y={170} fill={C.paper} fontFamily={SERIF} fontSize={40} fontWeight={600}>
               impedance control
             </text>
           </g>
@@ -780,7 +780,7 @@ export function Ch1Control({ cueIndex, playing, onAnimDone, onPlayDone, say, emi
           <PracticeRack />
           <Label className="c1-lab-survive" x={RACK[4].x + 70} y={RACK[4].y + 40} tx={760} ty={850} text="survive practice" sub="thousands of clumsy hours" color={C.danger} anchor="middle" />
           <Label className="c1-lab-sim" x={RACK[1].x - 60} y={RACK[1].y - 110} tx={560} ty={70} text="match the sim" color={C.lime} anchor="middle" />
-          <Label className="c1-lab-cheap" x={RACK[5].x + 180} y={RACK[5].y - 100} tx={1540} ty={860} text="cheap enough to buy many" color={C.gold} anchor="end" />
+          <Label className="c1-lab-cheap" x={RACK[5].x + 180} y={RACK[5].y - 100} tx={1440} ty={830} text="cheap enough to buy many" color={C.gold} anchor="end" />
         </g>
         <g data-depth="1.6">
           <Dust x={-200} y={0} w={2000} h={900} count={26} seed={66} color={C.keyLight} />

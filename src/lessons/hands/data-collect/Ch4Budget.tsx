@@ -104,7 +104,7 @@ export function Ch4Budget({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     const camR = camera(roomsRef.current, { x: 800, y: 450, zoom: 1.0 })
     const camK = camera(kofiRef.current, { x: 800, y: 450, zoom: 1.1 })
     const camP = camera(playRef.current, { x: 800, y: 450, zoom: 1.0 })
-    const camS = camera(strataRef.current, { x: 800, y: 470, zoom: 1.15 })
+    const camS = camera(strataRef.current, { x: 860, y: 470, zoom: 1.15 })
     const camT = camera(treeRef.current, { x: 800, y: 450, zoom: 1.1 })
     const shots = ['.c4-rooms', '.c4-kofi', '.c4-play', '.c4-strata', '.c4-tree']
     const show = (which: string, at: number) => shots.forEach((s) => tl.set(s, { opacity: s === which ? 1 : 0 }, at + 0.02))
@@ -177,7 +177,7 @@ export function Ch4Budget({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
     const b2 = b1 + 12
     tl.addLabel('b2', b2)
     show('.c4-strata', b2)
-    camS.to(tl, { x: 800, y: 470, zoom: 1.15 }, b2, 0.001)
+    camS.to(tl, { x: 860, y: 470, zoom: 1.15 }, b2, 0.001)
     camS.to(tl, { x: 800, y: 440, zoom: 1.0 }, b2 + 0.01, 7, 'sine.inOut')
     tl.fromTo('.c4-layer', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.9, ease: 'power2.out', immediateRender: false }, b2 + 0.3)
     fade(tl, '.c4-lab-video', 1, b2 + 1.0, 0.5)
@@ -467,7 +467,7 @@ export function Ch4Budget({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
             </g>
           </g>
           </g>
-          <Label className="c4-lab-video" x={1100} y={680} tx={1200} ty={740} text="human video" sub="cheapest, widest: millions of hours" color={C.limeLight} />
+          <Label className="c4-lab-video" x={1100} y={680} tx={1160} ty={740} text="human video" sub="cheapest, widest: millions of hours" color={C.limeLight} />
           <Label className="c4-lab-glove" x={1080} y={455} tx={1240} ty={520} text="gloves & wearables" sub="fits the robot, many homes" color={C.limeLight} />
           <Label className="c4-lab-robot" x={1050} y={368} tx={1240} ty={260} text="the robot’s own data" sub="teleop, fleets: thin" color={C.lime} />
           <g className="c4-q" opacity={0}>

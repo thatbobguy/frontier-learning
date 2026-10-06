@@ -44,7 +44,7 @@ export function Ch1Motors({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
   const root = useRef<SVGGElement>(null)
   const mapRef = useRef<SVGGElement>(null)
   const labRef = useRef<SVGGElement>(null)
-  const hand = useHandStore({ pose: GRASPS.relaxed, view: { yaw: -30, pitch: 8, roll: 0, s: 1.9 }, xray: 1 })
+  const hand = useHandStore({ pose: GRASPS.relaxed, view: { yaw: -30, pitch: 8, roll: 0, s: 1.35 }, xray: 1 })
 
   /* ---------------- the play: shrink the motor ---------------- */
   const [v, setV] = useState(1)
@@ -227,7 +227,7 @@ export function Ch1Motors({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
         <g data-depth="1">
           <Pool x={800} y={470} r={360} color="key" opacity={0.35} />
           <FiveMap cx={800} cy={470} prefix="m1" />
-          <Hand3D store={hand} x={800} y={600} look="xray" arm={110} />
+          <Hand3D store={hand} x={800} y={640} look="xray" arm={110} />
           <g className="c1-flare" opacity={0}>
             <circle cx={DOT.x} cy={DOT.y} r={90} fill="url(#cn-pool-amber)" />
             <circle cx={DOT.x} cy={DOT.y} r={16} fill={C.amberLight} filter="url(#cn-bloom)" />

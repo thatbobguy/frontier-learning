@@ -508,7 +508,7 @@ export function Ch4Supply({ cueIndex, playing, onAnimDone, onPlayDone, say, emit
         <g className="f4-handdot" opacity={0}>
           <circle cx={LX(0.3)} cy={LY(4.9)} r={16} fill={C.gold} filter="url(#cn-bloom)" />
         </g>
-        <Label className="f4-wlab-hand" x={LX(0.3) + 14} y={LY(4.9) - 10} tx={LX(1.6)} ty={LY(4.9) - 60} text="robot hands: just starting" color={C.gold} size={28} />
+        <Label className="f4-wlab-hand" x={LX(0.3) + 14} y={LY(4.9) - 10} tx={LX(3.4)} ty={LY(4.9) - 34} text="robot hands: just starting" color={C.gold} size={28} />
         <Vignette />
       </g>
 
