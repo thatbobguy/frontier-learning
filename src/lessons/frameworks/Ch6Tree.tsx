@@ -571,7 +571,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
     settle.forEach(([i, at]) => {
       tl.to(`.c6-lan${i}`, { x: 0, duration: 1.5, ease: 'sine.inOut' }, b1 + at)
       tl.to(`.c6-lan${i}`, { y: 0, duration: 1.5, ease: 'power1.inOut' }, b1 + at)
-      tl.to(`.c6-str${i}`, { opacity: 1, duration: 0.4 }, b1 + at + 1.25)
+      if (LANS[i].s > 0) tl.to(`.c6-str${i}`, { opacity: 1, duration: 0.4 }, b1 + at + 1.25)
     })
     tl.to('.c6-halo', { opacity: 1, duration: 1.8, ease: 'sine.inOut' }, b1 + 3.6)
     // The tree of math: its trunk and four big questions.
@@ -602,7 +602,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
     const b3 = b2 + 7.2
     tl.addLabel('b3', b3)
     camTo('cx', 1180, b3, 2.0)
-    camTo('cy', 520, b3, 2.0)
+    camTo('cy', 556, b3, 2.0)
     camTo('z', Math.log(1.38), b3, 1.0, 'sine.inOut')
     camTo('z', Math.log(1.7), b3 + 1.0, 1.0, 'sine.inOut')
     tl.to('.c6-budglow-D', { opacity: 1, duration: 0.8 }, b3 + 1.0)
@@ -784,7 +784,7 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
                         <Glow r={130} color="cool" />
                       </g>
                     </g>
-                    <g transform={`rotate(${(bezAngle(br.b, 1) + 90).toFixed(1)})`}>
+                    <g transform={`rotate(${((bezAngle(br.b, 1) + 90) * 0.55).toFixed(1)})`}>
                       <g className={`c6-bud c6-bud-${id}`} data-tutor={id === 'B' ? 'the What comes next? bud' : 'the How big? What shape? bud'}>
                         <BudShape />
                       </g>
@@ -813,14 +813,12 @@ export function Ch6Tree({ cueIndex, playing, onAnimDone, reportState, setHints }
 
         {/* The trunk: matching. It grows from the pebble. */}
         <g className="c6-roots">
-          {[
-            ['M784 792 Q742 800 700 812', 13],
-            ['M816 792 Q862 800 908 814', 13],
-            ['M792 796 Q772 812 748 828', 8],
-            ['M810 796 Q832 812 858 830', 8],
-          ].map(([d, w]) => (
-            <path key={d} d={d as string} stroke={N.woodDark} strokeWidth={w as number} fill="none" strokeLinecap="round" />
-          ))}
+          {/* tapered roots that hug the hilltop */}
+          <path d="M770 784 Q736 790 690 806 Q676 811 664 810 Q690 798 724 794 Q752 791 770 796 Z" fill={N.woodDark} />
+          <path d="M830 784 Q866 790 912 806 Q926 811 938 810 Q912 798 878 794 Q848 791 830 796 Z" fill={N.woodDark} />
+          <path d="M782 792 Q770 806 742 818 Q734 821 728 820 Q750 806 766 798 Z" fill={N.woodDark} />
+          <path d="M818 792 Q832 806 858 818 Q866 821 872 820 Q850 806 834 798 Z" fill={N.woodDark} />
+          <path d="M700 803 Q736 794 766 790" stroke={N.woodLight} strokeWidth={3} fill="none" opacity={0.4} strokeLinecap="round" />
         </g>
         <g className="c6-trunk" data-tutor="the trunk (matching)">
           <path d="M744 800 Q770 788 772 744 C775 680 778 590 781 470 L819 470 C822 590 825 680 828 744 Q830 788 856 800 Z" fill={N.woodDark} />
